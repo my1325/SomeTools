@@ -1,0 +1,69 @@
+//
+//  ViewController.h
+//  sdfsdafdsafa
+//
+//  Created by my on 2023/2/28.
+//
+
+#import <UIKit/UIKit.h>
+
+@protocol AdProtocol;
+
+@protocol TestDelegate <NSObject>
+
+
+@required
+- (void)asdfdsaf;
+@property(atomic, assign) NSInteger a;
+
+@optional
+
+@end
+@protocol ViewControllerDelegate
+
+
+@required
+@property NSString * a;
+- (void)sadfasdf;
+-(NSString *)asdf: (id)b sadf:(NSString*)c;
+
++(NSURL *)asdf;
+
+
+
+@optional
+@property(nonatomic, strong) NSString* b;
+-(NSString *)asdfasdfadsf;
+- (void)asdf;
+@end
+@interface ViewController : UIViewController
+
+
+@property NSString *asdf;
+-(void)asdfjlsdajf;
+-(void)safsdafjsdalkfjlsda;
+- (void)asdfjlff;
+
+
+
+@end
+@interface ViewController()
+
+@property NSString *asdfasasdfdf;
+@property NSString *asdfsdafasdfsda;
+@property NSString *asdfq23asdf;
+@property NSString *asdfasdf;
+@end
+
+@interface ViewController(asldjflkdsajflk)
+
+
+
+-(void)asdfjlsdajf;
+@property NSString *asdfasdf;
+-(void)safsdafjsdalkfjlsda;
+@property NSString *asdfasasdfdf;
+@property NSString *asdfq23asdf;
+- (void)asdfjlff;
+@property NSString *asdfsdafasdfsda;
+@end

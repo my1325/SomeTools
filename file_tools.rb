@@ -37,15 +37,4 @@ class FileTools
     File.rename @file_path, new_path
     @file_path = new_path
   end
-
-  def replace_file_in_dir(dict)
-    return unless File.exist?(@file_path) && File.directory?(@file_path)
-
-    exclude_dir = dict[:exclude_dir]
-    exclude_file = dict[:exclude_file]
-    
-
-
-
-  end
 end
