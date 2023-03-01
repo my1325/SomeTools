@@ -37,6 +37,10 @@ class OCFileHelper
     line =~ /^@interface .*\(.*\)$/
   end
 
+  def has_document?(line)
+    line =~ /.*\/\*.*\*\/.*/
+  end
+
   def instance_method?(line)
     line =~ /^- ?\(.*\).*;$/
   end
@@ -78,6 +82,10 @@ class OCFileHelper
             new_line = parse_class file, line
           elsif class_imp?(line) || class_category_imp?(line)
             new_line = parse_class_imp file, line
+          elsif has_document? line
+            new_line = line.gsub /\/\*.*\*\//, ''
+          elsif line.include?('/*')
+             new_line = parse_document file, line
           end
           new_file.write new_line unless new_line.strip.start_with?('//')
           line = file.readline.strip unless file.eof?
@@ -104,8 +112,22 @@ class OCFileHelper
       elsif _line == '@required'
         optional = false
       elsif optional
+        if class_method?(_line) || instance_method?(_line)
+          _line = parse_method file, _line
+        elsif has_document? _line
+          _line = _line.gsub /\/\*.*\*\//, ''
+        elsif line.include?('/*')
+          _line = parse_document file, _line
+        end
         optional_lines.append _line
       else
+        if class_method?(_line) || instance_method?(_line)
+          _line = parse_method file, _line
+        elsif has_document? _line
+          _line = _line.gsub /\/\*.*\*\//, ''
+        elsif line.include?('/*')
+          _line = parse_document file, _line
+        end
         require_lines.append _line
       end
       _line = file.readline.strip
@@ -113,6 +135,16 @@ class OCFileHelper
     optional_string = "\n@optional\n".dup.concat(optional_lines.shuffle.join("\n"))
     require_string = "\n@required\n".dup.concat(require_lines.shuffle.join("\n"))
     "\n#{line}\n".dup.concat(require_string).concat(optional_string).concat("\n@end\n")
+  end
+
+  def parse_document(file, line)
+    _line = line.gsub /@".*"/, ''
+    return line if _line.include?('/*') == 0
+    line = line.gsub /\/\*.*/, ''
+    _line = line
+    _line = file.readline until _line.include?('*/') || file.eof?
+    _line = _line.gsub /.*\*\//, ''
+    line.concat(_line)
   end
 
   def parse_class(file, line)
@@ -124,10 +156,28 @@ class OCFileHelper
         next
       end
 
-      lines.append _line
+      new_line = _line
+      if instance_method?(_line) || class_method?(_line)
+        new_line = parse_method file, _line
+      elsif has_document? _line
+        new_line = _line.gsub /\/\*.*\*\//, ''
+      elsif _line.include?('/*')
+        new_line = parse_document file, _line
+      end
+
+      lines.append new_line
       _line = file.readline.strip
     end
     "\n#{line}\n".dup.concat(lines.shuffle.join("\n").concat("\n@end\n"))
+  end
+
+  def parse_method(file, line)
+    lines = []
+    until line.strip.end_with? ';'
+      lines.append line
+      line = file.readline
+    end
+    lines.join.concat(line)
   end
 
   def parse_class_imp(file, line)
@@ -142,12 +192,18 @@ class OCFileHelper
 
       if class_method_imp?(_line) || instance_method_imp?(_line)
         method.append(parse_method_imp(file, _line))
+      elsif has_document? _line
+        new_line = _line.gsub /\/\*.*\*\//, ''
+        lines.append(new_line)
+      elsif _line.include?('/*')
+        new_line = parse_document file, _line
+        lines.append(new_line)
       else
         lines.append(_line)
       end
       _line = file.readline unless file.eof?
     end
-    "\n#{line}\n".dup.concat(lines.join()).concat(method.shuffle.join("\n")).concat("\n@end\n")
+    "\n#{line}\n".dup.concat(lines.join).concat(method.shuffle.join("\n")).concat("\n@end\n")
   end
 
   def parse_method_imp(file, line)
@@ -173,6 +229,6 @@ class OCFileHelper
       line = file.readline
     end
 
-    "#{line}".dup.concat(lines.join())
+    "#{line}".dup.concat(lines.join)
   end
 end

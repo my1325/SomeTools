@@ -76,12 +76,15 @@ typedef void(^GYLiveAttributeUpdateBlock)(NSArray<GYLiveAttributeUpdate *> * _Nu
 /// 加入频道
 /// @param agoraRoomId 房号
 /// @param completion 完成
-- (void)fb_joinAgoraRtcWithAgoraRoomId:(NSString *)agoraRoomId completion:(GYLiveVoidBlock __nullable )completion;
+- (void)fb_joinAgoraRtcWithAgoraRoomId:(NSString *)agoraRoomId
+hhh: (id)a
+completion:(GYLiveVoidBlock __nullable )completion;
 
 /// 切换频道（内置退出加入）
 /// @param agoraRoomId 房号
 /// @param completion 完成
-- (void)fb_switchAgoraRtcWithAgoraRoomId:(NSString *)agoraRoomId completion:(GYLiveVoidBlock __nullable )completion;
+- (void)fb_switchAgoraRtcWithAgoraRoomId:(NSString *)agoraRoomId
+completion:(GYLiveVoidBlock __nullable )completion;
 
 /// 退出频道
 /// @param completion 完成

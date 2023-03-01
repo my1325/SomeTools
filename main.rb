@@ -5,11 +5,21 @@ require 'find'
 
 def mix(args)
   dir = args[:dir]
-  puts "#{dir} is not directory" unless File.directory? dir
-  puts "#{dir} is not exists" unless File.exist? dir
+  if dir
+    puts "#{dir} is not directory" unless File.directory? dir
+    puts "#{dir} is not exists" unless File.exist? dir
 
-  dir_foreach dir do |file|
-    OCFileHelper
+    dir_foreach dir do |file|
+      helper = OCFileHelper.new file
+      helper.parse_file if helper.could_parse_file?
+    end
+  elsif args[:file]
+    file = args[:file]
+    puts "#{file} is not file" unless File.file? file
+    puts "#{file} is not exists" unless File.exist? file
+
+    helper = OCFileHelper.new file
+    helper.parse_file if helper.could_parse_file?
   end
 end
 
@@ -31,3 +41,5 @@ if contents.respond_to?(:encoding) && contents.encoding.name != 'UTF-8'
 end
 
 eval contents
+
+# puts '//n'.count("/*")
