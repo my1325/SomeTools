@@ -1,0 +1,124 @@
+/*
+  FBLiveLocalizable.strings
+  BasicFramework
+
+  Created by M1-mini on 2022/4/27.
+  Copyright © 2022 tt. All rights reserved.
+*/
+
+"%@ reached the room quota!" = "وصلت %@ للحصة المطلوبة في الغرفة";
+"%ld days" = "%ld أيام";
+"+ Follow" = "تابع +";
+"Anchor" = "مذيعة";
+"Host" = "مذيعة";
+"Audience" = "جمهور";
+"Block Successfully." = "تم الحظر بنجاح";
+"Block" = "حظر";
+"Cancel" = "الغاء";
+"Choose your unique event medal" = "اختر تسمية للحدث الفريد الخاص بك";
+"Close" = "اغلاق";
+"Dislike" = "عدم الإعجاب";
+"Do you want to end or minimize this live show ?" = "هل تريد انهاء العرض المباشر أو تصغير النافذة؟";
+"Don't miss any precious moments with her" = "لا تفوت اية لحظة ثمينة معها !";
+"Don’t show again." = "لا تذكِّر مجددا";
+"Draw" = "مسحوب";
+"Failed to follow." = "لقد فشلت عملية المتابعة";
+"Failed to join the Livestream, please try again." = "لقد فشلت في الإنضمام الى البث المباشر، ارجوك غادر و اعد المحاولة مجدداً";
+"Failed to report, please try again." = "لقد فشل الحظر. ارجوك حاول مجدداً";
+"Failed to send the gift." = "لقد فشلت في ارسال الهدية.";
+"First 5 minutes for free, %ld coins/min after that" = "أول 5 دقائق مجانًا ، %ld قطعة نقدية للدقيقة بعد ذلك";
+"Followed" = "لقد تمت المتابعة";
+"Followers" = "المتابعون";
+"Following" = "انا اتابع";
+"Forever" = "للابد";
+"Free for the first 5 minutes, %ld coins /minute after it." = "%ld عملة في دقيقة بعد 5 دقائق تصبح المكالمة مجانية.";
+"has been muted!" = "لقد تم كتم صوت";
+"Join the room" = "التحق بالغرفة";
+"Like her? Send a gift!" = "هل احببتها؟ ارسل هدية!";
+"Like" = "إعجاب";
+"Message" = "رسالة";
+"More anchors" = "المزيد من المذيعات";
+"No Medal" = "لا يوجد أي معدن";
+"Not now" = "ليس الآن";
+"Opposite" = "عكس";
+"Please allow the access of your camera in the \"Settings - Privacy - Cameras\"" = "الرجاء السماح بالوصول إلى الكاميرا الخاصة بك في \" الإعدادات - الخصوصية - الكاميرات \"";
+"Please allow the access of your Mircophone in the \"Settings - Privacy - Mircophone\" option" = "يُرجى السماح لعدة ضيوف بالوصول إلى الميكروفون الخاص بك في خيار \" الإعدادات - الخصوصية - ميكروفون \"";
+"Please allow the access of your photo album in the \"Settings - Privacy - Photo Album\" option" = "يُرجى السماح لنا بالوصول إلى ألبوم الصور الخاص بك في الخيار \" الإعدادات - الخصوصية - ألبوم الصور \"";
+"Please check your network." = "ارجوك تحقق من شبكة الانترنت.";
+"Please click your favorite medal as your particular comment effect for Multibeam/Livestream below." = "الرجاء النقر فوق التسمية المفضلة لديك كتأثير التعليق الخاص بك على العرض المباشر أو المتنوع  أدناه.";
+"Please describe the report in detail" = "يرجى وصف التقرير بالتفصيل";
+"Please don't spread vulgar, pornographic, abuse content, or any content violating customs, rights or laws. Exposure of personal information is also prohibited. Violators will be muted or banned." = "يرجى عدم نشر محتوى مبتذل وإباحي ومسيء وأي محتوى ينتهك العادات والحقوق والقوانين. وايضا يحظر الكشف عن المعلومات الشخصية. سيتم إسكات حساب  المستخدم أو حظر الحساب ";
+"Private video chat" = "دردشة فيديو خاصة";
+"Reconnecting, please try again later." = "إعادة الاتصال، ارجوك حاول مجدداً لاحقاً";
+"Report" = "تبليغ";
+"Room Income" = "مدخول الغرفة";
+"Say hi to the livestreamer." = "قل مرحباً للمذيعة";
+"Say hi..." = "قل مرحبا...";
+"Send a %@ by Lucky Box" = "ارسل ل %@ من صندوق الحظ";
+"Send a %@" = "ارسل ل %@";
+"Send coins" = "ارسل قطع نقدية";
+"Send gift" = "ارسال هدية";
+"Settings" = "اعدادات";
+"Show only the top 100 users" = "اعرض فقط أفضل 100 مستخدم";
+"Start the private chat" = "ابدأ الدردشة الخاصة";
+"Submit" = "ارسال";
+"Thank you for your report, we will solve it as soon as possible" = "شكرا على التبليغ، سوف نتعامل معه في أقرب وقت";
+"The anchor is offline, take a look at other anchors" = "المذيعة غير متصلة الآن. فلنلق نظرة على مذيعة أخرى.";
+"The host is in a private call. Please come back later" = "حالياً المذيعة بمكالمة خاصة، ارجوك عد لاحقاً";
+"The host is in a private call. Please come back later." = "حالياً المذيعة بمكالمة خاصة، ارجوك عد لاحقاً.";
+"The host is offline. Chat with other online hosts." = "المذيعة غير متوفرة حالياً، استمتع مع المذيعات الموجودين حالياً.";
+"The host quit, you lost this turn!" = "المذيعة غادرت، لقد خسرت الجولة.!";
+"The livestream function has been turned off." = "تم إيقاف وظيفة البث المباشر.";
+"The other host quit, congrats, you win this turn!" = "لقد غادرة المذيعة الأخرى هنيئاً لك، لقد فزت في هذه الجولة";
+"This round of PK is over. Please wait for the next round." = "انتهت هذه الجولة من PK، ارجوك إنتظر الجولة القادمة.";
+"Tips" = "نصائح";
+"Type something..." = "اكتب شيئا...";
+"Upload image (maximum of 4)" = "تحميل الصورة (4 كحد أقصى)";
+"Users" = "مستعملين";
+"Wait" = "انتظر!";
+"We have received your report and will solve it ASAP." = "لقد تم استلام التبليغ سوف نتعامل معه فس اقرب وقت ممكن.";
+"You don't have enough coins." = "ليس لديك قطع نقدية كافية.";
+"You have been muted." = "لقد تم كتم صوتك.";
+"You have been unmuted." = "لقد تم تفعيل صوتك.";
+"Content cannot be empty." = "لا يمكن ان يكون المحتوى فارغا";
+
+"She's not available." = "إنها غير متوفرة.";
+"You can only upload maximum 7 photos." = "يمكنك تحميل 7 صور فقط كحد أقصى.";
+"Oops, no internet…try again." = "عفوًا ، ليس هناك اتصال بالإنترنت ... حاول مرة أخرى.";
+"The livestreamer is busy now. Try to leave her messages." = "المذيعة مشغولة الآن. حاول ترك رسالة لها.";
+"Insufficient Coins." = "عملات غير كافية";
+"The user blocked you." = "قام المستخدم بحظرك.";
+"You blocked the user." = "لقد حظرت المستخدم.";
+"The account has been blocked." = "تم حظر الحساب.";
+"Anchor doesn't exist." = "المذيعة غير موجودة";
+"The caller has hung up." = "المتصل أنهى المكالمة.";
+"User name already exists, please login with password." = "اسم المستخدم موجود بالفعل ، يرجى تسجيل الدخول باستخدام كلمة المرور.";
+"You can only withdraw once a day." = "يمكنك السحب مرة واحدة فقط في اليوم.";
+"Mimimum withdraw amount: 100 dollars." = "الحد الأدنى لسحب المبلغ: 100 دولار.";
+"The nickname is already taken." = "الاسم المستعار مستعمل من قبل.";
+"Please don't do anything inappropriate again.Try again in 5 minutes." = "من فضلك لا تفعل أي شيء غير مناسب مرة أخرى ، حاول مرة أخرى بعد 5 دقائق";
+"We have a Boss now, please try again later!" = "لدينا رئيس الآن ، يرجى المحاولة مرة أخرى لاحقًا!";
+"The video chat room is closed." = "غرفة الدردشة المرئية مغلوقة حالياً .";
+"The host is not available now." = "المضيفة غير متوفر الآن.";
+"Private call is closed." = "الدردشة الخاصة ليست مفتوحة.";
+"The host is not in the room." = "المضيفة ليس في الغرفة.";
+
+"Recharge" = "تعبئة";
+"Broadcast" = "البث";
+"Drag your favorite medal to the top, it will be displayed on profile" = "اسحب ميداليتك المفضلة إلى الأعلى، وستعرض في ملفك";
+"Medal list" = "قائمة الميداليات";
+"Medals" = "ميداليات";
+"Permanent" = "إلى الأبد";
+
+"More" = "أكثر";
+"More Events" = "المزيد من الأحداث";
+"100% Extra coins" = "100٪ عملات إضافية";
+"VIP Comment Effect" = "تأثير تعليق VIP";
+
+// 图片
+"fb_live_luckybox" = "fb_live_luckybox_ar";
+"fb_live_newmessage_icon" = "fb_live_newmessage_icon_ar";
+"fb_live_pk_rank_blue_text" = "fb_live_pk_rank_blue_text_ar";
+"fb_live_pk_rank_red_text" = "fb_live_pk_rank_red_text_ar";
+"fb_live_target_send" = "fb_live_target_send_ar";
+

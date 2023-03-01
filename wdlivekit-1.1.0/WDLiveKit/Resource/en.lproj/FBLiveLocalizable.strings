@@ -1,0 +1,118 @@
+/*
+  FBLiveLocalizable.strings
+  BasicFramework
+
+  Created by M1-mini on 2022/4/27.
+  Copyright © 2022 tt. All rights reserved.
+*/
+
+"%@ reached the room quota!" = "%@ reached the room quota!";
+"%ld days" = "%ld days";
+"+ Follow" = "+ Follow";
+"Anchor" = "Host";
+"Host" = "Host";
+"Audience" = "Viewers";
+"Block Successfully." = "Block Successfully.";
+"Block" = "Block";
+"Cancel" = "Cancel";
+"Choose your unique event medal" = "Choose your unique medal";
+"Close" = "Close";
+"Dislike" = "Dislike";
+"Do you want to end or minimize this live show ?" = "Do you want to end or minimize this live room ?";
+"Don't miss any precious moments with her" = "Don't miss any precious moments with her";
+"Don’t show again." = "Don’t show again.";
+"Draw" = "Draw";
+"Failed to follow." = "Failed to follow.";
+"Failed to join the Livestream, please try again." = "Failed to join the Livestream, please try again.";
+"Failed to report, please try again." = "Failed to report, please try again.";
+"Failed to send the gift." = "Failed to send the gift.";
+"First 5 minutes for free, %ld coins/min after that" = "First 5 mins for free, then %ld coins/min";
+"Followed" = "Followed";
+"Followers" = "Followers";
+"Following" = "Following";
+"Forever" = "Forever";
+"Free for the first 5 minutes, %ld coins /minute after it." = "Free for the first 5 minutes, %ld coins /minute after it.";
+"has been muted!" = "has been muted!";
+"Join the room" = "joined the room";
+"Like her? Send a gift!" = "Like her? Send a gift!";
+"Like" = "Like";
+"Message" = "Message";
+"More anchors" = "More hosts";
+"No Medal" = "No Medal";
+"Not now" = "Not now";
+"Opposite" = "Opposite";
+"Please allow the access of your camera in the \"Settings - Privacy - Cameras\"" = "Please allow the access of your camera in the \"Settings - Privacy - Cameras\"";
+"Please allow the access of your Mircophone in the \"Settings - Privacy - Mircophone\" option" = "Please allow the access of your Mircophone in the \"Settings - Privacy - Mircophone\" option";
+"Please allow the access of your photo album in the \"Settings - Privacy - Photo Album\" option" = "Please allow the access of your photo album in the \"Settings - Privacy - Photo Album\" option";
+"Please check your network." = "Please check your network.";
+"Please click your favorite medal as your particular comment effect for Multibeam/Livestream below." = "Please select a medal below as your special comment effect. It will show when you comment.";
+"Please describe the report in detail" = "Please describe the report in detail";
+"Please don't spread vulgar, pornographic, abuse content, or any content violating customs, rights or laws. Exposure of personal information is also prohibited. Violators will be muted or banned." = "Please don't spread any vulgar, pornographic, or abusive content that violates customs, rights or laws. Sharing personal information is also prohibited. Violators will be muted or banned.";
+"Private video chat" = "Private video chat";
+"Reconnecting, please try again later." = "Reconnecting, please try again later.";
+"Report" = "Report";
+"Room Income" = "Room Income";
+"Say hi to the livestreamer." = "Say hi to the livestreamer.";
+"Say hi..." = "Say hi...";
+"Send a %@ by Lucky Box" = "Send a %@ by Lucky Box";
+"Send a %@" = "Send a %@";
+"Send coins" = "Coins";
+"Send gift" = "Send gift";
+"Settings" = "Settings";
+"Show only the top 100 users" = "Only show the top 100 viewers";
+"Start the private chat" = "Start the private chat";
+"Submit" = "Submit";
+"Thank you for your report, we will solve it as soon as possible" = "Thank you for your report, we will solve it as soon as possible";
+"The anchor is offline, take a look at other anchors" = "The host is offline, take a look at other hosts";
+"The host is in a private call. Please come back later" = "The host is in a private call. Please come back later";
+"The host is in a private call. Please come back later." = "The host is in a private call. Please come back later.";
+"The host is offline. Chat with other online hosts." = "The host is offline. Chat with other online hosts.";
+"The host quit, you lost this turn!" = "The host quit, you lost this turn!";
+"The livestream function has been turned off." = "The livestream function has been turned off.";
+"The other host quit, congrats, you win this turn!" = "The other host quit, congrats, you win this turn!";
+"This round of PK is over. Please wait for the next round." = "This round of PK is over. Please wait for the next round.";
+"Tips" = "Tips";
+"Type something..." = "Type something...";
+"Upload image (maximum of 4)" = "Upload image (maximum of 4)";
+"Users" = "Users";
+"Wait" = "Wait";
+"We have received your report and will solve it ASAP." = "We have received your report and will solve it ASAP.";
+"You don't have enough coins." = "You don't have enough coins.";
+"You have been muted." = "You have been muted.";
+"You have been unmuted." = "You have been unmuted.";
+"Content cannot be empty." = "Content cannot be empty.";
+
+"She's not available." = "She's not available.";
+"You can only upload maximum 7 photos." = "You can only upload a maximum of 7 photos.";
+"Oops, no internet…try again." = "Oops, no internet…try again.";
+"The livestreamer is busy now. Try to leave her messages." = "The livestreamer is busy now. Try to leave her a message.";
+"Insufficient Coins." = "Insufficient Coins.";
+"The user blocked you." = "The user blocked you.";
+"You blocked the user." = "You blocked the user.";
+"The account has been blocked." = "This account has been blocked.";
+"Anchor doesn't exist." = "Host doesn't exist.";
+"The caller has hung up." = "The caller has ended the call.";
+"User name already exists, please login with password." = "User name already exists, please login with password.";
+"You can only withdraw once a day." = "You can only withdraw once a day.";
+"Mimimum withdraw amount: 100 dollars." = "Mimimum withdraw amount: 100 dollars.";
+"The nickname is already taken." = "This nickname is already taken.";
+"Please don't do anything inappropriate again.Try again in 5 minutes." = "Please don't do anything inappropriate. Try again in 5 minutes.";
+"We have a Boss now, please try again later!" = "We have a Boss now, please try again later!";
+"The video chat room is closed." = "This video chat room is closed.";
+"The host is not available now." = "The host is not available now.";
+"Private call is closed." = "Private call is closed.";
+"The host is not in the room." = "The host is not in the room.";
+
+"Drag your favorite medal to the top, it will be displayed on profile" = "Drag your favorite medal to the top, it will be displayed on profile";
+"Medal list" = "Medal list";
+"Medals" = "Medals";
+"Permanent" = "Permanent";
+
+"More" = "More";
+"More Events" = "More Events";
+"100% Extra coins" = "100% Extra coins";
+"VIP Comment Effect" = "VIP Comment Effect";
+
+"Recharge" = "Recharge";
+"Broadcast" = "Broadcast";
+
