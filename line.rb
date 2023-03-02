@@ -18,7 +18,7 @@ class Line
   end
 
   def self.class_imp?(line)
-    line.start_with? '@implementation'
+    OCClassImplementation.implementation? line
   end
 
   def self.class_extension?(line)
@@ -26,7 +26,7 @@ class Line
   end
 
   def self.class_category_imp?(line)
-    line =~ /^@implementation .*\(.*\)$/
+    OCClassImplementation.category_implementation? line
   end
 
   def self.class_category?(line)
@@ -42,11 +42,11 @@ class Line
   end
 
   def self.instance_method_imp?(line)
-    line =~ /^- ?\(.*\).*(?<!;)$/
+    OCMethodImplementation.instance_method_implementation? line
   end
 
   def self.class_method_imp?(line)
-    line =~ /^\+ ?\(.*\).*(?<!;)$/
+    OCMethodImplementation.class_method_implementation? line
   end
 
   def self.property?(line)

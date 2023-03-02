@@ -3,6 +3,7 @@ require 'line'
 require 'oc_class'
 require 'oc_protocol'
 require 'document'
+require 'oc_condition'
 
 class OCFile
   def self.header?(file)
@@ -14,7 +15,7 @@ class OCFile
   end
 
   def self.supported?(file)
-    header? file
+    header?(file) || implementation?(file)
   end
 
   def initialize(file)
@@ -47,9 +48,12 @@ class OCFile
       if Line.protocol? line
         oc_protocol = OCProtocol.new file, line, options
         oc_protocol.format_line
-      elsif Line.class? line
+      elsif Line.class?(line) || Line.class_extension?(line) || Line.class_category?(line)
         oc_class = OCClass.new file, line, options
         oc_class.format_line
+      elsif Line.class_imp?(line) || Line.class_category_imp?(line)
+        oc_class_implementation = OCClassImplementation.new file, line, options
+        oc_class_implementation.format_line
       elsif OCCondition.condition? line
         oc_condition = OCCondition.new file, line
         oc_condition.format_line
