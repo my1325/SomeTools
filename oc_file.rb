@@ -43,17 +43,17 @@ class OCFile
   def start_parse(options = {})
     handle_line do |file, line|
       if line.strip.empty? && !options[:trim_empty_line]
-        return line
+        line
       end
 
       if Line.protocol? line
         oc_protocol = OCProtocol.new file, line, options
-        return oc_protocol.format_line
+        oc_protocol.format_line
       elsif Line.class? line
         oc_class = OCClass.new file, line, options
-        return oc_class.format_line
+        oc_class.format_line
       else
-        return line
+        line
       end
     end
   end

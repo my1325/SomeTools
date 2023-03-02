@@ -2,7 +2,7 @@
 
 class OCProperty < Line
   def self.property?(line)
-    line =~ /^@property.*;$/
+    line =~ /^@property.*$/
   end
 
   def initialize(file, line)
@@ -11,7 +11,7 @@ class OCProperty < Line
 
   def property_name
     r = /(?<= )[^ ;]*/
-    res = r.match(@line.line)
+    res = r.match(@line)
     i = res.count
     i -= 1 until i < 0 || !res[i].empty?
     i >= 0 ? res[i] : res[-1]

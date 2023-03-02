@@ -13,7 +13,7 @@ def mix(args)
     dir_foreach dir do |file|
       if OCFile.supported? file
         oc_file = OCFile.new file
-        oc_file.start_parse {}
+        oc_file.start_parse :trim_document => false
       end
     end
   elsif args[:file]

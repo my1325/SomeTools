@@ -22,7 +22,7 @@ class OCProtocol < Line
         next
       end
 
-      if Line.mark? line.strip && options[:trim_mark]
+      if Line.mark?(line.strip) && options[:trim_mark]
         line = file.readline
         next
       end
@@ -52,14 +52,15 @@ class OCProtocol < Line
 
   def protocol_name
     r = /(?<=@protocol )[^ ,<]*/
-    r.match(@line.line)[0]
+    r.match(@line)[0]
   end
 
   def format_line
-    required_line = @required.shuffle
-    optional_line = @optional.shuffle
-    @lines.insert -2, optional_line
-    @lines.insert -2, required_line
-    @lines.map { |line| line.format_line }.join
+    required_line = @required.shuffle.map { |line| line.format_line }.join
+    optional_line = @optional.shuffle.map { |line| line.format_line }.join
+    lines = @lines.map { |line| line.format_line }
+    lines.insert -2, optional_line
+    lines.insert -2, required_line
+    lines.join
   end
 end

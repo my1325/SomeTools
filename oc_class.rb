@@ -42,18 +42,18 @@ class OCClass < Line
   end
 
   def parse_line(file)
-    if @line.line.strip.end_with? '{'
-      @lines.append(OCClassInstance.new file, @line.line, @options)
+    if @line.strip.end_with? '{'
+      @lines.append(OCClassInstance.new file, @line, @options)
     end
 
     line = file.readline
-    until Line.end? line
+    until Line.end?(line) || file.eof?
       if line.strip.empty? && @options[:trim_empty_line]
         line = file.readline
         next
       end
 
-      if Line.mark? line.strip && @options[:trim_mark]
+      if Line.mark?(line.strip) && @options[:trim_mark]
         line = file.readline
         next
       end
@@ -69,7 +69,7 @@ class OCClass < Line
       else
         @lines.append Line.new(line)
       end
-      line = file.readline
+      line = file.readline unless file.eof?
     end
     @lines.append Line.new(line)
   end
@@ -81,12 +81,13 @@ class OCClass < Line
   end
 
   def format_line
-    property_line = @properties.shuffle
-    method_line = @methods.shuffle
-    document_line = @document.shuffle
-    @lines.insert -2, document_line
-    @lines.insert -2, method_line
-    @lines.insert -2, property_line
-    @lines.map { |line| line.format_line }.join
+    property_line = @properties.shuffle.map { |line| line.format_line }.join
+    method_line = @methods.shuffle.map { |line| line.format_line }.join
+    document_line = @document.shuffle.map { |line| line.format_line }.join
+    lines = @lines.map { |line| line.format_line }
+    lines.insert -2, document_line
+    lines.insert -2, method_line
+    lines.insert -2, property_line
+    lines.join
   end
 end

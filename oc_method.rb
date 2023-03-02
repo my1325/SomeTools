@@ -5,7 +5,7 @@ class OCMethod < Line
     line =~ /^- ?\(.*\).*$/
   end
 
-  def self.class_method(line)
+  def self.class_method?(line)
     line =~ /^\+ ?\(.*\).*$/
   end
 
@@ -16,9 +16,9 @@ class OCMethod < Line
   end
 
   def parse_method(file, options)
-    return if @line.line.strip.end_with?(";")
+    return if @line.strip.end_with?(";")
     line = file.readline
-    while line.strip.end_with?(";")
+    until line.strip.end_with?(";")
       if Document.document?(line) && options[:trim_document]
         line = file.readline
         next
@@ -33,7 +33,7 @@ class OCMethod < Line
 
   def class_name
     r = /(?<=\))[^:]*/
-    r.match(@line.line).join(":")
+    r.match(@line).join(":")
   end
 
   def format_line
