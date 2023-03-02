@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HurmeGeometricSans1-Bold.otf">
+            <string>HurmeGeometricSans1-Bold</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="LJLivePkRemoteControlView">
+            <rect key="frame" x="0.0" y="0.0" width="187" height="315"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qNg-CQ-ndi">
+                    <rect key="frame" x="0.0" y="0.0" width="187" height="315"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <connections>
+                        <action selector="maskButtonClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="Ree-ge-lq2"/>
+                    </connections>
+                </button>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_wins_bgd" translatesAutoresizingMaskIntoConstraints="NO" id="ARz-id-33E">
+                    <rect key="frame" x="10" y="5" width="65" height="28"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="voV-ev-bYu">
+                    <rect key="frame" x="85" y="9" width="97" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bgi-EA-wJv">
+                            <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <connections>
+                                <action selector="avatarButtonClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="Oqn-u7-1zw"/>
+                            </connections>
+                        </button>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Lloyde" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gxn-pj-Pnh">
+                            <rect key="frame" x="29" y="5" width="60" height="14"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" name="HurmeGeometricSans1-Bold" family="Hurme Geometric Sans 1" pointSize="12"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_muted_icon" translatesAutoresizingMaskIntoConstraints="NO" id="VW7-EE-9wO">
+                    <rect key="frame" x="165" y="48" width="16" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Co-t0-jby">
+                    <rect key="frame" x="92" y="261" width="107" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                    <fontDescription key="fontDescription" name="HurmeGeometricSans1-Bold" family="Hurme Geometric Sans 1" pointSize="12"/>
+                    <inset key="titleEdgeInsets" minX="-18" minY="0.0" maxX="18" maxY="0.0"/>
+                    <inset key="imageEdgeInsets" minX="50" minY="6.5" maxX="-50" maxY="6.5"/>
+                    <state key="normal" title="Opposite" image="lj_live_pk_right_icon">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <connections>
+                        <action selector="oppositeButtonClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="rGi-5e-ro7"/>
+                    </connections>
+                </button>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_win_icon" translatesAutoresizingMaskIntoConstraints="NO" id="Jah-oR-vc8">
+                    <rect key="frame" x="12" y="238" width="56" height="45"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </imageView>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhp-vw-3bu">
+                    <rect key="frame" x="13.5" y="13.5" width="17" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HurmeGeometricSans1-Bold" family="Hurme Geometric Sans 1" pointSize="14"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_ready_icon" translatesAutoresizingMaskIntoConstraints="NO" id="gr5-bp-dpd">
+                    <rect key="frame" x="98" y="288" width="75" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                </imageView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="avatarButton" destination="bgi-EA-wJv" id="WsX-je-hDI"/>
+                <outlet property="infoView" destination="voV-ev-bYu" id="Yd1-vG-GI7"/>
+                <outlet property="mutedIconView" destination="VW7-EE-9wO" id="6ng-Zk-Mto"/>
+                <outlet property="nameLabel" destination="gxn-pj-Pnh" id="H4c-0j-04N"/>
+                <outlet property="oppositeButton" destination="3Co-t0-jby" id="OtT-LA-QLJ"/>
+                <outlet property="readyIconView" destination="gr5-bp-dpd" id="4xs-uu-d9C"/>
+                <outlet property="winIconView" destination="Jah-oR-vc8" id="1JB-7j-Xpz"/>
+                <outlet property="winsBgdView" destination="ARz-id-33E" id="KOZ-T4-A5q"/>
+                <outlet property="winsCountLabel" destination="bhp-vw-3bu" id="2cX-cA-4f8"/>
+            </connections>
+            <point key="canvasLocation" x="-1633" y="57"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_pk_muted_icon" width="16" height="16"/>
+        <image name="lj_live_pk_ready_icon" width="75" height="19"/>
+        <image name="lj_live_pk_right_icon" width="7" height="13"/>
+        <image name="lj_live_pk_win_icon" width="56" height="45"/>
+        <image name="lj_live_pk_wins_bgd" width="65" height="28"/>
+    </resources>
+</document>

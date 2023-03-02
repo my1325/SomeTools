@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="LJLiveAlertWebView">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r1f-QS-9n8">
+                    <rect key="frame" x="0.0" y="313.66666666666669" width="414" height="597.33333333333326"/>
+                    <subviews>
+                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WwX-nN-6ex">
+                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="50" id="BYs-vw-8ac"/>
+                                <constraint firstAttribute="width" constant="50" id="xF6-i8-iJT"/>
+                            </constraints>
+                            <state key="normal" image="lj_live_view_back"/>
+                            <connections>
+                                <action selector="bz_backAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="1EA-eb-JGw"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.40000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="WwX-nN-6ex" firstAttribute="top" secondItem="r1f-QS-9n8" secondAttribute="top" id="0uh-Ph-QTO"/>
+                        <constraint firstItem="WwX-nN-6ex" firstAttribute="leading" secondItem="r1f-QS-9n8" secondAttribute="leading" id="Clc-Vk-Qpj"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="15"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bzp-Gb-TA5">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="313.66666666666669"/>
+                    <connections>
+                        <action selector="bz_backAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="lY7-ME-BNH"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.39937279930000003" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="r1f-QS-9n8" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="6Yg-yH-3lr"/>
+                <constraint firstItem="r1f-QS-9n8" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" multiplier="2:3" id="GPL-eY-cNi"/>
+                <constraint firstItem="r1f-QS-9n8" firstAttribute="top" secondItem="bzp-Gb-TA5" secondAttribute="bottom" id="RbN-af-Ytf"/>
+                <constraint firstAttribute="trailing" secondItem="bzp-Gb-TA5" secondAttribute="trailing" id="URo-MR-9lO"/>
+                <constraint firstAttribute="trailing" secondItem="r1f-QS-9n8" secondAttribute="trailing" id="i1c-eF-uuj"/>
+                <constraint firstAttribute="bottom" secondItem="r1f-QS-9n8" secondAttribute="bottom" constant="-15" id="oHQ-5U-CJG"/>
+                <constraint firstItem="bzp-Gb-TA5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="wq5-Jy-uTf"/>
+                <constraint firstItem="bzp-Gb-TA5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="zqk-O0-Muo"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="backBtn" destination="WwX-nN-6ex" id="dMf-J9-aXn"/>
+                <outlet property="mainView" destination="r1f-QS-9n8" id="Wrc-5I-Zke"/>
+            </connections>
+            <point key="canvasLocation" x="170" y="38"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_view_back" width="24" height="24"/>
+    </resources>
+</document>

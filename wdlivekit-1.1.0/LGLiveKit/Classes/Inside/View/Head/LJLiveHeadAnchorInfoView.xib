@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HurmeGeometricSans1-Bold.otf">
+            <string>HurmeGeometricSans1-Bold</string>
+        </array>
+        <array key="HurmeGeometricSans1-Regular.otf">
+            <string>HurmeGeometricSans1-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="LJLiveHeadAnchorInfoView">
+            <rect key="frame" x="0.0" y="0.0" width="177" height="40"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rxm-Vu-j01">
+                    <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="Rxm-Vu-j01" secondAttribute="height" id="Y2c-PO-QJn"/>
+                    </constraints>
+                    <connections>
+                        <action selector="headButtonClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="rnM-P3-QDJ"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bruna Lee Lee" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Po4-fF-tVx">
+                    <rect key="frame" x="45" y="2" width="92" height="19.5"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="92" id="Wsl-xf-Vt3"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HurmeGeometricSans1-Bold" family="Hurme Geometric Sans 1" pointSize="16"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="20E-Vy-1iF">
+                    <rect key="frame" x="137" y="0.0" width="40" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="20E-Vy-1iF" secondAttribute="height" multiplier="1:1" id="Rrs-l3-xw7"/>
+                    </constraints>
+                    <connections>
+                        <action selector="followButtonClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="5jo-W8-Fi7"/>
+                    </connections>
+                </button>
+                <stackView opaque="NO" contentMode="scaleToFill" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="S3C-XV-SXh">
+                    <rect key="frame" x="45" y="19.5" width="46.5" height="20"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lj_live_members_icon_small" translatesAutoresizingMaskIntoConstraints="NO" id="F2o-pb-YdK">
+                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="20" id="rxs-wB-fDJ"/>
+                                <constraint firstAttribute="height" constant="20" id="zgZ-N7-0WB"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nKd-lY-mtl">
+                            <rect key="frame" x="22" y="0.0" width="24.5" height="20"/>
+                            <fontDescription key="fontDescription" name="HurmeGeometricSans1-Regular" family="Hurme Geometric Sans 1" pointSize="12"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="Rxm-Vu-j01" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="0m4-OZ-vf7"/>
+                <constraint firstItem="Po4-fF-tVx" firstAttribute="leading" secondItem="Rxm-Vu-j01" secondAttribute="trailing" constant="5" id="Dvz-Nt-kqk"/>
+                <constraint firstItem="S3C-XV-SXh" firstAttribute="top" secondItem="Po4-fF-tVx" secondAttribute="bottom" constant="-2" id="N2f-fe-eQk"/>
+                <constraint firstAttribute="bottom" secondItem="20E-Vy-1iF" secondAttribute="bottom" id="NPf-5R-glF"/>
+                <constraint firstItem="20E-Vy-1iF" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="WT4-MV-VGg"/>
+                <constraint firstAttribute="bottom" secondItem="Rxm-Vu-j01" secondAttribute="bottom" id="WgK-dp-9o6"/>
+                <constraint firstItem="S3C-XV-SXh" firstAttribute="leading" secondItem="Po4-fF-tVx" secondAttribute="leading" id="vT2-aN-IXr"/>
+                <constraint firstAttribute="trailing" secondItem="20E-Vy-1iF" secondAttribute="trailing" id="w92-6j-tZg"/>
+                <constraint firstItem="Rxm-Vu-j01" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="wgH-sp-lxV"/>
+                <constraint firstItem="Po4-fF-tVx" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="2" id="zpS-Vb-XH2"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="countLabel" destination="nKd-lY-mtl" id="g56-pz-nvw"/>
+                <outlet property="followButton" destination="20E-Vy-1iF" id="vjF-5m-R0y"/>
+                <outlet property="headButton" destination="Rxm-Vu-j01" id="QFu-J4-miA"/>
+                <outlet property="nameLabel" destination="Po4-fF-tVx" id="mgE-ux-1Lp"/>
+            </connections>
+            <point key="canvasLocation" x="-205" y="94"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_members_icon_small" width="13" height="9.5"/>
+    </resources>
+</document>

@@ -10,7 +10,7 @@ class OCFileHelper
   end
 
   def imp?
-    File.basename(@file).end_with? '.m(++?)'
+    File.basename(@file) =~ /.*\.m(\+\+)?$/
   end
 
   def protocol?(line)
@@ -42,11 +42,11 @@ class OCFileHelper
   end
 
   def instance_method?(line)
-    line =~ /^- ?\(.*\).*;$/
+    line =~ /^- ?\(.*\).*$/
   end
 
   def class_method?(line)
-    line =~ /^\+ ?\(.*\).*;$/
+    line =~ /^\+ ?\(.*\).*$/
   end
 
   def instance_method_imp?(line)
@@ -74,7 +74,7 @@ class OCFileHelper
     File.open new_file_path, 'w+' do |new_file|
       File.open @file do |file|
         line = file.readline.strip
-        while line && !file.eof?
+        while line
           new_line = line.concat("\n")
           if protocol? line
             new_line = parse_protocol file, line
@@ -88,7 +88,11 @@ class OCFileHelper
              new_line = parse_document file, line
           end
           new_file.write new_line unless new_line.strip.start_with?('//')
-          line = file.readline.strip unless file.eof?
+          if !file.eof?
+            line = file.readline.strip
+          else
+            line = nil
+          end
         end
       end
     end
@@ -149,10 +153,10 @@ class OCFileHelper
 
   def parse_class(file, line)
     lines = []
-    _line = file.readline.strip
+    _line = file.readline
     until end?(_line)
       if _line == "\n" || _line.strip.start_with?('//')
-        _line = file.readline.strip
+        _line = file.readline
         next
       end
 
@@ -166,7 +170,7 @@ class OCFileHelper
       end
 
       lines.append new_line
-      _line = file.readline.strip
+      _line = file.readline
     end
     "\n#{line}\n".dup.concat(lines.shuffle.join("\n").concat("\n@end\n"))
   end

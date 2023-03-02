@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="LJLivePkAvatarsView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="35"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_red_head" translatesAutoresizingMaskIntoConstraints="NO" id="fZO-hF-i9F">
+                    <rect key="frame" x="18" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.3" translatesAutoresizingMaskIntoConstraints="NO" id="a70-bx-hUE">
+                    <rect key="frame" x="15" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_red_head" translatesAutoresizingMaskIntoConstraints="NO" id="PcG-UG-zNO">
+                    <rect key="frame" x="50" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.2" translatesAutoresizingMaskIntoConstraints="NO" id="Tle-Fy-SOt">
+                    <rect key="frame" x="47" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_red_head" translatesAutoresizingMaskIntoConstraints="NO" id="bgj-Ac-G8z">
+                    <rect key="frame" x="82" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.1" translatesAutoresizingMaskIntoConstraints="NO" id="TPY-Kb-Cw9">
+                    <rect key="frame" x="79" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_blue_head" translatesAutoresizingMaskIntoConstraints="NO" id="J3C-Nk-Mnm">
+                    <rect key="frame" x="270" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.1" translatesAutoresizingMaskIntoConstraints="NO" id="HvK-qh-1Ke">
+                    <rect key="frame" x="267" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_blue_head" translatesAutoresizingMaskIntoConstraints="NO" id="z7D-M7-516">
+                    <rect key="frame" x="302" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.2" translatesAutoresizingMaskIntoConstraints="NO" id="n3w-PS-lSo">
+                    <rect key="frame" x="299" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_rank_blue_head" translatesAutoresizingMaskIntoConstraints="NO" id="k0O-BP-5AJ">
+                    <rect key="frame" x="334" y="6" width="25" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="lj_live_pk_no.3" translatesAutoresizingMaskIntoConstraints="NO" id="Zmf-GE-j1l">
+                    <rect key="frame" x="331" y="3" width="29" height="29"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cFn-0K-wit">
+                    <rect key="frame" x="267" y="5" width="93" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                    <connections>
+                        <action selector="remoteAvatarsClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="Bth-vX-IUo"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5U8-kA-JlO">
+                    <rect key="frame" x="15" y="5" width="93" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <connections>
+                        <action selector="localAvatarsClick:" destination="iN0-l3-epB" eventType="touchUpInside" id="2AT-Z9-dB6"/>
+                    </connections>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="y9f-cz-27M"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="local_no1_iv" destination="bgj-Ac-G8z" id="Wq3-FM-wUu"/>
+                <outlet property="local_no2_iv" destination="PcG-UG-zNO" id="K4n-PO-v4U"/>
+                <outlet property="local_no3_iv" destination="fZO-hF-i9F" id="eLB-8E-YSp"/>
+                <outlet property="remote_no1_iv" destination="J3C-Nk-Mnm" id="iuH-zt-TAU"/>
+                <outlet property="remote_no2_iv" destination="z7D-M7-516" id="63m-wl-LH1"/>
+                <outlet property="remote_no3_iv" destination="k0O-BP-5AJ" id="Iae-AL-onn"/>
+            </connections>
+            <point key="canvasLocation" x="22" y="65"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_pk_no.1" width="128" height="128"/>
+        <image name="lj_live_pk_no.2" width="128" height="128"/>
+        <image name="lj_live_pk_no.3" width="128" height="128"/>
+        <image name="lj_live_pk_rank_blue_head" width="128" height="128"/>
+        <image name="lj_live_pk_rank_red_head" width="128" height="128"/>
+    </resources>
+</document>

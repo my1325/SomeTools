@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="LJLiveHeadMembersView">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="40"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sxQ-ec-5y5">
+                    <rect key="frame" x="0.0" y="5" width="30" height="30"/>
+                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="gYj-Dk-RL7"/>
+                        <constraint firstAttribute="width" constant="30" id="znG-oc-Fu5"/>
+                    </constraints>
+                    <state key="normal" image="lj_live_members_icon"/>
+                </button>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="2Na-0m-pco">
+                    <rect key="frame" x="30" y="5" width="136" height="30"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="Kmh-iC-b2Z"/>
+                    </constraints>
+                    <inset key="scrollIndicatorInsets" minX="5" minY="0.0" maxX="5" maxY="0.0"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="4" minimumInteritemSpacing="4" id="C6C-5Y-CUR">
+                        <size key="itemSize" width="30" height="30"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="4" minY="0.0" maxX="4" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
+                <button hidden="YES" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qla-sT-FHS">
+                    <rect key="frame" x="166" y="3" width="34" height="34"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="34" id="VSX-MK-Xdb"/>
+                        <constraint firstAttribute="width" constant="34" id="hjh-uE-mrq"/>
+                    </constraints>
+                    <state key="normal" image="lj_live_close_icon"/>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="sxQ-ec-5y5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7tZ-tK-zgL"/>
+                <constraint firstItem="2Na-0m-pco" firstAttribute="centerY" secondItem="qla-sT-FHS" secondAttribute="centerY" id="Iz8-rY-gI0"/>
+                <constraint firstItem="2Na-0m-pco" firstAttribute="leading" secondItem="sxQ-ec-5y5" secondAttribute="trailing" id="ZFc-el-jjS"/>
+                <constraint firstItem="qla-sT-FHS" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="ewO-pX-imn"/>
+                <constraint firstItem="qla-sT-FHS" firstAttribute="leading" secondItem="2Na-0m-pco" secondAttribute="trailing" id="fzY-2k-NoU"/>
+                <constraint firstAttribute="trailing" secondItem="qla-sT-FHS" secondAttribute="trailing" id="lXx-i3-Ckf"/>
+                <constraint firstItem="sxQ-ec-5y5" firstAttribute="centerY" secondItem="qla-sT-FHS" secondAttribute="centerY" id="sfU-gN-eCi"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="closeButton" destination="qla-sT-FHS" id="BT5-vp-OgO"/>
+                <outlet property="collectionView" destination="2Na-0m-pco" id="dHr-Jy-L23"/>
+                <outlet property="membersButton" destination="sxQ-ec-5y5" id="v8p-Mx-d0E"/>
+            </connections>
+            <point key="canvasLocation" x="-143.5114503816794" y="163.38028169014086"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_close_icon" width="24" height="24"/>
+        <image name="lj_live_members_icon" width="17.333333969116211" height="13"/>
+    </resources>
+</document>

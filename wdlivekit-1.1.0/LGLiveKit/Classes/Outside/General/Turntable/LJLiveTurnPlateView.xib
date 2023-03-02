@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="vUc-vn-qud" customClass="LJLiveTurnPlateView">
+            <rect key="frame" x="0.0" y="0.0" width="434" height="596"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L6r-Y8-WeP">
+                    <rect key="frame" x="0.0" y="0.0" width="434" height="596"/>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="plain"/>
+                    <connections>
+                        <action selector="selfTap:" destination="vUc-vn-qud" eventType="touchUpInside" id="L6t-zy-hLn"/>
+                    </connections>
+                </button>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yeL-Me-R4T">
+                    <rect key="frame" x="86" y="152" width="262" height="262"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a7Y-wj-Z9a">
+                            <rect key="frame" x="0.0" y="0.0" width="262" height="262"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" backgroundImage="lj_live_plate_bg"/>
+                            <connections>
+                                <action selector="bgClickAction:" destination="vUc-vn-qud" eventType="touchUpInside" id="meH-gR-lim"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cB2-g9-9Ry">
+                            <rect key="frame" x="98" y="93" width="66" height="76"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="76" id="IaP-MD-h1L"/>
+                                <constraint firstAttribute="width" constant="66" id="ego-fD-2NX"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" image="lj_live_plate_Start"/>
+                            <connections>
+                                <action selector="startAction:" destination="vUc-vn-qud" eventType="touchUpInside" id="XFF-Dl-QCb"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="cB2-g9-9Ry" firstAttribute="centerX" secondItem="yeL-Me-R4T" secondAttribute="centerX" id="CUa-GW-EkA"/>
+                        <constraint firstAttribute="width" constant="262" id="MjR-BW-j3J"/>
+                        <constraint firstItem="cB2-g9-9Ry" firstAttribute="centerY" secondItem="yeL-Me-R4T" secondAttribute="centerY" id="SjQ-TG-Fiq"/>
+                        <constraint firstAttribute="bottom" secondItem="a7Y-wj-Z9a" secondAttribute="bottom" id="Wfg-Mn-V1A"/>
+                        <constraint firstAttribute="height" constant="262" id="Xjs-9S-YFv"/>
+                        <constraint firstAttribute="trailing" secondItem="a7Y-wj-Z9a" secondAttribute="trailing" id="h5F-iQ-bnn"/>
+                        <constraint firstItem="a7Y-wj-Z9a" firstAttribute="top" secondItem="yeL-Me-R4T" secondAttribute="top" id="pqZ-HE-UnQ"/>
+                        <constraint firstItem="a7Y-wj-Z9a" firstAttribute="leading" secondItem="yeL-Me-R4T" secondAttribute="leading" id="rVW-bh-Q7A"/>
+                    </constraints>
+                </view>
+                <switch hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="oag-zp-Cch">
+                    <rect key="frame" x="372" y="152" width="49" height="31"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="31" id="FXc-Wg-6jO"/>
+                        <constraint firstAttribute="width" constant="47" id="aCo-Nh-Y0D"/>
+                    </constraints>
+                    <color key="onTintColor" red="0.12941176469999999" green="0.90196078430000004" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="thumbTintColor" red="0.93333333330000001" green="0.93333333330000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="turnPlateSwithAction:" destination="vUc-vn-qud" eventType="valueChanged" id="1Oy-Ig-eLl"/>
+                    </connections>
+                </switch>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WZM-Dq-64C">
+                    <rect key="frame" x="391" y="198" width="28" height="29"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="28" id="BTF-cK-u5g"/>
+                        <constraint firstAttribute="height" constant="29" id="Ums-0o-DN2"/>
+                    </constraints>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                    <state key="normal" image="lj_live_plate_bt"/>
+                    <connections>
+                        <action selector="editTrunListAction:" destination="vUc-vn-qud" eventType="touchUpInside" id="YON-Wr-eBU"/>
+                    </connections>
+                </button>
+                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6As-rM-5ag">
+                    <rect key="frame" x="0.0" y="112" width="434" height="30"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lj_live_remindView_bg" translatesAutoresizingMaskIntoConstraints="NO" id="tZj-Gm-sF0">
+                            <rect key="frame" x="0.0" y="0.0" width="434" height="30"/>
+                        </imageView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a9p-mr-YeO" customClass="LJLiveAutoScrollLabel">
+                            <rect key="frame" x="0.0" y="0.0" width="434" height="30"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="tZj-Gm-sF0" firstAttribute="top" secondItem="6As-rM-5ag" secondAttribute="top" id="Elr-hT-0tP"/>
+                        <constraint firstAttribute="height" constant="30" id="G3W-qJ-4v8"/>
+                        <constraint firstItem="tZj-Gm-sF0" firstAttribute="leading" secondItem="6As-rM-5ag" secondAttribute="leading" id="R7o-Yu-ixd"/>
+                        <constraint firstAttribute="trailing" secondItem="a9p-mr-YeO" secondAttribute="trailing" id="WPK-bn-P8c"/>
+                        <constraint firstItem="a9p-mr-YeO" firstAttribute="leading" secondItem="6As-rM-5ag" secondAttribute="leading" id="YTr-WR-fre"/>
+                        <constraint firstAttribute="bottom" secondItem="a9p-mr-YeO" secondAttribute="bottom" id="ds9-OY-N4w"/>
+                        <constraint firstAttribute="bottom" secondItem="tZj-Gm-sF0" secondAttribute="bottom" id="ea0-RM-AeE"/>
+                        <constraint firstItem="a9p-mr-YeO" firstAttribute="top" secondItem="6As-rM-5ag" secondAttribute="top" id="j0I-Gu-jPu"/>
+                        <constraint firstAttribute="trailing" secondItem="tZj-Gm-sF0" secondAttribute="trailing" id="tom-a9-emS"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="jjt-Ox-tGz"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="oag-zp-Cch" firstAttribute="top" secondItem="6As-rM-5ag" secondAttribute="bottom" constant="10" id="0VD-kd-cf8"/>
+                <constraint firstItem="L6r-Y8-WeP" firstAttribute="top" secondItem="vUc-vn-qud" secondAttribute="top" id="3Fj-af-Ikt"/>
+                <constraint firstItem="jjt-Ox-tGz" firstAttribute="trailing" secondItem="WZM-Dq-64C" secondAttribute="trailing" constant="15" id="BEN-h4-JJ1"/>
+                <constraint firstItem="L6r-Y8-WeP" firstAttribute="leading" secondItem="vUc-vn-qud" secondAttribute="leading" id="LGG-EK-IhL"/>
+                <constraint firstItem="yeL-Me-R4T" firstAttribute="top" secondItem="6As-rM-5ag" secondAttribute="bottom" constant="10" id="Ntz-xW-vQ6"/>
+                <constraint firstAttribute="trailing" secondItem="oag-zp-Cch" secondAttribute="trailing" constant="15" id="PA2-4y-hWn"/>
+                <constraint firstAttribute="bottom" secondItem="L6r-Y8-WeP" secondAttribute="bottom" id="Sfl-cC-bdl"/>
+                <constraint firstAttribute="trailing" secondItem="L6r-Y8-WeP" secondAttribute="trailing" id="b0M-0m-NbG"/>
+                <constraint firstItem="jjt-Ox-tGz" firstAttribute="trailing" secondItem="6As-rM-5ag" secondAttribute="trailing" id="bRi-s8-FCT"/>
+                <constraint firstItem="WZM-Dq-64C" firstAttribute="top" secondItem="oag-zp-Cch" secondAttribute="bottom" constant="15" id="h9u-FD-HCQ"/>
+                <constraint firstItem="6As-rM-5ag" firstAttribute="leading" secondItem="jjt-Ox-tGz" secondAttribute="leading" id="rVI-qg-uH6"/>
+                <constraint firstItem="yeL-Me-R4T" firstAttribute="centerX" secondItem="jjt-Ox-tGz" secondAttribute="centerX" id="sHx-uN-DRz"/>
+                <constraint firstItem="yeL-Me-R4T" firstAttribute="centerY" secondItem="jjt-Ox-tGz" secondAttribute="centerY" constant="-15" id="xo8-Uo-lDp"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="mainView" destination="yeL-Me-R4T" id="KiN-86-szu"/>
+                <outlet property="mainViewHeightConstraint" destination="Xjs-9S-YFv" id="flc-Gj-f5j"/>
+                <outlet property="mainViewWidthConstraint" destination="MjR-BW-j3J" id="afL-pP-W6W"/>
+                <outlet property="startBtn" destination="cB2-g9-9Ry" id="wHC-tF-eWC"/>
+                <outlet property="titleLabel" destination="a9p-mr-YeO" id="kzY-ea-HuT"/>
+                <outlet property="turnEditBtn" destination="WZM-Dq-64C" id="Aeu-G3-I9i"/>
+                <outlet property="turnPlateSwitch" destination="oag-zp-Cch" id="fcs-RV-3VA"/>
+            </connections>
+            <point key="canvasLocation" x="-687" y="250"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="lj_live_plate_Start" width="128" height="128"/>
+        <image name="lj_live_plate_bg" width="128" height="128"/>
+        <image name="lj_live_plate_bt" width="128" height="128"/>
+        <image name="lj_live_remindView_bg" width="128" height="128"/>
+    </resources>
+</document>
