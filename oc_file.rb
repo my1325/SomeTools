@@ -1,4 +1,8 @@
 # frozen_string_literal: true
+require 'line'
+require 'oc_class'
+require 'oc_protocol'
+require 'document'
 
 class OCFile
   def self.header?(file)
@@ -10,7 +14,7 @@ class OCFile
   end
 
   def self.supported?(file)
-    header?
+    header? file
   end
 
   def initialize(file)
@@ -23,7 +27,7 @@ class OCFile
   end
 
   def handle_line
-    temp_file_path = File.join(File.dirname(@file), "#{File.basename}.temp")
+    temp_file_path = File.join(File.dirname(@file), "#{File.basename(@file)}.temp")
     File.open temp_file_path, 'w+' do |new_file|
       File.open @file do |file|
         until file.eof?
@@ -36,7 +40,7 @@ class OCFile
     File.rename temp_file_path, @file
   end
 
-  def start_parse(options = nil)
+  def start_parse(options = {})
     handle_line do |file, line|
       if line.strip.empty? && !options[:trim_empty_line]
         return line

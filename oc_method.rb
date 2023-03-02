@@ -11,7 +11,7 @@ class OCMethod < Line
 
   def initialize(file, line, options = nil)
     super(line)
-    @lines = [Line.new line]
+    @lines = [Line.new(line)]
     parse_method file, options
   end
 

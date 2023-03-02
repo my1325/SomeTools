@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+require 'line'
+require 'oc_method'
+require 'document'
+require 'oc_property'
+
 class OCClass < Line
   def self.class?(line)
     line =~ /^@interface .*:.*$/
@@ -17,7 +22,7 @@ class OCClass < Line
     raise "#{line} is not valid objective class format" unless OCClass.class?(line) || OCClass.class_extension?(line) || OCClass.class_category?(line)
     super(line)
     @options = options
-    @lines = [Line.new line]
+    @lines = [Line.new(line)]
     @properties = []
     @methods = []
     @document = []

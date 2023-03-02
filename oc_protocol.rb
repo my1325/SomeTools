@@ -9,7 +9,7 @@ class OCProtocol < Line
     super(line)
     @optional = [Line.new("@optional")]
     @required = [Line.new("@required")]
-    @lines = [Line.new line]
+    @lines = [Line.new(line)]
     parse_protocol file, options
   end
 

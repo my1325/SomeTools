@@ -19,7 +19,7 @@ class Document < Line
 
   def initialize(file, line, options = nil)
     super(line)
-    @lines = [Line.new file]
+    @lines = [Line.new(line)]
     parse_document file, options
   end
 

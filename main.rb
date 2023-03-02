@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 $LOAD_PATH << '.'
-require 'oc_file_helper'
+# require 'oc_file_helper'
+require 'oc_file'
 require 'find'
 
 def mix(args)
@@ -10,16 +11,20 @@ def mix(args)
     puts "#{dir} is not exists" unless File.exist? dir
 
     dir_foreach dir do |file|
-      helper = OCFileHelper.new file
-      helper.parse_file if helper.could_parse_file?
+      if OCFile.supported? file
+        oc_file = OCFile.new file
+        oc_file.start_parse {}
+      end
     end
   elsif args[:file]
     file = args[:file]
     puts "#{file} is not file" unless File.file? file
     puts "#{file} is not exists" unless File.exist? file
 
-    helper = OCFileHelper.new file
-    helper.parse_file if helper.could_parse_file?
+    if OCFile.supported? file
+      oc_file = OCFile.new file
+      oc_file.start_parse
+    end
   end
 end
 
