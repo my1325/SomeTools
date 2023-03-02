@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveSideBannerView : UIView
 
-- (void)lj_showInView:(UIView *)inView;
+
 
 - (void)lj_dismiss;
-
+- (void)lj_showInView:(UIView *)inView;
 @end
 
 NS_ASSUME_NONNULL_END

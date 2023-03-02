@@ -9,33 +9,55 @@
 
 @interface LJLiveMarkView ()
 
-@property (nonatomic, strong) UIImageView *iconImageView;
+
 
 @property (nonatomic, strong) UILabel *contentLabel;
-
+@property (nonatomic, strong) UIImageView *iconImageView;
 @end
 
 @implementation LJLiveMarkView
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
+
+
+
+#pragma mark - Methods
+
++ (CGFloat)lj_widthForContent:(NSAttributedString *)content
+                       height:(CGFloat)height
+{
+    CGFloat width = 4 + 5 + 2 + (height-4);
+    CGSize size = [content boundingRectWithSize:CGSizeMake(MAXFLOAT, height) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil].size;
+    return width + ceil(size.width);
+}
+
+#pragma mark - Getter
+
+
+
+
 
 - (void)lj_setupViews
 {
     [self addSubview:self.iconImageView];
     [self addSubview:self.contentLabel];
 }
-
+- (UIImageView *)iconImageView
+{
+    if (!_iconImageView) {
+        _iconImageView = [[UIImageView alloc] init];
+    }
+    return _iconImageView;
+}
+- (void)setIcon:(UIImage *)icon
+{
+    _icon = icon;
+    self.iconImageView.image = icon;
+    [self lj_updateConstraints];
+}
 - (void)lj_updateConstraints
 {
     kLJWeakSelf;
@@ -51,27 +73,20 @@
         make.centerY.equalTo(weakSelf);
     }];
 }
-
-#pragma mark - Methods
-
-+ (CGFloat)lj_widthForContent:(NSAttributedString *)content
-                       height:(CGFloat)height
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    CGFloat width = 4 + 5 + 2 + (height-4);
-    CGSize size = [content boundingRectWithSize:CGSizeMake(MAXFLOAT, height) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil].size;
-    return width + ceil(size.width);
-}
-
-#pragma mark - Getter
-
-- (UIImageView *)iconImageView
-{
-    if (!_iconImageView) {
-        _iconImageView = [[UIImageView alloc] init];
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupViews];
     }
-    return _iconImageView;
+    return self;
 }
-
+- (void)setContent:(NSAttributedString *)content
+{
+    _content = content;
+    self.contentLabel.attributedText = content;
+    [self lj_updateConstraints];
+}
 - (UILabel *)contentLabel
 {
     if (!_contentLabel) {
@@ -79,19 +94,4 @@
     }
     return _contentLabel;
 }
-
-- (void)setIcon:(UIImage *)icon
-{
-    _icon = icon;
-    self.iconImageView.image = icon;
-    [self lj_updateConstraints];
-}
-
-- (void)setContent:(NSAttributedString *)content
-{
-    _content = content;
-    self.contentLabel.attributedText = content;
-    [self lj_updateConstraints];
-}
-
 @end

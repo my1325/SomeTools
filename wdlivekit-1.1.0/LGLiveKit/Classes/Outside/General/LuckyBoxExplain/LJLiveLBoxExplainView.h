@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveLBoxExplainView : UIView
 
+
+
+
 + (LJLiveLBoxExplainView *)luckyboxExplainView;
-
 - (void)showInView:(UIView *)view;
-
 - (void)dismiss;
-
 @end
 
 NS_ASSUME_NONNULL_END

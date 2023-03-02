@@ -24,17 +24,61 @@ static NSString *const kCellID = @"LJLiveControlMenuViewCellID";
 
 @implementation LJLiveControlMenuView
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
 
+
+#pragma mark - UICollectionViewDelegate
+
+
+
+
+
+#pragma mark - Events
+
+
+#pragma mark - Methods
+
+
+
+#pragma mark - Getter
+
+
+
+
+- (UICollectionView *)collectionView
+{
+    if (!_collectionView) {
+        CGFloat itemWidth = 38 + 15*2;
+        CGFloat itemHeight = 64;
+        CGFloat leading = kLJWidthScale(8);
+        CGFloat space = (kLJScreenWidth - itemWidth * 5 - leading * 2) / 4;
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        layout.itemSize = CGSizeMake(itemWidth, itemHeight);
+        layout.sectionInset = UIEdgeInsetsMake(15, leading, 25, leading);
+        layout.minimumInteritemSpacing = space;
+        layout.minimumLineSpacing = space;
+        _collectionView = [[UICollectionView alloc] initWithFrame:self.contentView.bounds collectionViewLayout:layout];
+        _collectionView.delegate = self;
+        _collectionView.dataSource = self;
+        _collectionView.backgroundColor = UIColor.whiteColor;
+        [_collectionView registerClass:[LJLiveControlMenuCell class] forCellWithReuseIdentifier:kCellID];
+    }
+    return _collectionView;
+}
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.titles.count;
+}
+- (void)lj_showInView:(UIView *)inView
+{
+    [inView addSubview:self];
+    CGFloat height = 120-15;
+    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:18 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.contentView.transform = CGAffineTransformMakeTranslation(0, -height);
+    } completion:^(BOOL finished) {
+    }];
+}
 - (void)lj_setupViews
 {
     self.images = @[kLJImageNamed(@"lj_live_icon_circular"), kLJImageNamed(@"lj_live_icon_wallet")];
@@ -45,19 +89,14 @@ static NSString *const kCellID = @"LJLiveControlMenuViewCellID";
     [self addSubview:self.contentView];
     [self.contentView addSubview:self.collectionView];
 }
-
-#pragma mark - UICollectionViewDelegate
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    return 1;
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupViews];
+    }
+    return self;
 }
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.titles.count;
-}
-
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     LJLiveControlMenuCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCellID forIndexPath:indexPath];
@@ -72,7 +111,24 @@ static NSString *const kCellID = @"LJLiveControlMenuViewCellID";
     }
     return cell;
 }
-
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+- (void)maskButtonClick:(UIButton *)sender
+{
+    [self lj_dismiss];
+}
+- (UIView *)contentView
+{
+    if (!_contentView) {
+        _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, kLJScreenHeight, kLJScreenWidth, 120 + kLJBottomSafeHeight)];
+        _contentView.backgroundColor = UIColor.whiteColor;
+        _contentView.layer.masksToBounds = YES;
+        _contentView.layer.cornerRadius = 12;
+    }
+    return _contentView;
+}
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.row) {
@@ -97,26 +153,14 @@ static NSString *const kCellID = @"LJLiveControlMenuViewCellID";
             break;
     }
 }
-
-#pragma mark - Events
-
-- (void)maskButtonClick:(UIButton *)sender
+- (UIButton *)maskButton
 {
-    [self lj_dismiss];
+    if (!_maskButton) {
+        _maskButton = [[UIButton alloc] initWithFrame:self.bounds];
+        [_maskButton addTarget:self action:@selector(maskButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _maskButton;
 }
-
-#pragma mark - Methods
-
-- (void)lj_showInView:(UIView *)inView
-{
-    [inView addSubview:self];
-    CGFloat height = 120-15;
-    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:18 options:UIViewAnimationOptionCurveLinear animations:^{
-        self.contentView.transform = CGAffineTransformMakeTranslation(0, -height);
-    } completion:^(BOOL finished) {
-    }];
-}
-
 - (void)lj_dismiss
 {
     [UIView animateWithDuration:0.2 animations:^{
@@ -126,48 +170,4 @@ static NSString *const kCellID = @"LJLiveControlMenuViewCellID";
         [self removeFromSuperview];
     });
 }
-
-#pragma mark - Getter
-
-- (UIButton *)maskButton
-{
-    if (!_maskButton) {
-        _maskButton = [[UIButton alloc] initWithFrame:self.bounds];
-        [_maskButton addTarget:self action:@selector(maskButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _maskButton;
-}
-
-- (UIView *)contentView
-{
-    if (!_contentView) {
-        _contentView = [[UIView alloc] initWithFrame:CGRectMake(0, kLJScreenHeight, kLJScreenWidth, 120 + kLJBottomSafeHeight)];
-        _contentView.backgroundColor = UIColor.whiteColor;
-        _contentView.layer.masksToBounds = YES;
-        _contentView.layer.cornerRadius = 12;
-    }
-    return _contentView;
-}
-
-- (UICollectionView *)collectionView
-{
-    if (!_collectionView) {
-        CGFloat itemWidth = 38 + 15*2;
-        CGFloat itemHeight = 64;
-        CGFloat leading = kLJWidthScale(8);
-        CGFloat space = (kLJScreenWidth - itemWidth * 5 - leading * 2) / 4;
-        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-        layout.itemSize = CGSizeMake(itemWidth, itemHeight);
-        layout.sectionInset = UIEdgeInsetsMake(15, leading, 25, leading);
-        layout.minimumInteritemSpacing = space;
-        layout.minimumLineSpacing = space;
-        _collectionView = [[UICollectionView alloc] initWithFrame:self.contentView.bounds collectionViewLayout:layout];
-        _collectionView.delegate = self;
-        _collectionView.dataSource = self;
-        _collectionView.backgroundColor = UIColor.whiteColor;
-        [_collectionView registerClass:[LJLiveControlMenuCell class] forCellWithReuseIdentifier:kCellID];
-    }
-    return _collectionView;
-}
-
 @end

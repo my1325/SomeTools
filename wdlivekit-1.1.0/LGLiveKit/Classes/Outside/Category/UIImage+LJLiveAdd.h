@@ -11,11 +11,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (LJLiveAdd)
 
+
+
 /// 图片镜像
-- (UIImage *)lj_flipedByRTL;
-
 - (CGImageRef)lj_newCGImageRenderedInBitmapContext;
-
+- (UIImage *)lj_flipedByRTL;
 @end
 
 NS_ASSUME_NONNULL_END

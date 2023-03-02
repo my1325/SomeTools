@@ -15,14 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIFont (LJLiveAdd)
 
-/// HurmeGeometricSans1-Regular
-/// @param size 大小
-+ (UIFont *)lj_hurmeRegularFontOfSize:(CGFloat)size;
+
 
 /// HurmeGeometricSans1-Bold
 /// @param size 大小
+/// HurmeGeometricSans1-Regular
+/// @param size 大小
++ (UIFont *)lj_hurmeRegularFontOfSize:(CGFloat)size;
 + (UIFont *)lj_hurmeBoldFontOfSize:(CGFloat)size;
-
 @end
 
 NS_ASSUME_NONNULL_END

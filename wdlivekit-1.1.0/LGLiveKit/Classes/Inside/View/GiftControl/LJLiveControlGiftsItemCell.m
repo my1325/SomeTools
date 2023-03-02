@@ -9,33 +9,44 @@
 
 @interface LJLiveControlGiftsItemCell ()
 
-@property (weak, nonatomic) IBOutlet UILabel *giftNameLabel;
+
+///
 ///
 @property (nonatomic, assign) NSInteger combo;
-///
 @property (nonatomic, strong) UILongPressGestureRecognizer *longGes;
-
+@property (weak, nonatomic) IBOutlet UILabel *giftNameLabel;
 @end
 
 @implementation LJLiveControlGiftsItemCell
 
 #pragma mark - Life Cycle
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
-- (void)lj_setupViews
-{
-    self.longGes = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTouch:)];
-    self.longGes.minimumPressDuration = 0.3;
-    [self.contentView addGestureRecognizer:self.longGes];
-}
 
+
+
+#pragma mark - Setter
+
+
+
+- (IBAction)topRightButtonClick:(UIButton *)sender {
+    if (self.clickBlindboxDetail) {
+        self.clickBlindboxDetail();
+    }
+}
+- (void)setGiftConfig:(LJLiveGift *)giftConfig
+{
+    _giftConfig = giftConfig;
+    
+    [self.giftImageView sd_setImageWithURL:[NSURL URLWithString:giftConfig.iconUrl]];
+    self.coinsLabel.text = @(giftConfig.giftPrice).stringValue;
+    self.giftNameLabel.text = giftConfig.giftName;
+    if ([giftConfig.giftName isEqualToString:@"face_manKiss"]) {//特殊改名
+        self.giftNameLabel.text = @"True Love's Kiss";
+    }
+}
 - (void)longTouch:(UILongPressGestureRecognizer *)ges
 {
     if (self.giftConfig.comboIconUrl.length > 0) {
@@ -63,7 +74,17 @@
         }
     }
 }
-
+- (void)lj_setupViews
+{
+    self.longGes = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTouch:)];
+    self.longGes.minimumPressDuration = 0.3;
+    [self.contentView addGestureRecognizer:self.longGes];
+}
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupViews];
+}
 - (void)lj_giftFast
 {
     if (kLJLiveHelper.comboing == -1) {
@@ -77,25 +98,4 @@
         });
     }
 }
-
-#pragma mark - Setter
-
-- (void)setGiftConfig:(LJLiveGift *)giftConfig
-{
-    _giftConfig = giftConfig;
-    
-    [self.giftImageView sd_setImageWithURL:[NSURL URLWithString:giftConfig.iconUrl]];
-    self.coinsLabel.text = @(giftConfig.giftPrice).stringValue;
-    self.giftNameLabel.text = giftConfig.giftName;
-    if ([giftConfig.giftName isEqualToString:@"face_manKiss"]) {//特殊改名
-        self.giftNameLabel.text = @"True Love's Kiss";
-    }
-}
-
-- (IBAction)topRightButtonClick:(UIButton *)sender {
-    if (self.clickBlindboxDetail) {
-        self.clickBlindboxDetail();
-    }
-}
-
 @end

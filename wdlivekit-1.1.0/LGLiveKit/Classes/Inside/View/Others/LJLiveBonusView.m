@@ -15,6 +15,14 @@
 
 @implementation LJLiveBonusView
 
+
+
+
+
+
+
+
+
 - (instancetype)init
 {
     self = [super init];
@@ -25,7 +33,56 @@
     }
     return self;
 }
+- (void)lj_dismiss{
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.25];
+    self.bgView.transform = CGAffineTransformMakeScale(0.01,0.01);
+    self.bgView.center = CGPointMake(kLJScreenWidth - 45, 76 + kLJStatusBarHeight + 15 + 105);
+    [UIView commitAnimations];
 
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self removeAllSubviews];
+        [self removeFromSuperview];
+        if (self.bonusViewDismissBlock) self.bonusViewDismissBlock();
+    });
+    
+}
+- (void)lj_showInView:(UIView *)inView withPrice:(LJLiveBonusViewPrice)price{
+    LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventFirstRechargeWindowAppear, nil);
+    for (UIView *subview in inView.subviews) {
+        if ([subview isKindOfClass:[self class]]) {
+            return;
+        }
+    }
+    [self lj_creatUI];
+    [inView addSubview:self];
+    if (price == LJLiveBonusViewPrice099){
+        [self.rechargeBtn setTitle:@"$ 0.99" forState:UIControlStateNormal];
+        self.coinLab.text = @"10+10";
+    }else if (price == LJLiveBonusViewPrice499){
+        [self.rechargeBtn setTitle:@"$ 4.99" forState:UIControlStateNormal];
+        self.coinLab.text = @"30+30";
+    }
+
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.25];
+    self.bgView.transform = CGAffineTransformMakeScale(1,1);
+    self.bgView.center = CGPointMake(kLJScreenWidth/2, kLJScreenHeight/2);
+    [UIView commitAnimations];
+
+
+}
+- (UIImageView *)bgView{
+    if (!_bgView) {
+        _bgView = [[UIImageView alloc] initWithFrame:CGRectMake(kLJScreenWidth - 70, 76 + kLJStatusBarHeight + 15 + 105, 331, 460)];
+        _bgView.transform = CGAffineTransformMakeScale(0.01,0.01);
+        _bgView.image = kLJImageNamed(@"lj_live_discount_bg");
+        _bgView.userInteractionEnabled = YES;
+    }
+    return _bgView;
+}
 -(void)lj_creatUI{
     UIButton *closeBtn = [[UIButton alloc] initWithFrame:self.bounds];
     [self addSubview:closeBtn];
@@ -78,51 +135,6 @@
     [self addSubview:self.bgView];
     [self.bgView addSubview:self.rechargeBtn];
 }
-
-- (void)lj_showInView:(UIView *)inView withPrice:(LJLiveBonusViewPrice)price{
-    LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventFirstRechargeWindowAppear, nil);
-    for (UIView *subview in inView.subviews) {
-        if ([subview isKindOfClass:[self class]]) {
-            return;
-        }
-    }
-    [self lj_creatUI];
-    [inView addSubview:self];
-    if (price == LJLiveBonusViewPrice099){
-        [self.rechargeBtn setTitle:@"$ 0.99" forState:UIControlStateNormal];
-        self.coinLab.text = @"10+10";
-    }else if (price == LJLiveBonusViewPrice499){
-        [self.rechargeBtn setTitle:@"$ 4.99" forState:UIControlStateNormal];
-        self.coinLab.text = @"30+30";
-    }
-
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.25];
-    self.bgView.transform = CGAffineTransformMakeScale(1,1);
-    self.bgView.center = CGPointMake(kLJScreenWidth/2, kLJScreenHeight/2);
-    [UIView commitAnimations];
-
-
-}
-
-- (void)lj_dismiss{
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.25];
-    self.bgView.transform = CGAffineTransformMakeScale(0.01,0.01);
-    self.bgView.center = CGPointMake(kLJScreenWidth - 45, 76 + kLJStatusBarHeight + 15 + 105);
-    [UIView commitAnimations];
-
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self removeAllSubviews];
-        [self removeFromSuperview];
-        if (self.bonusViewDismissBlock) self.bonusViewDismissBlock();
-    });
-    
-}
-
-
 -(void)rechargeClick{
     LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventClickRechargeWindow, nil);
     if ([self.rechargeBtn.titleLabel.text isEqualToString:@"$ 0.99"]) {
@@ -136,17 +148,6 @@
         }
     }
 }
-
-- (UIImageView *)bgView{
-    if (!_bgView) {
-        _bgView = [[UIImageView alloc] initWithFrame:CGRectMake(kLJScreenWidth - 70, 76 + kLJStatusBarHeight + 15 + 105, 331, 460)];
-        _bgView.transform = CGAffineTransformMakeScale(0.01,0.01);
-        _bgView.image = kLJImageNamed(@"lj_live_discount_bg");
-        _bgView.userInteractionEnabled = YES;
-    }
-    return _bgView;
-}
-
 - (UIButton *)rechargeBtn{
     if (!_rechargeBtn) {
         _rechargeBtn = [[UIButton alloc] initWithFrame:CGRectMake(30.5, 367, 270, 53)];
@@ -157,5 +158,4 @@
     }
     return _rechargeBtn;
 }
-
 @end

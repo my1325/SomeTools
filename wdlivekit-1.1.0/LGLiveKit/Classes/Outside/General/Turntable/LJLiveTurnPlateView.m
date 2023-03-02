@@ -38,56 +38,37 @@
 
 @implementation LJLiveTurnPlateView
 
--(void)awakeFromNib {
-    
-    [super awakeFromNib];
-    
-    self.hidden = YES;
-    
-    self.isAnimation = NO;
-    
-    [self initItemDataArray];
-    
-    self.mainViewWidthConstraint.constant = kScreenWidth-30*2;
-    self.mainViewHeightConstraint.constant = kScreenWidth-30*2;
-    
-    //这里裁剪主要是为了防止误点到了四角空白
-    self.mainView.layer.cornerRadius = (kScreenWidth-30*2)/2;
-    self.mainView.layer.masksToBounds = YES;
-    
-    [self.mainView addSubview:self.circleView];
-    
-    [self.circleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.mainView).offset(-10);
-        make.left.equalTo(self.mainView).offset(-10);
-        make.bottom.equalTo(self.mainView).offset(10);
-        make.right.equalTo(self.mainView).offset(10);
-    }];
-    
-    [self.circleView.layer addAnimation:self.rotationAnimation forKey:@"autoRotationAnimation"];
-    
-    
-    [self.mainView bringSubviewToFront:self.startBtn];
-    
-}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// 接收到主播端的转盘更新消息通知
 /// 点击转盘
-/// @param sender <#sender description#>
-- (IBAction)bgClickAction:(id)sender {
-    
-}
-
-
+/// @param dic <#dic description#>
 /// 点击出了转盘外的区域事件处理
--(IBAction)selfTap:(id)sender {
-    self.hiddenBlock();
-    self.isShowing = NO;
-    
-//    [self.circleView.layer removeAllAnimations]; 
-    
+/// @param sender <#sender description#>
+- (LJLiveTurntableViewModel *)getItemByIndex:(NSInteger)index
+{
+    NSPredicate * pre = [NSPredicate predicateWithFormat:@"SELF.index == %d",index];
+    NSArray * result = [self.luckyItemArray filteredArrayUsingPredicate:pre];
+    LJLiveTurntableViewModel * item = result.firstObject;
+    return item;
 }
-
-
 -(LJLiveTurntableView*)circleView {
     
     if (_circleView == nil) {
@@ -122,7 +103,113 @@
     
     return _circleView;
 }
-
+- (IBAction)bgClickAction:(id)sender {
+    
+}
+-(IBAction)selfTap:(id)sender {
+    self.hiddenBlock();
+    self.isShowing = NO;
+    
+//    [self.circleView.layer removeAllAnimations]; 
+    
+}
+-(void)awakeFromNib {
+    
+    [super awakeFromNib];
+    
+    self.hidden = YES;
+    
+    self.isAnimation = NO;
+    
+    [self initItemDataArray];
+    
+    self.mainViewWidthConstraint.constant = kScreenWidth-30*2;
+    self.mainViewHeightConstraint.constant = kScreenWidth-30*2;
+    
+    //这里裁剪主要是为了防止误点到了四角空白
+    self.mainView.layer.cornerRadius = (kScreenWidth-30*2)/2;
+    self.mainView.layer.masksToBounds = YES;
+    
+    [self.mainView addSubview:self.circleView];
+    
+    [self.circleView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.mainView).offset(-10);
+        make.left.equalTo(self.mainView).offset(-10);
+        make.bottom.equalTo(self.mainView).offset(10);
+        make.right.equalTo(self.mainView).offset(10);
+    }];
+    
+    [self.circleView.layer addAnimation:self.rotationAnimation forKey:@"autoRotationAnimation"];
+    
+    
+    [self.mainView bringSubviewToFront:self.startBtn];
+    
+}
+-(NSArray*)getColorsWithItems:(NSArray*)items {
+    //偶数
+    if (items.count%2 == 0) {
+        return @[kLJColorFromRGBA(0xffffff,1.0),kLJColorFromRGBA(0xffffff, 0.9)];
+    }else{
+        if (items.count == 3) {
+            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8)];
+        }else if (items.count == 5) {
+            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9)];
+        }else if (items.count == 7) {
+            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.8)];
+        }else if (items.count == 9){
+            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8)];
+        }else if(items.count == 11) {
+            return @[kLJColorFromRGBA(0xffffff,1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9)];
+            
+        }else{
+            return nil;
+        }
+    }
+}
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+    
+}
+-(void)updateRoomInfo:(LJLiveRoom*)roomModel {
+    
+//    kLJLiveHelper.live = roomModel;
+    
+    [self.circleView.layer removeAllSublayers];
+    
+    [self initItemDataArray];
+    
+    //更新转盘信息
+    self.circleView.panBgColors = [self getColorsWithItems:self.luckyItemArray];
+    
+    self.circleView.luckyItemArray = self.luckyItemArray;
+}
+-(CABasicAnimation *)rotationAnimation {
+    
+    if(_rotationAnimation == nil) {
+        CABasicAnimation *rotationAnimation;
+        
+        rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+        
+        rotationAnimation.toValue = [NSNumber numberWithFloat:M_PI*2.0];
+        
+        rotationAnimation.duration = 25;
+        
+        rotationAnimation.delegate = self;
+        
+        rotationAnimation.repeatCount = MAXFLOAT;
+        
+        _rotationAnimation = rotationAnimation;
+        
+    }
+    
+    return _rotationAnimation;
+}
+-(void)hiddenView
+{
+    self.hidden = YES;
+    self.isShowing = NO;
+    [self.circleView.layer removeAllAnimations];
+}
 - (void)initItemDataArray
 {
 
@@ -161,30 +248,12 @@
         return obj1.displayIndex>obj2.displayIndex;
     }];
 }
-
--(void)updateRoomInfo:(LJLiveRoom*)roomModel {
+- (void)animationDidStart:(CAAnimation *)theAnimation {
     
-//    kLJLiveHelper.live = roomModel;
+    //动画开始了
+    LJLog(@"动画开始");
     
-    [self.circleView.layer removeAllSublayers];
-    
-    [self initItemDataArray];
-    
-    //更新转盘信息
-    self.circleView.panBgColors = [self getColorsWithItems:self.luckyItemArray];
-    
-    self.circleView.luckyItemArray = self.luckyItemArray;
 }
-
-
-- (LJLiveTurntableViewModel *)getItemByIndex:(NSInteger)index
-{
-    NSPredicate * pre = [NSPredicate predicateWithFormat:@"SELF.index == %d",index];
-    NSArray * result = [self.luckyItemArray filteredArrayUsingPredicate:pre];
-    LJLiveTurntableViewModel * item = result.firstObject;
-    return item;
-}
-
 -(void)showView
 {
     self.hidden = NO;
@@ -192,42 +261,6 @@
     self.isShowing = YES;
     [self.circleView.layer addAnimation:self.rotationAnimation forKey:@"autoRotationAnimation"];
 }
-
--(void)hiddenView
-{
-    self.hidden = YES;
-    self.isShowing = NO;
-    [self.circleView.layer removeAllAnimations];
-}
-
--(void)startAction {
-    
-    [self.circleView.layer removeAllAnimations];
-    
-    //如果转盘正在旋转，不做任何操作
-    if (self.isAnimation) {
-        return;
-    }
-    
-    self.isAnimation = YES;
-    
-    self.curItem = [self getItemByIndex:self.selectedIndex];
-    
-    if (self.curItem) {
-        LJLiveTurntableViewModel * item = [self getItemByIndex:self.curItem.index];
-        if (item) {
-            LJLog(@"奖品应该是：%@",item);
-            [self.circleView turntableRotateToDisplayIndex:item.displayIndex];
-        }else{
-            LJLog(@"没有此奖品");
-        }
-    }
-    
-}
-
-
-/// 接收到主播端的转盘更新消息通知
-/// @param dic <#dic description#>
 -(void)reciveTurnPlateInfoData:(NSDictionary*)dic {
     
     //转盘开关
@@ -263,61 +296,28 @@
         [self startAction];
     }
 }
-
--(NSArray*)getColorsWithItems:(NSArray*)items {
-    //偶数
-    if (items.count%2 == 0) {
-        return @[kLJColorFromRGBA(0xffffff,1.0),kLJColorFromRGBA(0xffffff, 0.9)];
-    }else{
-        if (items.count == 3) {
-            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8)];
-        }else if (items.count == 5) {
-            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9)];
-        }else if (items.count == 7) {
-            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.8)];
-        }else if (items.count == 9){
-            return @[kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8)];
-        }else if(items.count == 11) {
-            return @[kLJColorFromRGBA(0xffffff,1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9),kLJColorFromRGBA(0xffffff, 0.8),kLJColorFromRGBA(0xffffff, 1.0),kLJColorFromRGBA(0xffffff, 0.9)];
-            
+-(void)startAction {
+    
+    [self.circleView.layer removeAllAnimations];
+    
+    //如果转盘正在旋转，不做任何操作
+    if (self.isAnimation) {
+        return;
+    }
+    
+    self.isAnimation = YES;
+    
+    self.curItem = [self getItemByIndex:self.selectedIndex];
+    
+    if (self.curItem) {
+        LJLiveTurntableViewModel * item = [self getItemByIndex:self.curItem.index];
+        if (item) {
+            LJLog(@"奖品应该是：%@",item);
+            [self.circleView turntableRotateToDisplayIndex:item.displayIndex];
         }else{
-            return nil;
+            LJLog(@"没有此奖品");
         }
     }
-}
-
--(CABasicAnimation *)rotationAnimation {
-    
-    if(_rotationAnimation == nil) {
-        CABasicAnimation *rotationAnimation;
-        
-        rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-        
-        rotationAnimation.toValue = [NSNumber numberWithFloat:M_PI*2.0];
-        
-        rotationAnimation.duration = 25;
-        
-        rotationAnimation.delegate = self;
-        
-        rotationAnimation.repeatCount = MAXFLOAT;
-        
-        _rotationAnimation = rotationAnimation;
-        
-    }
-    
-    return _rotationAnimation;
-}
-
-- (void)animationDidStart:(CAAnimation *)theAnimation {
-    
-    //动画开始了
-    LJLog(@"动画开始");
     
 }
-
-- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
-{
-    
-}
-
 @end

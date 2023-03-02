@@ -9,28 +9,24 @@
 
 
 @interface LJLiveUniqueTagCell ()
-@property (weak, nonatomic) IBOutlet UIImageView *bgImg;
-@property (weak, nonatomic) IBOutlet UIImageView *uniqueImg;
-@property (weak, nonatomic) IBOutlet UILabel *titlelb;
-@property (weak, nonatomic) IBOutlet UILabel *desclb;
-@property (weak, nonatomic) IBOutlet UIImageView *selectImg;
-@property (weak, nonatomic) IBOutlet UIButton *dataBtn;
 
+@property (weak, nonatomic) IBOutlet UIImageView *selectImg;
+@property (weak, nonatomic) IBOutlet UIImageView *bgImg;
+@property (weak, nonatomic) IBOutlet UIButton *dataBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *uniqueImg;
+@property (weak, nonatomic) IBOutlet UILabel *desclb;
+@property (weak, nonatomic) IBOutlet UILabel *titlelb;
 @end
 @implementation LJLiveUniqueTagCell
+
+
+
+
 
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
 }
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
-
 - (void)setModel:(LJUniqueTag *)model
 {
     _model = model;
@@ -55,5 +51,9 @@
         self.titlelb.textColor = [UIColor colorWithWhite:1 alpha:0.6];
     }
 }
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
 
+    // Configure the view for the selected state
+}
 @end

@@ -9,16 +9,16 @@
 
 @interface LJLivePkAvatarsView ()
 
+
+
+
 @property (weak, nonatomic) IBOutlet UIImageView *local_no3_iv;
 @property (weak, nonatomic) IBOutlet UIImageView *local_no2_iv;
-@property (weak, nonatomic) IBOutlet UIImageView *local_no1_iv;
-
 @property (weak, nonatomic) IBOutlet UIImageView *remote_no1_iv;
+@property (nonatomic, strong) NSArray *localIVs, *remoteIVs;
 @property (weak, nonatomic) IBOutlet UIImageView *remote_no2_iv;
 @property (weak, nonatomic) IBOutlet UIImageView *remote_no3_iv;
-
-@property (nonatomic, strong) NSArray *localIVs, *remoteIVs;
-
+@property (weak, nonatomic) IBOutlet UIImageView *local_no1_iv;
 @end
 
 @implementation LJLivePkAvatarsView
@@ -31,20 +31,24 @@
     return view;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupDataSource];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
-{
-    self.localIVs = @[self.local_no1_iv, self.local_no2_iv, self.local_no3_iv];
-    self.remoteIVs = @[self.remote_no1_iv, self.remote_no2_iv, self.remote_no3_iv];
-}
+
+
+#pragma mark - Events
+
+
+
+#pragma mark - Public Methods
+
+
+#pragma mark - Methods
+
+
+#pragma mark - Setter
+
+
 
 - (void)lj_setupViews
 {
@@ -68,21 +72,11 @@
     self.remote_no2_iv.contentMode = UIViewContentModeScaleAspectFill;
     self.remote_no3_iv.contentMode = UIViewContentModeScaleAspectFill;
 }
-
-#pragma mark - Events
-
-- (IBAction)localAvatarsClick:(UIButton *)sender
+- (void)lj_setupDataSource
 {
-    if (self.eventBlock) self.eventBlock(LJLiveEventPKOpenHomeRank, nil);
+    self.localIVs = @[self.local_no1_iv, self.local_no2_iv, self.local_no3_iv];
+    self.remoteIVs = @[self.remote_no1_iv, self.remote_no2_iv, self.remote_no3_iv];
 }
-
-- (IBAction)remoteAvatarsClick:(UIButton *)sender
-{
-    if (self.eventBlock) self.eventBlock(LJLiveEventPKOpenAwayRank, nil);
-}
-
-#pragma mark - Public Methods
-
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
     // 开始PK
@@ -99,32 +93,6 @@
         self.remoteAvatars = msg.awayPoint.topFanAvatars;
     }
 }
-
-#pragma mark - Methods
-
-- (void)lj_cleanAvatars
-{
-    for (UIImageView *iv in self.localIVs) {
-        [iv setImage:kLJImageNamed(@"lj_live_pk_rank_red_head")];
-    }
-    for (UIImageView *iv in self.remoteIVs) {
-        [iv setImage:kLJImageNamed(@"lj_live_pk_rank_blue_head")];
-    }
-}
-
-#pragma mark - Setter
-
-- (void)setLocalAvatars:(NSArray *)localAvatars
-{
-    _localAvatars = localAvatars;
-    
-    for (int i = 0; i < localAvatars.count; i++) {
-        UIImageView *iv = self.localIVs[i];
-        NSString *imageUrl = localAvatars[i];
-        [iv sd_setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:kLJLiveManager.config.avatar];
-    }
-}
-
 - (void)setRemoteAvatars:(NSArray *)remoteAvatars
 {
     _remoteAvatars = remoteAvatars;
@@ -135,5 +103,37 @@
         [iv sd_setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:kLJLiveManager.config.avatar];
     }
 }
-
+- (IBAction)localAvatarsClick:(UIButton *)sender
+{
+    if (self.eventBlock) self.eventBlock(LJLiveEventPKOpenHomeRank, nil);
+}
+- (IBAction)remoteAvatarsClick:(UIButton *)sender
+{
+    if (self.eventBlock) self.eventBlock(LJLiveEventPKOpenAwayRank, nil);
+}
+- (void)lj_cleanAvatars
+{
+    for (UIImageView *iv in self.localIVs) {
+        [iv setImage:kLJImageNamed(@"lj_live_pk_rank_red_head")];
+    }
+    for (UIImageView *iv in self.remoteIVs) {
+        [iv setImage:kLJImageNamed(@"lj_live_pk_rank_blue_head")];
+    }
+}
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupDataSource];
+    [self lj_setupViews];
+}
+- (void)setLocalAvatars:(NSArray *)localAvatars
+{
+    _localAvatars = localAvatars;
+    
+    for (int i = 0; i < localAvatars.count; i++) {
+        UIImageView *iv = self.localIVs[i];
+        NSString *imageUrl = localAvatars[i];
+        [iv sd_setImageWithURL:[NSURL URLWithString:imageUrl] placeholderImage:kLJLiveManager.config.avatar];
+    }
+}
 @end

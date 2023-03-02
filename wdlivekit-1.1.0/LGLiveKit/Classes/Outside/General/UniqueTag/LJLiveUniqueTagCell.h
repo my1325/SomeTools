@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveUniqueTagCell : UITableViewCell
 
-@property (nonatomic, strong) LJUniqueTag *model;
 
+@property (nonatomic, strong) LJUniqueTag *model;
 @end
 
 NS_ASSUME_NONNULL_END

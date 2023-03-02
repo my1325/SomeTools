@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveControlChatView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+
+
 ///
-@property (nonatomic, assign) CGFloat orginWidth;
-
 - (void)lj_openClose:(BOOL)openClose animated:(BOOL)animated;
-
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+@property (nonatomic, assign) CGFloat orginWidth;
 @end
 
 NS_ASSUME_NONNULL_END

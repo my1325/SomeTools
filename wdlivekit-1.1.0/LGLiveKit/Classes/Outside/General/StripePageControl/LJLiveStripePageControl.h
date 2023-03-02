@@ -11,18 +11,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveStripePageControl : UIView
 
-@property (nonatomic, strong) UIColor *normalColor, *currentTagColor;
-
-@property (nonatomic, assign) CGSize currentTagSize;
-
-@property (nonatomic, assign) CGFloat currentTagRadius;
 
 
 
-@property (nonatomic, assign) NSInteger numbersOfPage;
+
+
+
 
 @property (nonatomic, assign) NSInteger currentPage;
-
+@property (nonatomic, strong) UIColor *normalColor, *currentTagColor;
+@property (nonatomic, assign) CGSize currentTagSize;
+@property (nonatomic, assign) NSInteger numbersOfPage;
+@property (nonatomic, assign) CGFloat currentTagRadius;
 @end
 
 NS_ASSUME_NONNULL_END

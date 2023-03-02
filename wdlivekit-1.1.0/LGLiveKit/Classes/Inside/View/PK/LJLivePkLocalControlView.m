@@ -9,18 +9,18 @@
 
 @interface LJLivePkLocalControlView ()
 
-@property (weak, nonatomic) IBOutlet UIImageView *winsBgdView;
 
-@property (weak, nonatomic) IBOutlet UILabel *winsCountLabel;
 
-@property (weak, nonatomic) IBOutlet UIImageView *readyIconView;
 
-@property (weak, nonatomic) IBOutlet UIImageView *winIconView;
-/// 连胜
-@property (nonatomic, assign) NSInteger keepWins;
+
 /// 是否胜利（-1，0，1）
+/// 连胜
+@property (weak, nonatomic) IBOutlet UIImageView *readyIconView;
+@property (weak, nonatomic) IBOutlet UIImageView *winsBgdView;
+@property (weak, nonatomic) IBOutlet UILabel *winsCountLabel;
+@property (nonatomic, assign) NSInteger keepWins;
 @property (nonatomic, assign) NSInteger haveWon;
-
+@property (weak, nonatomic) IBOutlet UIImageView *winIconView;
 @end
 
 @implementation LJLivePkLocalControlView
@@ -33,33 +33,23 @@
     return view;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupDataSource];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
-{
-    
-}
 
-- (void)lj_setupViews
-{
-    
-}
 
 #pragma mark - Event
 
-- (IBAction)maskButtonClick:(UIButton *)sender
-{
-    LJEvent(@"lj_PKClickHomePlayerVideo", nil);
-}
 
 #pragma mark - Public Methods
+
+
+#pragma mark - Getter
+
+#pragma mark - Setter
+
+
+
 
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
@@ -110,25 +100,10 @@
         if (hostAccountId == self.homePlayer.hostAccountId) self.readyIconView.hidden = NO;
     }
 }
-
-#pragma mark - Getter
-
-#pragma mark - Setter
-
-- (void)setHomePlayer:(LJLivePkPlayer *)homePlayer
+- (void)lj_setupViews
 {
-    _homePlayer = homePlayer;
+    
 }
-
-- (void)setKeepWins:(NSInteger)keepWins
-{
-    _keepWins = keepWins;
-    // 连胜
-    self.winsBgdView.hidden = keepWins <= 1;
-    self.winsCountLabel.hidden = keepWins <= 1;
-    self.winsCountLabel.text = @(keepWins).stringValue;
-}
-
 - (void)setHaveWon:(NSInteger)haveWon
 {
     _haveWon = haveWon;
@@ -163,5 +138,30 @@
             break;
     }
 }
-
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupDataSource];
+    [self lj_setupViews];
+}
+- (IBAction)maskButtonClick:(UIButton *)sender
+{
+    LJEvent(@"lj_PKClickHomePlayerVideo", nil);
+}
+- (void)lj_setupDataSource
+{
+    
+}
+- (void)setHomePlayer:(LJLivePkPlayer *)homePlayer
+{
+    _homePlayer = homePlayer;
+}
+- (void)setKeepWins:(NSInteger)keepWins
+{
+    _keepWins = keepWins;
+    // 连胜
+    self.winsBgdView.hidden = keepWins <= 1;
+    self.winsCountLabel.hidden = keepWins <= 1;
+    self.winsCountLabel.text = @(keepWins).stringValue;
+}
 @end

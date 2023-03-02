@@ -10,6 +10,12 @@
 
 @implementation LJLiveBaseObject
 
+
++ (NSArray *)mj_ignoredPropertyNames
+{
+    return @[@"dictionary"];
+}
+
 - (instancetype)initWithDictionary:(NSDictionary * __nullable )dictionary
 {
     if (dictionary != nil) {
@@ -26,10 +32,4 @@
     }
     return nil;
 }
-
-+ (NSArray *)mj_ignoredPropertyNames
-{
-    return @[@"dictionary"];
-}
-
 @end

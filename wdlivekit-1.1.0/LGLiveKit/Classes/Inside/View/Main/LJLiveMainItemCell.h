@@ -11,40 +11,40 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveMainItemCell : UITableViewCell
 
-/// 键盘控制
-@property (nonatomic, assign) CGFloat keyboardChangedHeight;
-/// 事件传递
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
-/// 己方主播幕布
-@property (nonatomic, strong) LJLiveRemoteView *remoteView;
-/// PK：对方的幕布
-@property (nonatomic, strong) LJLiveRemoteView *pkRemoteView;
 
 
-@property (nonatomic, strong) UIView *pkHostVideo;
-///
-@property (nonatomic, assign) NSInteger myHostStatus;
-///
-@property (nonatomic, assign) UIView *myHostVideo;
 
-/// 装视图的容器视图
-@property (nonatomic, strong) LJLiveContainerView *containerView;
 
-/// 每个cell持有数据源
-@property (nonatomic, strong) LJLiveRoom *room;
-/// 加入房间之后渲染
-@property (nonatomic, strong) LJLiveRoom * _Nullable joinedRender;
-/// 刷新UI
-@property (nonatomic, strong) LJLiveRoom * _Nullable refreshRender;
+
+
 
 
 /// 刷新内部
+///
+/// PK：对方的幕布
+/// 己方主播幕布
 /// @param event 事件
+/// 键盘控制
 /// @param obj 对象
+/// 事件传递
+/// 每个cell持有数据源
+///
+/// 刷新UI
+/// 装视图的容器视图
+/// 加入房间之后渲染
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
 - (void)lj_playerLiveGoalDone;
-
+@property (nonatomic, strong) LJLiveRoom * _Nullable joinedRender;
+@property (nonatomic, strong) LJLiveContainerView *containerView;
+@property (nonatomic, strong) UIView *pkHostVideo;
+@property (nonatomic, strong) LJLiveRoom *room;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+@property (nonatomic, assign) UIView *myHostVideo;
+@property (nonatomic, assign) NSInteger myHostStatus;
+@property (nonatomic, assign) CGFloat keyboardChangedHeight;
+@property (nonatomic, strong) LJLiveRoom * _Nullable refreshRender;
+@property (nonatomic, strong) LJLiveRemoteView *remoteView;
+@property (nonatomic, strong) LJLiveRemoteView *pkRemoteView;
 @end
 
 NS_ASSUME_NONNULL_END

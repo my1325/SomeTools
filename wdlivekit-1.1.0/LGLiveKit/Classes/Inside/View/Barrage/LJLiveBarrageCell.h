@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBarrageCell : UITableViewCell
 
-@property (nonatomic, strong) LJLiveBarrageViewModel *viewModel;
+
 
 @property (nonatomic, copy) LJLiveVoidBlock nameBlock;
-
+@property (nonatomic, strong) LJLiveBarrageViewModel *viewModel;
 @end
 
 NS_ASSUME_NONNULL_END

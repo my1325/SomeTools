@@ -14,6 +14,16 @@
 
 @implementation LJLiveControlMenuCell
 
+
+#pragma mark - Init
+
+
+
+#pragma mark - Getter
+
+
+
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -22,19 +32,6 @@
     }
     return self;
 }
-
-#pragma mark - Init
-
-- (void)lj_setupViews
-{
-    self.contentView.backgroundColor = UIColor.whiteColor;
-    [self.contentView addSubview:self.iconImageView];
-    [self.contentView addSubview:self.offImageView];
-    [self.contentView addSubview:self.textLabel];
-    
-    [self lj_updateConstraints];
-}
-
 - (void)lj_updateConstraints
 {
     kLJWeakSelf;
@@ -53,9 +50,6 @@
         make.bottom.equalTo(weakSelf.iconImageView.mas_bottom).offset(-1);
     }];
 }
-
-#pragma mark - Getter
-
 - (UIImageView *)iconImageView
 {
     if (!_iconImageView) {
@@ -63,15 +57,15 @@
     }
     return _iconImageView;
 }
-
-- (UIImageView *)offImageView
+- (void)lj_setupViews
 {
-    if (!_offImageView) {
-        _offImageView = [[UIImageView alloc] init];
-    }
-    return _offImageView;
+    self.contentView.backgroundColor = UIColor.whiteColor;
+    [self.contentView addSubview:self.iconImageView];
+    [self.contentView addSubview:self.offImageView];
+    [self.contentView addSubview:self.textLabel];
+    
+    [self lj_updateConstraints];
 }
-
 - (UILabel *)textLabel
 {
     if (!_textLabel) {
@@ -82,5 +76,11 @@
     }
     return _textLabel;
 }
-
+- (UIImageView *)offImageView
+{
+    if (!_offImageView) {
+        _offImageView = [[UIImageView alloc] init];
+    }
+    return _offImageView;
+}
 @end

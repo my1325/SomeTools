@@ -10,7 +10,7 @@
 
 @interface LJLiveIndicatorView : UIView
 
-@property (nonatomic, strong) UIView *frontView;
-@property (nonatomic, strong) UIView *backView;
 
+@property (nonatomic, strong) UIView *backView;
+@property (nonatomic, strong) UIView *frontView;
 @end

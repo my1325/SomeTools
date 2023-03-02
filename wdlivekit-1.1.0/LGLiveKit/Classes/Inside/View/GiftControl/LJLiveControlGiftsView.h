@@ -11,16 +11,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveControlGiftsView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-@property (nonatomic, strong) NSArray<LJLiveGiftConfig *> *configs;
 
-- (void)lj_showInView:(UIView *)inView;
 
-- (void)lj_dismiss;
+
 
 - (void)lj_reloadMyCoins;
-
+- (void)lj_showInView:(UIView *)inView;
+- (void)lj_dismiss;
+@property (nonatomic, strong) NSArray<LJLiveGiftConfig *> *configs;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 @end
 
 NS_ASSUME_NONNULL_END

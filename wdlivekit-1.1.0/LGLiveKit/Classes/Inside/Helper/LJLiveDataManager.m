@@ -13,6 +13,23 @@
 
 @implementation LJLiveDataManager
 
+
+
+
+#pragma mark - Methods
+
+
+
+
+/// @param operationBlock 操作
+/// @param room 房间信息
+//    _index = index;
+//}
+/// 更新房间数组
+//- (void)setIndex:(NSInteger)index
+//    self.current = self.rooms[index];
+//{
+/// @param completionBlock 完成操作
 - (instancetype)init
 {
     self = [super init];
@@ -21,20 +38,21 @@
     }
     return self;
 }
-
-//- (void)setIndex:(NSInteger)index
-//{
-//    _index = index;
-//    self.current = self.rooms[index];
-//}
-
 - (LJLiveRoom *)current
 {
     return self.rooms[self.index];
 }
-
-#pragma mark - Methods
-
+- (void)lj_reloadDataWithSuccess:(void(^) (NSArray<LJLiveRoom *> * _Nonnull rooms))success
+                          failure:(LJLiveVoidBlock)failure
+{
+    // 请求直播数据
+    [LJLiveNetworkHelper lj_getLivesWithSuccess:^(NSArray<LJLiveRoom *> * _Nonnull rooms) {
+        success(rooms);
+        return;
+    } failure:^{
+        failure();
+    }];
+}
 - (void)lj_initWithRooms:(NSArray *)rooms atIndex:(NSInteger)index
 {
     self.rooms = [@[] mutableCopy];
@@ -48,23 +66,6 @@
     }
     self.index = index;
 }
-
-- (void)lj_reloadDataWithSuccess:(void(^) (NSArray<LJLiveRoom *> * _Nonnull rooms))success
-                          failure:(LJLiveVoidBlock)failure
-{
-    // 请求直播数据
-    [LJLiveNetworkHelper lj_getLivesWithSuccess:^(NSArray<LJLiveRoom *> * _Nonnull rooms) {
-        success(rooms);
-        return;
-    } failure:^{
-        failure();
-    }];
-}
-
-/// 更新房间数组
-/// @param room 房间信息
-/// @param operationBlock 操作
-/// @param completionBlock 完成操作
 - (void)lj_updateWith:(LJLiveRoom *)room
         operationBlock:(LJLiveDataOperation (^)(NSInteger index, LJLiveRoom * _Nullable old))operationBlock
        completionBlock:(void (^)(NSInteger index, LJLiveRoom * _Nullable old))completionBlock
@@ -115,5 +116,4 @@
 //    if (index == self.index) self.index = index;
     if (completionBlock) completionBlock(index, old);
 }
-
 @end

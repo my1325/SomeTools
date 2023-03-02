@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDictionary (LJLiveAdd)
 
-+ (NSDictionary *)lj_dictionaryWithJsonString:(NSString *)jsonString;
+
 
 - (NSString *)lj_toJson;
-
++ (NSDictionary *)lj_dictionaryWithJsonString:(NSString *)jsonString;
 @end
 
 NS_ASSUME_NONNULL_END

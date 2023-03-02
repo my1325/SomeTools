@@ -84,15 +84,10 @@
         default:
             break;
     }
-    // 弹窗
     if (showTip && tipText.length > 0) LJTipError(tipText);
     return NO;
 }
 
-/// 加入房间
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_joinRoomWithRoomId:(NSInteger)roomId
                        success:(LJLiveVoidBlock)success
                        failure:(LJLiveVoidBlock)failure
@@ -111,17 +106,12 @@
     }];
 }
 
-/// 加入房间
-/// @param hostId 主播ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_joinRoomByHostId:(NSInteger)hostId
                      success:(LJLiveObjectBlock)success
                      failure:(LJLiveVoidBlock)failure
 {
     NSString *api = kLJLiveApi_Room_JoinRoomByHostId;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_JoinRoomByHostId;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodPost requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"hostId": @(hostId).stringValue
@@ -137,17 +127,12 @@
     }];
 }
 
-/// 离开房间
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_leaveRoomWithRoomId:(NSInteger)roomId
                         success:(void(^) (LJLiveRoom * __nullable room))success
                         failure:(LJLiveVoidBlock)failure
 {
     NSString *api = kLJLiveApi_Room_LeaveRoom;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_LeaveRoom;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodPost requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"roomId": @(roomId).stringValue
@@ -163,11 +148,6 @@
     }];
 }
 
-/// 送礼
-/// @param giftId 礼物ID
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_userSendGiftWithGiftId:(NSInteger)giftId
                             roomId:(NSInteger)roomId
                            success:(void(^) (LJLiveRoomDiamond * __nullable diamond))success
@@ -175,7 +155,6 @@
 {
     NSString *api = kLJLiveApi_Room_UserSendGift;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_UserSendGift;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodPost requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"roomId": @(roomId).stringValue,
@@ -192,9 +171,6 @@
     }];
 }
 
-/// 获取关注的主播列表
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getFollowAnchorListWithSuccess:(void(^) (NSArray<LJLiveRoomAnchor *> *anchors))success
                                    failure:(LJLiveVoidBlock)failure
 {
@@ -216,15 +192,11 @@
     }];
 }
 
-/// 获取直播间列表
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getLivesWithSuccess:(void(^) (NSArray<LJLiveRoom *> *rooms))success
                         failure:(LJLiveVoidBlock)failure
 {
     NSString *api = kLJLiveApi_Room_GetRoomList;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_GetRoomList;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodGet requestApi:api query:@{
         @"session": kLJLiveManager.inside.session
     } body:@{} success:^(id  _Nonnull responseObj) {
@@ -244,17 +216,12 @@
     }];
 }
 
-/// 获取直播间信息
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getLiveInfoWithRoomId:(NSInteger)roomId
                           success:(void(^) (LJLiveRoom * __nullable room))success
                           failure:(LJLiveVoidBlock)failure
 {
     NSString *api = kLJLiveApi_Room_GetRoomInfo;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_GetRoomInfo;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodGet requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"roomId": @(roomId).stringValue
@@ -270,11 +237,6 @@
     }];
 }
 
-/// 获取直播间主播的信息
-/// @param anchorId 主播ID
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getLiveAnchorInfoWithAnchorId:(NSInteger)anchorId
                                    roomId:(NSInteger)roomId
                                   success:(void(^) (LJLiveRoomAnchor * __nullable anchor))success
@@ -296,11 +258,6 @@
     }];
 }
 
-/// 获取直播间用户信息
-/// @param userId 用户ID
-/// @param roomId 房间ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getLiveUserInfoWithUserId:(NSInteger)userId
                                roomId:(NSInteger)roomId
                               success:(void(^) (LJLiveRoomUser * __nullable user))success
@@ -308,7 +265,6 @@
 {
     NSString *api = kLJLiveApi_Room_GetVideoChatRoomUserInfo;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_GetVideoChatRoomUserInfo;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodGet requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"roomId": @(roomId).stringValue,
@@ -325,11 +281,6 @@
     }];
 }
 
-/// 私聊带走
-/// @param roomId 房间ID
-/// @param giftId 礼物ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_userTakeHostWithRoomId:(NSInteger)roomId
                             giftId:(NSInteger)giftId
                            success:(void(^) (LJLivePrivate * __nullable privateChat))success
@@ -351,12 +302,6 @@
     }];
 }
 
-/// 举报
-/// @param accountId ID
-/// @param content 文本
-/// @param images 图片
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_reportWithAccountId:(NSInteger)accountId
                         content:(NSString *)content
                          images:(NSArray<NSString *> *)images
@@ -364,7 +309,6 @@
                         failure:(LJLiveVoidBlock)failure
 {
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc && accountId == kLJLiveManager.room.hostAccountId) {
-        // UGC
         [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodPost requestApi:kLJLiveApi_UgcRoom_ReportRoom query:@{
             @"session": kLJLiveManager.inside.session,
             @"roomId": @(kLJLiveManager.room.roomId).stringValue
@@ -381,7 +325,6 @@
             if (failure) failure();
         }];
     } else {
-        //
         [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodPost requestApi:kLJLiveApi_Account_Report query:@{
             @"session": kLJLiveManager.inside.session,
             @"targetAccountId":@(accountId).stringValue
@@ -400,11 +343,6 @@
     }
 }
 
-/// 获取PK排行
-/// @param roomId 房间ID
-/// @param hostId 主播ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getLiveTopFansWithRoomId:(NSInteger)roomId
                               hostId:(NSInteger)hostId
                              success:(void(^) (NSArray<LJLivePkTopFan *> * fans))success
@@ -430,9 +368,6 @@
     }];
 }
 
-/// 获取multi-beam及live合并之后的列表数据
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getMultiplayerChatRoomListWithSuccess:(void(^) (NSArray<LJLiveMultiplayerRoom *> * rooms))success
                                           failure:(LJLiveVoidBlock)failure
 {
@@ -454,9 +389,6 @@
     }];
 }
 
-/// 获取multi-beam及live合并之后的关注的主播列表
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getMultiplayerChatRoomFollowingAnchorList:(void(^) (NSArray<LJLiveMultiplayerRoomAnchor *> *anchors))success
                                               failure:(LJLiveVoidBlock)failure
 {
@@ -478,9 +410,6 @@
     }];
 }
 
-/// 阅读礼物标签
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_setGiftViewdByTitle:(NSString *)title
                         success:(LJLiveVoidBlock __nullable)success
                         failure:(LJLiveVoidBlock __nullable)failure
@@ -499,17 +428,12 @@
     }];
 }
 
-/// 获取禁言列表
-/// @param success 成功
-/// @param failure 失败
-/// @param agoraRoomId 房间ID
 + (void)lj_getMutedMembersWithAgoraRoomId:(NSString *)agoraRoomId
                                    success:(LJLiveArrayBlock __nullable)success
                                    failure:(LJLiveVoidBlock __nullable)failure
 {
     NSString *api = kLJLiveApi_Room_GetMutedMembers;
     if (kLJLiveManager.room && kLJLiveManager.room.isUgc) api = kLJLiveApi_UgcRoom_GetMutedMembers;
-    //
     [kLJLiveManager.delegate lj_requestWay:LJLiveRequestMethodGet requestApi:api query:@{
         @"session": kLJLiveManager.inside.session,
         @"agoraRoomId": agoraRoomId
@@ -529,9 +453,6 @@
     }];
 }
 
-/// 获取活动标签列表
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getEventLabelListSuccess:(LJLiveResponseBlock)success
                              failure:(LJLiveVoidBlock)failure
 {
@@ -548,10 +469,6 @@
     }];
 }
 
-/// 获取活动标签列表
-/// @param accountId accountId
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getEventLabelListWithAccountId:(NSInteger)accountId
                                success:(LJLiveResponseBlock)success
                                failure:(LJLiveVoidBlock)failure
@@ -570,10 +487,6 @@
     }];
 }
 
-/// 设置活动标签顺序
-/// @param data 数据
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_setEventLabelListSequence:(NSArray *)data
                              success:(LJLiveResponseBlock)success
                              failure:(LJLiveVoidBlock)failure{
@@ -590,10 +503,6 @@
     }];
 }
 
-/// 设置默认活动标签
-/// @param title 标签名
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_setEventLabelWithTitle:(NSString *)title
                            success:(LJLiveResponseBlock)success
                            failure:(LJLiveVoidBlock)failure
@@ -612,10 +521,6 @@
     }];
 }
 
-/// 拉黑某人
-/// @param targetAccountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_blockByTargetAccountId:(NSInteger)targetAccountId
                            success:(LJLiveVoidBlock)success
                            failure:(LJLiveVoidBlock)failure
@@ -634,10 +539,6 @@
     }];
 }
 
-/// 取消拉黑某人
-/// @param targetAccountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_cancelBlockByTargetAccountId:(NSInteger)targetAccountId
                            success:(LJLiveVoidBlock)success
                            failure:(LJLiveVoidBlock)failure
@@ -656,10 +557,6 @@
     }];
 }
 
-/// 关注某人
-/// @param targetAccountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_followByTargetAccountId:(NSInteger)targetAccountId
                             success:(LJLiveVoidBlock)success
                             failure:(LJLiveVoidBlock)failure
@@ -671,14 +568,11 @@
         if (LJValidResponseObj(responseObj, YES)) {
             if (success) success();
             
-            // 外部关注刷新直播间
             if (kLJLiveHelper.isMinimize) {
                 NSArray *array = @[@(targetAccountId), @(1)];
                 kLJNTFPost(kLJLiveFollowStatusUpdate, array);
             }
-            // 陌生人功能
             
-            // 数数统计
             LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventFollowSuccess, (@{
                 LJLiveThinkingKeyFrom: kLJLiveManager.inside.from,
                 LJLiveThinkingKeyFromDetail: kLJLiveManager.inside.fromDetail
@@ -691,10 +585,6 @@
     }];
 }
 
-/// 取消关注
-/// @param targetAccountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_cancelFollowByTargetAccountId:(NSInteger)targetAccountId
                                   success:(LJLiveVoidBlock)success
                                   failure:(LJLiveVoidBlock)failure
@@ -706,12 +596,10 @@
         if (LJValidResponseObj(responseObj, YES)) {
             if (success) success();
             
-            // 外部关注刷新直播间
             if (kLJLiveHelper.isMinimize) {
                 NSArray *array = @[@(targetAccountId), @(1)];
                 kLJNTFPost(kLJLiveFollowStatusUpdate, array);
             }
-            // 陌生人功能
             
         } else {
             if (failure) failure();
@@ -721,10 +609,6 @@
     }];
 }
 
-/// 获取主播详情
-/// @param accountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getAnchorInfoWithAccountId:(NSInteger)accountId
                                success:(void(^) (LJLiveAccount *anchor))success
                                failure:(LJLiveVoidBlock)failure
@@ -744,10 +628,6 @@
     }];
 }
 
-/// 获取用户详情
-/// @param accountId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_getUserInfoWithAccountId:(NSInteger)accountId
                              success:(void(^) (LJLiveAccount *a))success
                              failure:(LJLiveVoidBlock)failure
@@ -767,11 +647,6 @@
     }];
 }
 
-/// 记录发送文本弹幕
-/// @param text 文本
-/// @param roomId ID
-/// @param success 成功
-/// @param failure 失败
 + (void)lj_sendTextMessage:(NSString *)text
                      roomId:(NSInteger)roomId
                     success:(LJLiveVoidBlock)success
@@ -788,4 +663,129 @@
     }];
 }
 
+/// @param success 成功
+/// @param targetAccountId ID
+/// @param success 成功
+/// @param accountId ID
+/// @param success 成功
+/// 私聊带走
+    //
+/// @param failure 失败
+/// @param success 成功
+/// @param targetAccountId ID
+/// @param failure 失败
+/// @param success 成功
+/// @param success 成功
+/// @param failure 失败
+/// 取消拉黑某人
+/// @param success 成功
+/// @param failure 失败
+/// 举报
+/// @param failure 失败
+/// @param failure 失败
+/// @param success 成功
+/// @param accountId ID
+/// 送礼
+/// 获取multi-beam及live合并之后的列表数据
+    // 弹窗
+/// @param roomId 房间ID
+/// @param success 成功
+/// 加入房间
+            // 数数统计
+/// @param success 成功
+/// @param success 成功
+            // 陌生人功能
+/// 阅读礼物标签
+/// @param success 成功
+/// @param failure 失败
+/// @param failure 失败
+/// @param failure 失败
+/// @param giftId 礼物ID
+/// @param roomId 房间ID
+/// 设置活动标签顺序
+/// @param failure 失败
+/// @param images 图片
+    //
+            // 陌生人功能
+/// @param hostId 主播ID
+/// @param failure 失败
+/// @param failure 失败
+/// 获取关注的主播列表
+/// @param success 成功
+/// @param success 成功
+    //
+    //
+            // 外部关注刷新直播间
+/// @param success 成功
+/// 取消关注
+/// @param failure 失败
+/// 获取直播间信息
+/// @param success 成功
+/// @param title 标签名
+/// @param roomId 房间ID
+/// @param targetAccountId ID
+/// 关注某人
+        // UGC
+/// 获取活动标签列表
+/// 获取活动标签列表
+/// 获取用户详情
+/// 获取直播间主播的信息
+/// 获取直播间列表
+/// @param failure 失败
+/// @param roomId ID
+/// 获取multi-beam及live合并之后的关注的主播列表
+/// @param giftId 礼物ID
+            // 外部关注刷新直播间
+/// @param success 成功
+/// @param success 成功
+/// @param success 成功
+/// @param failure 失败
+/// @param failure 失败
+/// 记录发送文本弹幕
+/// @param roomId 房间ID
+/// @param failure 失败
+/// @param failure 失败
+/// 获取禁言列表
+/// @param failure 失败
+/// @param accountId ID
+/// @param success 成功
+/// @param hostId 主播ID
+/// 获取直播间用户信息
+/// @param failure 失败
+    //
+/// @param failure 失败
+/// @param anchorId 主播ID
+/// @param success 成功
+/// @param failure 失败
+/// @param failure 失败
+/// @param success 成功
+        //
+/// @param success 成功
+/// 设置默认活动标签
+/// @param roomId 房间ID
+/// 离开房间
+/// @param success 成功
+/// @param roomId 房间ID
+/// @param content 文本
+    //
+/// @param failure 失败
+/// @param success 成功
+/// @param failure 失败
+/// @param failure 失败
+/// @param accountId accountId
+/// @param data 数据
+/// 获取主播详情
+/// @param success 成功
+/// @param failure 失败
+/// 加入房间
+/// @param userId 用户ID
+/// 获取PK排行
+/// @param roomId 房间ID
+/// @param success 成功
+/// @param agoraRoomId 房间ID
+    //
+/// @param text 文本
+/// @param roomId 房间ID
+/// @param targetAccountId ID
+/// 拉黑某人
 @end

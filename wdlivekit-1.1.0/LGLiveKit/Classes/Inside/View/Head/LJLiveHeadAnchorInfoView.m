@@ -9,14 +9,14 @@
 
 @interface LJLiveHeadAnchorInfoView ()
 
-@property (weak, nonatomic) IBOutlet UIButton *headButton;
 
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
+
 
 @property (weak, nonatomic) IBOutlet UIButton *followButton;
-
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UIButton *headButton;
 @property (weak, nonatomic) IBOutlet UILabel *countLabel;
-
 @end
 
 @implementation LJLiveHeadAnchorInfoView
@@ -30,13 +30,17 @@
     return infoView;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
+
+
+#pragma mark - Event
+
+
+
+#pragma mark - Getter
+
+
 
 - (void)lj_setupViews
 {
@@ -51,9 +55,11 @@
     
     self.headButton.imageView.contentMode = UIViewContentModeScaleAspectFill;
 }
-
-#pragma mark - Event
-
+- (void)setFollowed:(BOOL)followed
+{
+    _followed = followed;
+    self.followButton.hidden = followed;
+}
 - (IBAction)headButtonClick:(UIButton *)sender
 {
     // 请求数据
@@ -65,7 +71,6 @@
     LJEvent(@"lj_LiveTouchCurrentHostAvatar", nil);
     LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventClickHostAvatarInLive, nil);
 }
-
 - (IBAction)followButtonClick:(UIButton *)sender
 {
     kLJLiveManager.inside.from = LJLiveThinkingValueLive;
@@ -76,9 +81,11 @@
     //
     LJEvent(@"lj_LiveTouchCurrentHostFollow", nil);
 }
-
-#pragma mark - Getter
-
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupViews];
+}
 - (void)setLiveRoom:(LJLiveRoom *)liveRoom
 {
     _liveRoom = liveRoom;
@@ -88,11 +95,4 @@
     self.countLabel.text = @(liveRoom.memberCount).stringValue;
     self.followed = liveRoom.isHostFollowed;
 }
-
-- (void)setFollowed:(BOOL)followed
-{
-    _followed = followed;
-    self.followButton.hidden = followed;
-}
-
 @end

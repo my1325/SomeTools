@@ -17,17 +17,17 @@ typedef NS_ENUM(NSInteger, PageStyle){
 
 @interface LJLiveAnimatedPageControl : UIControl
 
-@property (nonatomic, strong) UIScrollView *sourceScrollView;
-@property (nonatomic, assign) NSInteger numberOfPages;
-@property (nonatomic, strong) UIColor *pageIndicatorColor;
-@property (nonatomic, strong) UIColor *currentPageIndicatorColor;
-@property (nonatomic, assign) CGFloat indicatorMultiple;
-@property (nonatomic, assign) CGFloat indicatorMargin;
-@property (nonatomic, assign) CGFloat indicatorDiameter;
-@property (nonatomic, assign) PageStyle pageStyle;
-@property (nonatomic, assign) NSInteger currentPage;
+
 
 - (void)prepareShow;
 - (void)clearIndicators;
-
+@property (nonatomic, assign) PageStyle pageStyle;
+@property (nonatomic, assign) CGFloat indicatorMargin;
+@property (nonatomic, assign) NSInteger numberOfPages;
+@property (nonatomic, strong) UIColor *pageIndicatorColor;
+@property (nonatomic, strong) UIScrollView *sourceScrollView;
+@property (nonatomic, assign) NSInteger currentPage;
+@property (nonatomic, strong) UIColor *currentPageIndicatorColor;
+@property (nonatomic, assign) CGFloat indicatorDiameter;
+@property (nonatomic, assign) CGFloat indicatorMultiple;
 @end

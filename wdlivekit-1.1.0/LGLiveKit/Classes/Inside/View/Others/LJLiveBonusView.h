@@ -16,12 +16,12 @@ typedef enum : NSUInteger {
 
 @interface LJLiveBonusView : UIView
 
-@property (nonatomic, copy) LJLiveVoidBlock bonusViewDismissBlock;
+
+
 
 - (void)lj_showInView:(UIView *)inView withPrice:(LJLiveBonusViewPrice)price;
-
 - (void)lj_dismiss;
-
+@property (nonatomic, copy) LJLiveVoidBlock bonusViewDismissBlock;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -11,20 +11,14 @@
 
 @implementation NSString (LJLiveAdd)
 
-- (NSString *)lj_md5Hash
-{
-    const char *cStr = [self UTF8String];
-    unsigned char result[16];
-    NSNumber *num = [NSNumber numberWithUnsignedLong:strlen(cStr)];
-    CC_MD5( cStr,[num intValue], result );
-    return [[NSString stringWithFormat:@"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-             result[0], result[1], result[2], result[3],
-             result[4], result[5], result[6], result[7],
-             result[8], result[9], result[10], result[11],
-             result[12], result[13], result[14], result[15]] lowercaseString];
-}
+
+
+
+
 
 /// 拼接URLl
+/// 是否阿语打头
+/// 分割URL
 /// @param arg 参数
 - (NSString *)lj_addressURLAppendingByArg:(NSDictionary *)arg
 {
@@ -39,8 +33,30 @@
     str = [str substringToIndex:str.length - 1];
     return str;
 }
-
-/// 分割URL
+- (NSString *)lj_md5Hash
+{
+    const char *cStr = [self UTF8String];
+    unsigned char result[16];
+    NSNumber *num = [NSNumber numberWithUnsignedLong:strlen(cStr)];
+    CC_MD5( cStr,[num intValue], result );
+    return [[NSString stringWithFormat:@"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+             result[0], result[1], result[2], result[3],
+             result[4], result[5], result[6], result[7],
+             result[8], result[9], result[10], result[11],
+             result[12], result[13], result[14], result[15]] lowercaseString];
+}
+- (BOOL)lj_beginWithArabic
+{
+    if (!self || self.length == 0) return NO;
+    NSString *text = [self substringToIndex:1];
+    // 正则表达式：阿拉伯语
+    NSString *regex = @"^[ء-ي]+$";
+    // 创建谓词对象并设定条件表达式
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+    // 字符串判断，然后BOOL值
+    BOOL result = [predicate evaluateWithObject:text];
+    return result;
+}
 - (NSDictionary *)lj_parameterAddressURL
 {
     /** 分开 请求URL地址 获取参数段 */
@@ -57,21 +73,6 @@
     }
     return paramDict;
 }
-
-/// 是否阿语打头
-- (BOOL)lj_beginWithArabic
-{
-    if (!self || self.length == 0) return NO;
-    NSString *text = [self substringToIndex:1];
-    // 正则表达式：阿拉伯语
-    NSString *regex = @"^[ء-ي]+$";
-    // 创建谓词对象并设定条件表达式
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-    // 字符串判断，然后BOOL值
-    BOOL result = [predicate evaluateWithObject:text];
-    return result;
-}
-
 - (NSString *)lj_localized
 {
     NSArray *supports = @[@"en", @"ar", @"tr"];
@@ -85,5 +86,4 @@
     }
     return self;
 }
-
 @end

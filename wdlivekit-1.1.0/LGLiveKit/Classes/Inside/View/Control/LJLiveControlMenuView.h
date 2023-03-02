@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveControlMenuView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-- (void)lj_showInView:(UIView *)inView;
+
 
 - (void)lj_dismiss;
-
+- (void)lj_showInView:(UIView *)inView;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGiftBarrageViewModel : LJLiveBaseObject
 
-@property (nonatomic, strong) LJLiveBarrage *barrage;
 
-@property (nonatomic, assign) NSInteger countdown;
+
 
 @property (nonatomic, copy) LJLiveMessageReceiveBlock dismissBlock;
-
+@property (nonatomic, strong) LJLiveBarrage *barrage;
+@property (nonatomic, assign) NSInteger countdown;
 @end
 
 NS_ASSUME_NONNULL_END

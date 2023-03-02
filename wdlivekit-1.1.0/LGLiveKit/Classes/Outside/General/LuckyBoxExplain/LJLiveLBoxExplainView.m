@@ -31,12 +31,46 @@ static NSString *const kLJLiveLuckyboxUrl = @"https://sng-apps-configs.s3-us-wes
     return view;
 }
 
+
+
+
+
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
     [self bz_initViews];
 }
-
+- (void)showInView:(UIView *)view
+{
+    [view addSubview:self];
+    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:12 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.mainView.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+    }];
+    // 清理combo动画
+    kLJLiveHelper.comboing = -1;
+    [LJLiveComboViewManager.shared lj_removeCurrentViewFromSuperView];
+    UIApplication.sharedApplication.delegate.window.userInteractionEnabled = YES;
+}
+- (UIImageView *)img
+{
+    if (!_img) {
+        _img = [[UIImageView alloc] initWithFrame:CGRectZero];
+    }
+    return _img;;
+}
+- (IBAction)bz_backAction:(id)sender {
+    [self dismiss];
+}
+- (void)dismiss
+{
+    [UIView animateWithDuration:0.2 animations:^{
+        self.mainView.transform = CGAffineTransformMakeTranslation(0, kScreenWidth);
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
+    }];
+}
 - (void)bz_initViews
 {
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, kScreenWidth, kScreenWidth) byRoundingCorners:UIRectCornerTopRight | UIRectCornerTopLeft cornerRadii:CGSizeMake(kLJWidthScale(25), kLJWidthScale(25))];
@@ -62,39 +96,5 @@ static NSString *const kLJLiveLuckyboxUrl = @"https://sng-apps-configs.s3-us-wes
             }
         }];
     }];
-}
-
-- (void)showInView:(UIView *)view
-{
-    [view addSubview:self];
-    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:12 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        self.mainView.transform = CGAffineTransformIdentity;
-    } completion:^(BOOL finished) {
-    }];
-    // 清理combo动画
-    kLJLiveHelper.comboing = -1;
-    [LJLiveComboViewManager.shared lj_removeCurrentViewFromSuperView];
-    UIApplication.sharedApplication.delegate.window.userInteractionEnabled = YES;
-}
-
-- (void)dismiss
-{
-    [UIView animateWithDuration:0.2 animations:^{
-        self.mainView.transform = CGAffineTransformMakeTranslation(0, kScreenWidth);
-    } completion:^(BOOL finished) {
-        [self removeFromSuperview];
-    }];
-}
-
-- (IBAction)bz_backAction:(id)sender {
-    [self dismiss];
-}
-
-- (UIImageView *)img
-{
-    if (!_img) {
-        _img = [[UIImageView alloc] initWithFrame:CGRectZero];
-    }
-    return _img;;
 }
 @end

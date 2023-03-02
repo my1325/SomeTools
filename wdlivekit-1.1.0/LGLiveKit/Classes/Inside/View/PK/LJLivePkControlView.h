@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkControlView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-/// 刷新内部
+
 /// @param event 事件
+/// 刷新内部
 /// @param obj 对象
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -15,11 +15,11 @@
 
 @implementation LJLiveTurntableViewModel
 
+
 -(NSString *)description
 {
     return [NSString stringWithFormat:@"title=%@ , displayIndex=%d , index=%d",self.remark,self.displayIndex,self.index];
 }
-
 @end
 
 @interface LJLiveTurntableView ()<CAAnimationDelegate>{
@@ -52,73 +52,39 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
 
 @implementation LJLiveTurntableView
 
-- (void)dealloc{
-    [_imageRenderQueue cancelAllOperations];
-    _imageRenderQueue = nil;
-    
-    [_imageLayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
-    [_imageLayers removeAllObjects];
-    
-    [_dotLayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
-    [_dotLayers removeAllObjects];
-}
 
 #pragma mark - Init Methods
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        [self defaultSetups];
-    }
-    return self;
-}
 
-- (instancetype)initWithFrame:(CGRect)frame{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self defaultSetups];
-    }
-    return self;
-}
 
 #pragma mark - Preparations
 
-// 这些可当做属性设置 也可以 IB_DESIGNABLE 这里就没做了
-- (void)defaultSetups{
-    self.backgroundColor = [UIColor clearColor];
-    
-    _dotLayers = [NSMutableArray arrayWithCapacity:18];
-    _textFontSize = 12.0;
-    _textPadding = 5.0;
-    _attributes = @{
-        NSForegroundColorAttributeName: [UIColor colorWithRed:51 / 255.0 green:51 / 255.0 blue:51 / 255.0 alpha:1.0],
-                              NSFontAttributeName:[UIFont boldSystemFontOfSize:12]
-                    };
-    
-//    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//    _paragraphStyle = paragraphStyle;
-//    //行间距
-//    paragraphStyle.lineSpacing = 10.0;
-//    //段落间距
-////    paragraphStyle.paragraphSpacing = 20.0;
-//    //    paragraphStyle.baseWritingDirection = NSWritingDirectionLeftToRight;
-//    //    paragraphStyle.firstLineHeadIndent = 10.0;
-//    //    paragraphStyle.headIndent = 50.0;
-//    //    paragraphStyle.tailIndent = 200.0;
-
-    _imageSize = CGSizeMake(35, 35);
-    _circleWidth = 30.f;
-    _numberOfDot = 18;
-    _dotSize = 8.0;
-    _panBgColors = @[[UIColor colorWithRed:249 / 255.0 green:105 / 255.0 blue:108 / 255.0 alpha:1.0],[UIColor colorWithRed:247 / 255.0 green:131 / 255.0 blue:131 / 255.0 alpha:1.0]
-    ];
-    _circleBgColor = [UIColor colorWithRed:251 / 255.0 green:94 / 255.0 blue:97 / 255.0 alpha:1.0];
-    _dotShinningColor = [UIColor colorWithRed:42 / 255.0 green:253 / 255.0 blue:47 / 255.0 alpha:1.0];
-    _dotColor = [UIColor whiteColor];
-}
 
 #pragma mark - Getter & Setter
 
+
+
+#pragma mark - Public Methods
+
+
+#pragma mark - CAAnimationDelegate
+
+
+
+#pragma mark - Draw Method
+
+
+
+
+
+
+
+
+
+
+
+// 这些可当做属性设置 也可以 IB_DESIGNABLE 这里就没做了
+// draw fan shaped text(sector text) 画扇形字
 - (NSOperationQueue *)imageRenderQueue{
     if (!_imageRenderQueue) {
         _imageRenderQueue = [[NSOperationQueue alloc] init];
@@ -126,7 +92,78 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
     }
     return _imageRenderQueue;
 }
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self defaultSetups];
+    }
+    return self;
+}
+- (void)drawDotOnCircle{
+    
+    [_dotLayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
+    [_dotLayers makeObjectsPerformSelector:@selector(removeAllAnimations)];
+    [_dotLayers removeAllObjects];
+    
+    CGPoint center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
+    CGFloat dotRadians = M_PI*2 / _numberOfDot;
+    
+    CABasicAnimation *shinningAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
+    
+    for (int i = 0; i < _numberOfDot; i++) {
+        
+        CAShapeLayer *dotLayer = [CAShapeLayer layer];
+        dotLayer.frame = CGRectMake(0, 0, _dotSize, _dotSize);
+        dotLayer.cornerRadius = _dotSize / 2.0;
+        dotLayer.position = pointAroundCircumference(center, center.x - _circleWidth / 2.0, i * dotRadians);
+        dotLayer.backgroundColor = (i % 2) ? _dotColor.CGColor : _dotShinningColor.CGColor;
+        
+        [_dotLayers addObject:dotLayer];
+        [self.layer addSublayer:dotLayer];
+        
+        shinningAnimation.fromValue = (id)(dotLayer.backgroundColor);
+        shinningAnimation.toValue = (id)((i % 2) ? _dotShinningColor.CGColor : _dotColor.CGColor);
+        shinningAnimation.duration = 0.25f;
+        shinningAnimation.repeatCount = 1000;
+        shinningAnimation.autoreverses = YES;
+        
+        [dotLayer addAnimation:shinningAnimation forKey:@"backgroundColor"];
+    }
+}
+- (void)drawLinearGradient:(CGContextRef)context path:(CGPathRef)path startColor:(CGColorRef)startColor endColor:(CGColorRef)endColor{
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+//    CGFloat locations[] = {0.0,1.0};
+    NSArray *colors = @[(__bridge id)startColor,(__bridge id)endColor];
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)colors,NULL);
+    CGRect pathRect = CGPathGetBoundingBox(path);
 
+    //具体方向可根据需求修改
+    CGPoint startPoint = CGPointMake(CGRectGetMinX(pathRect), CGRectGetMidY(pathRect));
+    CGPoint endPoint = CGPointMake(CGRectGetMaxX(pathRect), CGRectGetMidY(pathRect));
+    CGContextSaveGState(context);
+    CGContextAddPath(context,path);
+    CGContextClip(context);
+    CGContextDrawLinearGradient(context,gradient, startPoint, endPoint, 0);
+    CGContextRestoreGState(context);
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+}
+- (void)animationDidStart:(CAAnimation *)anim{
+    
+}
+- (void)startRotationWithEndValue:(CGFloat)endValue round:(NSInteger)round{
+    
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+    animation.delegate = self;
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    animation.fromValue = @(_startValue);
+    animation.toValue = @(endValue);// default is 6 * M_PI
+    animation.duration = 5.0;
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeBoth;
+    [self.layer addAnimation:animation forKey:@"rotation"];
+    _startValue = round ? (endValue - 2*M_PI*round) : 0;//记录上次的结果位置当作下次的开始位置
+}
 - (void)setLuckyItemArray:(NSArray<LJLiveTurntableViewModel *> *)luckyItemArray{
     
     _luckyItemArray = luckyItemArray;
@@ -135,9 +172,43 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
     
     [self setNeedsDisplay];
 }
-
-#pragma mark - Public Methods
-
+- (void)drawStringOnLayer:(CALayer *)layer
+             withAttributedText:(NSAttributedString *)text
+                        atAngle:(float)angle
+                     withRadius:(float)radius {
+    
+//    CGSize textSize = CGRectIntegral([text boundingRectWithSize:CGSizeMake(radius - 25, 50)
+//                                                        options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+//                                                        context:nil]).size;
+    CGSize textSize = CGSizeMake(radius - 25, 20);
+    
+//    CGFloat perimeter = 2 * M_PI * radius;
+//    textSize.height += 1;//高度刚好显示不出第二行，要加1
+    CGFloat textRotation = 0;
+    CGFloat textDirection = 0;
+    textRotation = 1 * M_PI;
+    textDirection = 2 * M_PI;
+    
+    CGFloat flagValue = kLJWidthScale(38.5);
+    CGFloat x = (radius - flagValue) * cos(angle);
+    CGFloat y = (radius - flagValue) * sin(angle);
+    
+    CATextLayer * textLayer = [self drawTextOnLayer:layer
+                                           withText:text
+                                              frame:CGRectMake(layer.frame.size.width/2 - textSize.width/2 + x,
+                                                               layer.frame.size.height/2 - textSize.height/2 + y,
+                                                               textSize.width, textSize.height)
+                                            bgColor:nil
+                                            opacity:1];
+    textLayer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(angle - textDirection));
+}
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"LJLunckyAnimationDidStopNotication" object:nil];
+    if (self.lunckyAnimationDidStopBlock) {
+        self.lunckyAnimationDidStopBlock(flag,self.luckyItemArray[self.displayIndex]);
+    }
+}
 - (void)turntableRotateToDisplayIndex:(NSInteger)displayIndex
 {
     self.displayIndex = displayIndex;
@@ -158,36 +229,23 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
     CGFloat radians = LJDegress2Radians(angle4Rotate) + M_PI * 20;
     [self startRotationWithEndValue:radians round:20];
 }
-- (void)startRotationWithEndValue:(CGFloat)endValue round:(NSInteger)round{
-    
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
-    animation.delegate = self;
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    animation.fromValue = @(_startValue);
-    animation.toValue = @(endValue);// default is 6 * M_PI
-    animation.duration = 5.0;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeBoth;
-    [self.layer addAnimation:animation forKey:@"rotation"];
-    _startValue = round ? (endValue - 2*M_PI*round) : 0;//记录上次的结果位置当作下次的开始位置
-}
-
-#pragma mark - CAAnimationDelegate
-
-- (void)animationDidStart:(CAAnimation *)anim{
-    
-}
-
-- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+- (CATextLayer *)drawTextOnLayer:(CALayer *)layer
+                        withText:(NSAttributedString *)text
+                           frame:(CGRect)frame
+                         bgColor:(UIColor *)bgColor
+                         opacity:(CGFloat)opacity
 {
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"LJLunckyAnimationDidStopNotication" object:nil];
-    if (self.lunckyAnimationDidStopBlock) {
-        self.lunckyAnimationDidStopBlock(flag,self.luckyItemArray[self.displayIndex]);
-    }
+    CATextLayer *textLayer = [[CATextLayer alloc] init];
+    [textLayer setFrame:frame];
+    [textLayer setString:text];
+    [textLayer setAlignmentMode:kCAAlignmentCenter];
+    [textLayer setBackgroundColor:bgColor.CGColor];
+    [textLayer setContentsScale:[UIScreen mainScreen].scale];
+    [textLayer setOpacity:opacity];
+    [textLayer setWrapped:NO];
+    [layer addSublayer:textLayer];
+    return textLayer;
 }
-
-#pragma mark - Draw Method
-
 - (void)drawRect:(CGRect)rect{
     [super drawRect:rect];
     
@@ -295,58 +353,48 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
         }
     }
 }
-
-- (void)drawLinearGradient:(CGContextRef)context path:(CGPathRef)path startColor:(CGColorRef)startColor endColor:(CGColorRef)endColor{
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-//    CGFloat locations[] = {0.0,1.0};
-    NSArray *colors = @[(__bridge id)startColor,(__bridge id)endColor];
-    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)colors,NULL);
-    CGRect pathRect = CGPathGetBoundingBox(path);
-
-    //具体方向可根据需求修改
-    CGPoint startPoint = CGPointMake(CGRectGetMinX(pathRect), CGRectGetMidY(pathRect));
-    CGPoint endPoint = CGPointMake(CGRectGetMaxX(pathRect), CGRectGetMidY(pathRect));
-    CGContextSaveGState(context);
-    CGContextAddPath(context,path);
-    CGContextClip(context);
-    CGContextDrawLinearGradient(context,gradient, startPoint, endPoint, 0);
-    CGContextRestoreGState(context);
-    CGGradientRelease(gradient);
-    CGColorSpaceRelease(colorSpace);
-}
-
-- (void)drawDotOnCircle{
+- (void)dealloc{
+    [_imageRenderQueue cancelAllOperations];
+    _imageRenderQueue = nil;
+    
+    [_imageLayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
+    [_imageLayers removeAllObjects];
     
     [_dotLayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
-    [_dotLayers makeObjectsPerformSelector:@selector(removeAllAnimations)];
     [_dotLayers removeAllObjects];
-    
-    CGPoint center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
-    CGFloat dotRadians = M_PI*2 / _numberOfDot;
-    
-    CABasicAnimation *shinningAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
-    
-    for (int i = 0; i < _numberOfDot; i++) {
-        
-        CAShapeLayer *dotLayer = [CAShapeLayer layer];
-        dotLayer.frame = CGRectMake(0, 0, _dotSize, _dotSize);
-        dotLayer.cornerRadius = _dotSize / 2.0;
-        dotLayer.position = pointAroundCircumference(center, center.x - _circleWidth / 2.0, i * dotRadians);
-        dotLayer.backgroundColor = (i % 2) ? _dotColor.CGColor : _dotShinningColor.CGColor;
-        
-        [_dotLayers addObject:dotLayer];
-        [self.layer addSublayer:dotLayer];
-        
-        shinningAnimation.fromValue = (id)(dotLayer.backgroundColor);
-        shinningAnimation.toValue = (id)((i % 2) ? _dotShinningColor.CGColor : _dotColor.CGColor);
-        shinningAnimation.duration = 0.25f;
-        shinningAnimation.repeatCount = 1000;
-        shinningAnimation.autoreverses = YES;
-        
-        [dotLayer addAnimation:shinningAnimation forKey:@"backgroundColor"];
-    }
 }
+- (void)defaultSetups{
+    self.backgroundColor = [UIColor clearColor];
+    
+    _dotLayers = [NSMutableArray arrayWithCapacity:18];
+    _textFontSize = 12.0;
+    _textPadding = 5.0;
+    _attributes = @{
+        NSForegroundColorAttributeName: [UIColor colorWithRed:51 / 255.0 green:51 / 255.0 blue:51 / 255.0 alpha:1.0],
+                              NSFontAttributeName:[UIFont boldSystemFontOfSize:12]
+                    };
+    
+//    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//    _paragraphStyle = paragraphStyle;
+//    //行间距
+//    paragraphStyle.lineSpacing = 10.0;
+//    //段落间距
+////    paragraphStyle.paragraphSpacing = 20.0;
+//    //    paragraphStyle.baseWritingDirection = NSWritingDirectionLeftToRight;
+//    //    paragraphStyle.firstLineHeadIndent = 10.0;
+//    //    paragraphStyle.headIndent = 50.0;
+//    //    paragraphStyle.tailIndent = 200.0;
 
+    _imageSize = CGSizeMake(35, 35);
+    _circleWidth = 30.f;
+    _numberOfDot = 18;
+    _dotSize = 8.0;
+    _panBgColors = @[[UIColor colorWithRed:249 / 255.0 green:105 / 255.0 blue:108 / 255.0 alpha:1.0],[UIColor colorWithRed:247 / 255.0 green:131 / 255.0 blue:131 / 255.0 alpha:1.0]
+    ];
+    _circleBgColor = [UIColor colorWithRed:251 / 255.0 green:94 / 255.0 blue:97 / 255.0 alpha:1.0];
+    _dotShinningColor = [UIColor colorWithRed:42 / 255.0 green:253 / 255.0 blue:47 / 255.0 alpha:1.0];
+    _dotColor = [UIColor whiteColor];
+}
 - (void)addAnimation2DotLayer{
     
     for (int i = 0; i < _numberOfDot; i++) {
@@ -363,8 +411,29 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
         [dotLayer addAnimation:shinningAnimation forKey:@"backgroundColor"];
     }
 }
-
-// draw fan shaped text(sector text) 画扇形字
+-(NSString*)subTextString:(NSString*)str len:(NSInteger)len{
+    if(str.length<=len)return str;
+    int count=0;
+    NSMutableString *sb = [NSMutableString string];
+    
+    for (int i=0; i<str.length; i++) {
+        NSRange range = NSMakeRange(i, 1) ;
+        NSString *aStr = [str substringWithRange:range];
+        count += [aStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]>1?2:1;
+        [sb appendString:aStr];
+        if(count >= len*2) {
+            return (i==str.length-1)?[sb copy]:[NSString stringWithFormat:@"%@...",[sb copy]];
+        }
+    }
+    return str;
+}
+- (instancetype)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self defaultSetups];
+    }
+    return self;
+}
 - (void)drawCurvedStringOnLayer:(CALayer *)layer
              withAttributedText:(NSAttributedString *)text
                         atAngle:(float)angle
@@ -416,75 +485,6 @@ static CGPoint pointAroundCircumference(CGPoint center, CGFloat radius, CGFloat 
         angle += letterAngle;
     }
 }
-
-- (void)drawStringOnLayer:(CALayer *)layer
-             withAttributedText:(NSAttributedString *)text
-                        atAngle:(float)angle
-                     withRadius:(float)radius {
-    
-//    CGSize textSize = CGRectIntegral([text boundingRectWithSize:CGSizeMake(radius - 25, 50)
-//                                                        options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-//                                                        context:nil]).size;
-    CGSize textSize = CGSizeMake(radius - 25, 20);
-    
-//    CGFloat perimeter = 2 * M_PI * radius;
-//    textSize.height += 1;//高度刚好显示不出第二行，要加1
-    CGFloat textRotation = 0;
-    CGFloat textDirection = 0;
-    textRotation = 1 * M_PI;
-    textDirection = 2 * M_PI;
-    
-    CGFloat flagValue = kLJWidthScale(38.5);
-    CGFloat x = (radius - flagValue) * cos(angle);
-    CGFloat y = (radius - flagValue) * sin(angle);
-    
-    CATextLayer * textLayer = [self drawTextOnLayer:layer
-                                           withText:text
-                                              frame:CGRectMake(layer.frame.size.width/2 - textSize.width/2 + x,
-                                                               layer.frame.size.height/2 - textSize.height/2 + y,
-                                                               textSize.width, textSize.height)
-                                            bgColor:nil
-                                            opacity:1];
-    textLayer.transform = CATransform3DMakeAffineTransform(CGAffineTransformMakeRotation(angle - textDirection));
-}
-
-
-- (CATextLayer *)drawTextOnLayer:(CALayer *)layer
-                        withText:(NSAttributedString *)text
-                           frame:(CGRect)frame
-                         bgColor:(UIColor *)bgColor
-                         opacity:(CGFloat)opacity
-{
-    CATextLayer *textLayer = [[CATextLayer alloc] init];
-    [textLayer setFrame:frame];
-    [textLayer setString:text];
-    [textLayer setAlignmentMode:kCAAlignmentCenter];
-    [textLayer setBackgroundColor:bgColor.CGColor];
-    [textLayer setContentsScale:[UIScreen mainScreen].scale];
-    [textLayer setOpacity:opacity];
-    [textLayer setWrapped:NO];
-    [layer addSublayer:textLayer];
-    return textLayer;
-}
-
-
--(NSString*)subTextString:(NSString*)str len:(NSInteger)len{
-    if(str.length<=len)return str;
-    int count=0;
-    NSMutableString *sb = [NSMutableString string];
-    
-    for (int i=0; i<str.length; i++) {
-        NSRange range = NSMakeRange(i, 1) ;
-        NSString *aStr = [str substringWithRange:range];
-        count += [aStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]>1?2:1;
-        [sb appendString:aStr];
-        if(count >= len*2) {
-            return (i==str.length-1)?[sb copy]:[NSString stringWithFormat:@"%@...",[sb copy]];
-        }
-    }
-    return str;
-}
-
 @end
 
 // center point on circle 在圆上的点

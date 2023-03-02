@@ -16,15 +16,18 @@ class OCMethodImplementation < Line
   end
 
   def parse_method_implementation(file, line, options)
-    count = -1
+    count = 0
+    method_begin = false
     loop do
       count += line.strip.count('{')
       count -= line.strip.count('}')
-      @lines.append(Line.new(line))
-      break if count.zero?
+      break if count.zero? && method_begin
 
+      method_begin = true unless count.zero?
+      @lines.append(Line.new(line))
       line = file.readline
     end
+    @lines.append(Line.new(line))
   end
 
   def format_line

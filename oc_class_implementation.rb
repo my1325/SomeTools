@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'oc_method_implementation'
 class OCClassImplementation < Line
   def self.implementation?(line)
     line.strip.start_with? '@implementation'
@@ -23,8 +23,12 @@ class OCClassImplementation < Line
         @lines.append(Line.new(line))
       elsif Document.document?(line)
         @document.append(Document.new(file, line, options)) unless options[:trim_document] == true
-      elsif Line.class_method_imp?(line) || Line.instance_method_imp?(line)
+      elsif OCMethodImplementation.class_method_implementation?(line) || OCMethodImplementation.instance_method_implementation?(line)
         @methods.append(OCMethodImplementation.new(file, line, options))
+      elsif OCCondition.condition? line
+        @lines.append(OCCondition.new(file, line))
+      else
+        @lines.append(Line.new(line))
       end
       line = file.readline unless file.eof?
     end

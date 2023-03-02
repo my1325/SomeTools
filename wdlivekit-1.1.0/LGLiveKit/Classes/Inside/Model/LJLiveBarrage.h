@@ -15,73 +15,73 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBarrage : LJLiveBaseObject
 
-/// 0：hint；1：pkEnd
-@property (nonatomic, assign) NSInteger systemMsgType;
-/// 弹幕类型
-@property (nonatomic, assign) LJLiveBarrageType type;
-/// 用户类型
-@property (nonatomic, assign) LJLiveUserType userType;
-/// 是否VIP
-@property (nonatomic, assign) BOOL isVip;
-/// 是否SVIP
-@property (nonatomic, assign) BOOL isSvip;
-/// 特权
-@property (nonatomic, assign) BOOL isPrivilege;
-/// 用户ID（AccountId）
-@property (nonatomic, assign) NSInteger userId;
-/// 昵称
-@property (nonatomic, strong) NSString *userName;
-/// 头像
-@property (nonatomic, strong) NSString *avatar;
-/// 内容（jsonString）
-@property (nonatomic, strong) NSString *content;
-/// 礼物ID和combo数
-@property (nonatomic, assign) NSInteger giftId, combo, isblindBox;
-/// 弹幕标签地址
-@property (nonatomic, strong) NSString *uniqueTagUrl;
-/// 标签宽高
-@property (nonatomic, assign) NSInteger uniqueTagHeight, uniqueTagWidth;
 
-/// 加入
-+ (LJLiveBarrage *)joinedMessage;
 
-/// 提示
-+ (LJLiveBarrage *)hintMessage;
 
-/// 提示
-+ (LJLiveBarrage *)pkEndMessage;
 
-/// SayHi
-+ (LJLiveBarrage *)sayHiMessage;
 
-/// 礼物
-/// @param giftConfig 礼物配置
-/// @param combo combo
-+ (LJLiveBarrage *)messageWithGift:(LJLiveGift *)giftConfig combo:(NSInteger)combo;
 
-/// 房间信息
-/// @param live 房间信息
-+ (LJLiveBarrage *)messageWithLive:(LJLiveRoom *)live;
 
-/// 观众信息
-/// @param members 观众
-+ (LJLiveBarrage *)messageWithMembers:(NSArray<LJLiveRoomMember *> *)members;
 
-/// 私聊带走
-/// @param giftConfig gift
-/// @param room room
-+ (LJLiveBarrage *)messageWithPrivateGift:(LJLiveGift *)giftConfig privateRoom:(LJLivePrivate *)room;
 
 #pragma mark - Methods
 
+
+
+
+/// 用户ID（AccountId）
+/// 用户类型
 /// 3s自动消失的消息
-- (BOOL)lj_isSystemBarrage;
-
+/// @param members 观众
+/// 提示
+/// 标签宽高
+/// 头像
+/// 礼物
+/// 房间信息
+/// 礼物ID和combo数
 /// 需要显示的消息
-- (BOOL)lj_isDisplayedBarrage;
-
+/// 昵称
+/// 内容（jsonString）
+/// 特权
+/// 提示
+/// @param room room
+/// @param giftConfig 礼物配置
+/// 弹幕类型
+/// 私聊带走
+/// SayHi
+/// 是否SVIP
+/// @param combo combo
+/// 0：hint；1：pkEnd
+/// 加入
+/// 弹幕标签地址
+/// @param live 房间信息
+/// 是否VIP
+/// 观众信息
+/// @param giftConfig gift
++ (LJLiveBarrage *)sayHiMessage;
++ (LJLiveBarrage *)joinedMessage;
 - (BOOL)lj_isSameGiftBarrageWith:(LJLiveBarrage *)barrage;
-
++ (LJLiveBarrage *)pkEndMessage;
++ (LJLiveBarrage *)messageWithGift:(LJLiveGift *)giftConfig combo:(NSInteger)combo;
++ (LJLiveBarrage *)hintMessage;
++ (LJLiveBarrage *)messageWithPrivateGift:(LJLiveGift *)giftConfig privateRoom:(LJLivePrivate *)room;
++ (LJLiveBarrage *)messageWithMembers:(NSArray<LJLiveRoomMember *> *)members;
++ (LJLiveBarrage *)messageWithLive:(LJLiveRoom *)live;
+- (BOOL)lj_isDisplayedBarrage;
+- (BOOL)lj_isSystemBarrage;
+@property (nonatomic, assign) BOOL isPrivilege;
+@property (nonatomic, strong) NSString *content;
+@property (nonatomic, assign) BOOL isVip;
+@property (nonatomic, strong) NSString *userName;
+@property (nonatomic, assign) LJLiveUserType userType;
+@property (nonatomic, assign) NSInteger uniqueTagHeight, uniqueTagWidth;
+@property (nonatomic, assign) NSInteger systemMsgType;
+@property (nonatomic, assign) NSInteger giftId, combo, isblindBox;
+@property (nonatomic, strong) NSString *uniqueTagUrl;
+@property (nonatomic, assign) BOOL isSvip;
+@property (nonatomic, assign) LJLiveBarrageType type;
+@property (nonatomic, assign) NSInteger userId;
+@property (nonatomic, strong) NSString *avatar;
 @end
 
 NS_ASSUME_NONNULL_END

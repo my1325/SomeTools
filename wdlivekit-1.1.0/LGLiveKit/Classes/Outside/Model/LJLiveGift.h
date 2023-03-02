@@ -12,25 +12,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGift : LJLiveBaseObject
 
-/// 礼物ID
-@property (nonatomic, assign) NSInteger giftId;
-/// 礼物name
-@property (nonatomic, strong) NSString *giftName;
-/// 价格
-@property (nonatomic, assign) NSInteger giftPrice;
-/// 原价
-@property (nonatomic, assign) NSInteger giftOriPrice;
-/// 礼物图标
-@property (nonatomic, strong) NSString *iconUrl;
-/// svg文件地址
-@property (nonatomic, strong) NSString *svgUrl;
-/// 是否是盲盒
-@property (nonatomic, assign) BOOL isBlindBox;
-///
-@property (nonatomic, strong) NSString *comboIconUrl;
-///
-@property (nonatomic, assign) CGFloat comboSize;
 
+/// 原价
+/// svg文件地址
+/// 礼物name
+/// 礼物图标
+/// 价格
+///
+///
+/// 礼物ID
+/// 是否是盲盒
+@property (nonatomic, strong) NSString *giftName;
+@property (nonatomic, strong) NSString *iconUrl;
+@property (nonatomic, strong) NSString *comboIconUrl;
+@property (nonatomic, assign) CGFloat comboSize;
+@property (nonatomic, assign) BOOL isBlindBox;
+@property (nonatomic, assign) NSInteger giftId;
+@property (nonatomic, strong) NSString *svgUrl;
+@property (nonatomic, assign) NSInteger giftOriPrice;
+@property (nonatomic, assign) NSInteger giftPrice;
 @end
 
 NS_ASSUME_NONNULL_END

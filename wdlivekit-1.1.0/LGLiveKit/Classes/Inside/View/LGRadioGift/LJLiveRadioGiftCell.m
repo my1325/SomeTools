@@ -24,6 +24,22 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
 @end
 @implementation LJLiveRadioGiftCell
 
+
+
+#pragma mark - KVO
+
+
+#pragma mark - 跑马灯代理
+
+
+
+#pragma mark 横向滚动时执行
+
+
+
+- (CGFloat)itemViewWidthAtIndex:(NSUInteger)index forMarqueeView:(LJLiveRadioMarqueeView*)marqueeView {
+    return 100 + [_model.senderName sizeWithFont:[UIFont boldSystemFontOfSize:15] forWidth:MAXFLOAT lineBreakMode:NSLineBreakByWordWrapping].width + [_model.recieverName sizeWithFont:[UIFont boldSystemFontOfSize:15] forWidth:MAXFLOAT lineBreakMode:NSLineBreakByWordWrapping].width;
+}
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -38,7 +54,6 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     }
     return self;
 }
-
 - (void)setModel:(LJLiveRadioGiftModel *)model{
     _model = model;
     self.crosswiseMarquee = [[LJLiveRadioMarqueeView alloc] initWithFrame:CGRectMake(70, 0, 227, 48.5) direction:LJMarqueeViewDirectionLeftward];
@@ -52,9 +67,6 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     [self.crosswiseMarquee pause];
     
 }
-
-#pragma mark - KVO
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if (self.state == LJLiveRadioGiftCellStateEnter) {
@@ -98,25 +110,6 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     }
     
 }
-
-#pragma mark - 跑马灯代理
-- (NSUInteger)numberOfDataForMarqueeView:(LJLiveRadioMarqueeView *)marqueeView {
-    return 1;
-}
-
-- (void)createItemView:(UIView *)itemView forMarqueeView:(LJLiveRadioMarqueeView *)marqueeView{
-
-    UILabel *contentLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 227, 48)];
-    contentLab.font = [UIFont fontWithName:LJLiveRadioGift.shared.boldFontName size:15];
-    contentLab.textColor = [UIColor colorWithRed:122/255.0 green:79/255.0 blue:233/255.0 alpha:1];
-    contentLab.tag = 1001;
-    [itemView addSubview:contentLab];
-    
-    UIImageView *giftImage = [[UIImageView alloc] initWithFrame:CGRectMake(150, 12, 25, 25)];
-    giftImage.tag = 1003;
-    [itemView addSubview:giftImage];
-}
-
 - (void)updateItemView:(UIView *)itemView atIndex:(NSUInteger)index forMarqueeView:(LJLiveRadioMarqueeView *)marqueeView{
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"\u202A%@ Send a         to %@",_model.senderName,_model.recieverName]];
     [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithRed:229/255.0 green:92/255.0 blue:255/255.0 alpha:1] range:[attributedString.string rangeOfString:_model.senderName]];
@@ -146,12 +139,18 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     [giftImage sd_setImageWithURL:[NSURL URLWithString:_model.giftIconUrl] placeholderImage:[UIImage imageNamed:@"lj_radio_gift_default" inBundle:[NSBundle bundleForClass:[LJLiveRadioGiftCell class]] compatibleWithTraitCollection:nil] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
     }];
 }
+- (void)createItemView:(UIView *)itemView forMarqueeView:(LJLiveRadioMarqueeView *)marqueeView{
 
-#pragma mark 横向滚动时执行
-- (CGFloat)itemViewWidthAtIndex:(NSUInteger)index forMarqueeView:(LJLiveRadioMarqueeView*)marqueeView {
-    return 100 + [_model.senderName sizeWithFont:[UIFont boldSystemFontOfSize:15] forWidth:MAXFLOAT lineBreakMode:NSLineBreakByWordWrapping].width + [_model.recieverName sizeWithFont:[UIFont boldSystemFontOfSize:15] forWidth:MAXFLOAT lineBreakMode:NSLineBreakByWordWrapping].width;
+    UILabel *contentLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 227, 48)];
+    contentLab.font = [UIFont fontWithName:LJLiveRadioGift.shared.boldFontName size:15];
+    contentLab.textColor = [UIColor colorWithRed:122/255.0 green:79/255.0 blue:233/255.0 alpha:1];
+    contentLab.tag = 1001;
+    [itemView addSubview:contentLab];
+    
+    UIImageView *giftImage = [[UIImageView alloc] initWithFrame:CGRectMake(150, 12, 25, 25)];
+    giftImage.tag = 1003;
+    [itemView addSubview:giftImage];
 }
-
 - (BOOL)hasKey:(NSString *)kvoKey {
     BOOL hasKey = NO;
     id info = self.observationInfo;
@@ -165,6 +164,7 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     }
     return hasKey;
 }
-
-
+- (NSUInteger)numberOfDataForMarqueeView:(LJLiveRadioMarqueeView *)marqueeView {
+    return 1;
+}
 @end

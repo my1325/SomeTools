@@ -43,38 +43,71 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupDataSource];
-        [self lj_setupViews];
-    }
-    return self;
-}
 
-- (void)dealloc
-{
-    if (self.autoEventTimer) {
-        [self.autoEventTimer invalidate];
-        self.autoEventTimer = nil;
-    }
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
-{
-    // 数据
-    self.autoHeadHeight = 25;
-    self.barrages = [@[] mutableCopy];
-    self.autoScrollToBottom = YES;
-    self.didSayHi = self.didSendGift = self.didFollow = NO;
-    self.haveSayHi = self.haveSendGift = self.haveFollow = NO;
-    self.newMessageShowing = NO;
-    self.autoEventShowing = NO;
-}
 
+
+
+#pragma mark - Event
+
+
+
+#pragma mark - UITableViewDelegate
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - Methods
+
+
+
+
+
+
+
+
+#pragma mark - Public Methods
+
+
+#pragma mark - Receive Event Methods
+
+
+
+#pragma mark - Getter
+
+
+
+
+
+
+#pragma mark - Setter
+
+
+/// newMessage展示动画
+/// @param completion 完成
+/// @param completion 完成
+/// AutoEvent自动消失
+/// 自动滚动至底部
+/// newMessage消失动画
+/// AutoEvent自动加载
+/// @param completion 完成
+/// autoEvent展示动画
+/// autoEvent消失动画
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
+{
+    return NO;
+}
 - (void)lj_setupViews
 {
     // 渐变遮罩
@@ -117,7 +150,104 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
         }];
     };
 }
-
+- (void)dealloc
+{
+    if (self.autoEventTimer) {
+        [self.autoEventTimer invalidate];
+        self.autoEventTimer = nil;
+    }
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
+- (void)lj_autoEventLoading
+{
+    NSMutableArray *waitting = [@[] mutableCopy];
+    if (self.didSayHi) {
+    } else {
+        if (!kLJLiveHelper.barrageMute) {
+            if (self.haveSayHi) {
+            } else {
+                [waitting addObject:@(LJLiveBarrageAutoEventTypeSayHi)];
+            }
+        }
+    }
+    if (self.didSendGift) {
+    } else {
+        if (self.haveSendGift) {
+        } else {
+            [waitting addObject:@(LJLiveBarrageAutoEventTypeSendGift)];
+        }
+    }
+    if (self.didFollow) {
+    } else {
+        if (self.haveFollow) {
+        } else {
+            [waitting addObject:@(LJLiveBarrageAutoEventTypeFollow)];
+        }
+    }
+    if (waitting.count == 0) {
+        
+    } else {
+        // 自动显示
+        NSInteger type = [waitting.firstObject integerValue];
+        // 展示
+        [self lj_autoEventUp:type withCompletion:^{
+        }];
+    }
+}
+- (UITableView *)tableView
+{
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), 0, kLJWidthScale(256), self.height) style:UITableViewStyleGrouped];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.showsVerticalScrollIndicator = NO;
+        _tableView.backgroundColor = UIColor.clearColor;
+        _tableView.estimatedRowHeight = 0;
+        _tableView.estimatedSectionHeaderHeight = 0;
+        _tableView.estimatedSectionFooterHeight = 0;
+        _tableView.rowHeight = UITableViewAutomaticDimension;
+        _tableView.clipsToBounds = NO;
+        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID1];
+        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID2];
+        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID3];
+    }
+    return _tableView;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    return nil;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return section == 0 ? self.autoHeadHeight : 3;
+}
+- (void)newMessageButtonClick:(UIButton *)sender
+{
+    // NewMessage
+    kLJWeakSelf;
+    [self lj_newMessageDownAnimationCompletion:^{
+        weakSelf.autoScrollToBottom = YES;
+        [weakSelf lj_scrollToBottomAutoControl];
+    }];
+}
+- (void)privateButtonClick:(UIButton *)sender
+{
+    // 私聊带走
+    kLJWeakSelf;
+    [LJLiveAuth lj_requestCameraAuthSuccess:^{
+        [LJLiveAuth lj_requestMicrophoneAuth:^{
+            
+            weakSelf.eventBlock(LJLiveEventPrivateChat, nil);
+            
+        } failure:^{
+        }];
+    } failure:^{
+    }];
+}
 - (void)lj_setupTimers
 {
     // 关闭定时器
@@ -167,68 +297,152 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
         
     }];
 }
-
-#pragma mark - Event
-
-- (void)privateButtonClick:(UIButton *)sender
+- (LJLiveBarrageAutoEventView *)autoEventView
 {
-    // 私聊带走
-    kLJWeakSelf;
-    [LJLiveAuth lj_requestCameraAuthSuccess:^{
-        [LJLiveAuth lj_requestMicrophoneAuth:^{
-            
-            weakSelf.eventBlock(LJLiveEventPrivateChat, nil);
-            
-        } failure:^{
-        }];
-    } failure:^{
-    }];
-}
-
-- (void)newMessageButtonClick:(UIButton *)sender
-{
-    // NewMessage
-    kLJWeakSelf;
-    [self lj_newMessageDownAnimationCompletion:^{
-        weakSelf.autoScrollToBottom = YES;
-        [weakSelf lj_scrollToBottomAutoControl];
-    }];
-}
-
-#pragma mark - UITableViewDelegate
-
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-{
-    CGPoint offset = CGPointMake(targetContentOffset->x, targetContentOffset->y);
-    // 底部剩余50内，自动滚动至底部，
-    self.autoScrollToBottom = scrollView.contentSize.height - (offset.y + scrollView.height) < 50;
-    if (self.newMessageShowing && self.autoScrollToBottom) {
-        // 显示着newMessage并且已经滚动至底部
-        [self lj_newMessageDownAnimationCompletion:^{
-        }];
+    if (!_autoEventView) {
+        _autoEventView = [[LJLiveBarrageAutoEventView alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), self.height, 190, 44)];
+        _autoEventView.alpha = 0;
+        _autoEventView.hidden = YES;
     }
+    return _autoEventView;
 }
-
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+- (void)lj_newMessageDownAnimationCompletion:(LJLiveVoidBlock)completion
 {
-    
+    [UIView animateWithDuration:0.3 animations:^{
+        self.newMessageButton.transform = CGAffineTransformIdentity;
+        self.newMessageButton.alpha = 0;
+    } completion:^(BOOL finished) {
+        self.newMessageButton.hidden = YES;
+        self.newMessageShowing = NO;
+        if (completion) completion();
+    }];
 }
-
-- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
+- (void)lj_autoEventUp:(LJLiveBarrageAutoEventType)type withCompletion:(LJLiveVoidBlock)completion
 {
-    return NO;
+    // 加载newMessage
+    self.autoEventView.avatarUrl = self.liveRoom.hostAvatar;
+    self.autoEventView.type = type;
+    self.autoEventView.hidden = NO;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.autoEventView.transform = CGAffineTransformMakeTranslation(0, -44);
+        self.autoEventView.alpha = 1;
+        // table上移
+        self.tableView.transform = CGAffineTransformMakeTranslation(0, -44);
+        // newMessage
+        if (self.newMessageShowing) {
+            self.newMessageButton.transform = CGAffineTransformMakeTranslation(0, -44+3-30);
+        }
+    } completion:^(BOOL finished) {
+        if (type == LJLiveBarrageAutoEventTypeSayHi) self.haveSayHi = YES;
+        if (type == LJLiveBarrageAutoEventTypeFollow) self.haveFollow = YES;
+        if (type == LJLiveBarrageAutoEventTypeSendGift) self.haveSendGift = YES;
+        if (completion) completion();
+    }];
+    self.autoEventShowing = YES;
 }
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return self.barrages.count;
 }
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 1;
+//    self.eventBlock(LJLiveEventPersonalData, nil);
 }
-
+- (void)setLiveRoom:(LJLiveRoom *)liveRoom
+{
+    _liveRoom = liveRoom;
+    // 私聊按钮
+    if (kLJLiveManager.config.privateEnable) {
+        if (liveRoom.isUgc) {
+            self.privateButton.hidden = YES;
+        } else {
+            if (liveRoom.pking) {
+                self.privateButton.hidden = YES;
+            } else {
+                self.privateButton.hidden = liveRoom.privateChatFlag == 2;
+            }
+        }
+    } else {
+        self.privateButton.hidden = YES;
+    }
+    self.didFollow = liveRoom.isHostFollowed;
+}
+- (void)lj_autoEventDownWithCompletion:(LJLiveVoidBlock)completion
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.autoEventView.transform = CGAffineTransformIdentity;
+        self.autoEventView.alpha = 0;
+        // table下移
+        self.tableView.transform = CGAffineTransformIdentity;
+        // newMessage
+        if (self.newMessageShowing) {
+            self.newMessageButton.transform = CGAffineTransformMakeTranslation(0, -30+3);
+        }
+    } completion:^(BOOL finished) {
+        self.autoEventView.hidden = YES;
+        self.autoEventShowing = NO;
+        if (completion) completion();
+    }];
+}
+- (void)lj_scrollToBottomAutoControl
+{
+    if (self.autoScrollToBottom) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.barrages.count > 0) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:self.barrages.count - 1] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+        });
+    }
+}
+- (void)lj_receiveFrameUpdate:(BOOL)isPk
+{
+    // 更新布局
+    CGFloat height = isPk ? kLJLiveHelper.ui.pkBarrageRect.size.height : kLJLiveHelper.ui.barrageRect.size.height;
+    if (self.tableView.height == height) return;
+    self.tableView.height = height;
+    self.autoEventView.y = height;
+    self.privateButton.y = height - 104/2 - 5;
+    self.newMessageButton.y = height;
+    // 更新遮罩
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.bounds = CGRectMake(0, 0, self.width, height);
+    gradientLayer.locations = @[@(0), @(30/height), @(1)];
+    gradientLayer.anchorPoint = CGPointZero;
+    NSArray *colors = @[(__bridge id)UIColor.clearColor.CGColor,
+                        (__bridge id)UIColor.whiteColor.CGColor,
+                        (__bridge id)UIColor.whiteColor.CGColor];
+    gradientLayer.colors = colors;
+    self.layer.mask = gradientLayer;
+    // 滚动至底部
+    [self lj_scrollToBottomAutoControl];
+}
+- (void)lj_autoEventDismiss
+{
+    [self lj_autoEventDownWithCompletion:^{
+    }];
+}
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    
+}
+- (UIButton *)privateButton
+{
+    if (!_privateButton) {
+        _privateButton = [[UIButton alloc] initWithFrame:CGRectMake(kLJScreenWidth - 200/2, self.height - 104/2 - 5, 200/2, 104/2)];
+        [_privateButton addTarget:self action:@selector(privateButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        NSMutableArray *marr = [@[] mutableCopy];
+        for (int i = 0; i < 40; i++) {
+            NSString *imagename = [NSString stringWithFormat:@"lj_live_private_%@_%02d", kLJLiveManager.inside.localizableAbbr, i];
+            [marr addObject:kLJImageNamed(imagename)];
+        }
+        [_privateButton setImage:marr.firstObject forState:UIControlStateNormal];
+        _privateButton.imageView.animationImages = marr;
+        _privateButton.imageView.animationDuration = 5;
+        [_privateButton.imageView startAnimating];
+        _privateButton.hidden = YES;
+    }
+    return _privateButton;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     kLJWeakSelf;
@@ -275,144 +489,10 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
     };
     return system;
 }
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-//    self.eventBlock(LJLiveEventPersonalData, nil);
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    return nil;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    return nil;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return section == 0 ? self.autoHeadHeight : 3;
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     return 0.01;
 }
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    LJLiveBarrageViewModel *barrage = self.barrages[indexPath.section];
-    return barrage.contentSize.height;
-}
-
-#pragma mark - Methods
-
-/// AutoEvent自动加载
-- (void)lj_autoEventLoading
-{
-    NSMutableArray *waitting = [@[] mutableCopy];
-    if (self.didSayHi) {
-    } else {
-        if (!kLJLiveHelper.barrageMute) {
-            if (self.haveSayHi) {
-            } else {
-                [waitting addObject:@(LJLiveBarrageAutoEventTypeSayHi)];
-            }
-        }
-    }
-    if (self.didSendGift) {
-    } else {
-        if (self.haveSendGift) {
-        } else {
-            [waitting addObject:@(LJLiveBarrageAutoEventTypeSendGift)];
-        }
-    }
-    if (self.didFollow) {
-    } else {
-        if (self.haveFollow) {
-        } else {
-            [waitting addObject:@(LJLiveBarrageAutoEventTypeFollow)];
-        }
-    }
-    if (waitting.count == 0) {
-        
-    } else {
-        // 自动显示
-        NSInteger type = [waitting.firstObject integerValue];
-        // 展示
-        [self lj_autoEventUp:type withCompletion:^{
-        }];
-    }
-}
-
-/// AutoEvent自动消失
-- (void)lj_autoEventDismiss
-{
-    [self lj_autoEventDownWithCompletion:^{
-    }];
-}
-
-/// 自动滚动至底部
-- (void)lj_scrollToBottomAutoControl
-{
-    if (self.autoScrollToBottom) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (self.barrages.count > 0) {
-                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:self.barrages.count - 1] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-            }
-        });
-    }
-}
-
-/// autoEvent展示动画
-/// @param completion 完成
-- (void)lj_autoEventUp:(LJLiveBarrageAutoEventType)type withCompletion:(LJLiveVoidBlock)completion
-{
-    // 加载newMessage
-    self.autoEventView.avatarUrl = self.liveRoom.hostAvatar;
-    self.autoEventView.type = type;
-    self.autoEventView.hidden = NO;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.autoEventView.transform = CGAffineTransformMakeTranslation(0, -44);
-        self.autoEventView.alpha = 1;
-        // table上移
-        self.tableView.transform = CGAffineTransformMakeTranslation(0, -44);
-        // newMessage
-        if (self.newMessageShowing) {
-            self.newMessageButton.transform = CGAffineTransformMakeTranslation(0, -44+3-30);
-        }
-    } completion:^(BOOL finished) {
-        if (type == LJLiveBarrageAutoEventTypeSayHi) self.haveSayHi = YES;
-        if (type == LJLiveBarrageAutoEventTypeFollow) self.haveFollow = YES;
-        if (type == LJLiveBarrageAutoEventTypeSendGift) self.haveSendGift = YES;
-        if (completion) completion();
-    }];
-    self.autoEventShowing = YES;
-}
-
-/// autoEvent消失动画
-- (void)lj_autoEventDownWithCompletion:(LJLiveVoidBlock)completion
-{
-    [UIView animateWithDuration:0.3 animations:^{
-        self.autoEventView.transform = CGAffineTransformIdentity;
-        self.autoEventView.alpha = 0;
-        // table下移
-        self.tableView.transform = CGAffineTransformIdentity;
-        // newMessage
-        if (self.newMessageShowing) {
-            self.newMessageButton.transform = CGAffineTransformMakeTranslation(0, -30+3);
-        }
-    } completion:^(BOOL finished) {
-        self.autoEventView.hidden = YES;
-        self.autoEventShowing = NO;
-        if (completion) completion();
-    }];
-}
-
-/// newMessage展示动画
-/// @param completion 完成
 - (void)lj_newMessageAutoUpAnimationCompletion:(LJLiveVoidBlock)completion
 {
     if (self.autoScrollToBottom) {
@@ -431,82 +511,56 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
         }
     }
 }
-
-/// newMessage消失动画
-/// @param completion 完成
-- (void)lj_newMessageDownAnimationCompletion:(LJLiveVoidBlock)completion
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    [UIView animateWithDuration:0.3 animations:^{
-        self.newMessageButton.transform = CGAffineTransformIdentity;
-        self.newMessageButton.alpha = 0;
-    } completion:^(BOOL finished) {
-        self.newMessageButton.hidden = YES;
-        self.newMessageShowing = NO;
-        if (completion) completion();
-    }];
-}
-
-#pragma mark - Public Methods
-
-- (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
-{
-    // 开始PK
-    if (event == LJLiveEventPKReceiveVideo) [self lj_receiveFrameUpdate:YES];
-    
-    // 收到PK数据，刷新UI显示
-    if (event == LJLiveEventPKReceiveMatchSuccessed) [self lj_receiveFrameUpdate:YES];
-    
-    // 结束PK
-    if (event == LJLiveEventPKEnded) [self lj_receiveFrameUpdate:NO];
-    
-    // 关注状态
-    if (event == LJLiveEventFollow && [obj isKindOfClass:[NSArray class]]) {
-        NSArray *array = (NSArray *)obj;
-        BOOL followed = [array.lastObject boolValue];
-        self.didFollow = followed;
-    }
-    
-    // 清屏
-    if (event == LJLiveEventRoomLeave) {
-        // 关闭定时器
-        if (self.autoEventTimer) {
-            [self.autoEventTimer invalidate];
-            self.autoEventTimer = nil;
-        }
-        // 清空
+    self = [super initWithFrame:frame];
+    if (self) {
         [self lj_setupDataSource];
-        [self.tableView reloadData];
-        //
+        [self lj_setupViews];
+    }
+    return self;
+}
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    CGPoint offset = CGPointMake(targetContentOffset->x, targetContentOffset->y);
+    // 底部剩余50内，自动滚动至底部，
+    self.autoScrollToBottom = scrollView.contentSize.height - (offset.y + scrollView.height) < 50;
+    if (self.newMessageShowing && self.autoScrollToBottom) {
+        // 显示着newMessage并且已经滚动至底部
         [self lj_newMessageDownAnimationCompletion:^{
         }];
-        [self lj_autoEventDownWithCompletion:^{
-        }];
-        self.privateButton.hidden = YES;
-        LJLog(@"live debug - barrage leave.");
-    }
-
-    // 更新私聊按钮
-    if (event == LJLiveEventUpdatePrivateChat && [obj isKindOfClass:[LJLivePrivateChatFlagMsg class]]) {
-        if (kLJLiveManager.config.privateEnable) {
-            if (self.liveRoom.isUgc) {
-                self.privateButton.hidden = YES;
-            } else {
-                LJLivePrivateChatFlagMsg *private = (LJLivePrivateChatFlagMsg *)obj;
-                self.privateButton.hidden = private.privateChatFlag == 2;
-            }
-        } else {
-            self.privateButton.hidden = YES;
-        }
-    }
-    
-    // 收到弹幕
-    if (event == LJLiveEventReceivedBarrage && [obj isKindOfClass:[LJLiveBarrage class]]) {
-        [self lj_receiveBarrage:(LJLiveBarrage *)obj];
     }
 }
-
-#pragma mark - Receive Event Methods
-
+- (void)lj_setupDataSource
+{
+    // 数据
+    self.autoHeadHeight = 25;
+    self.barrages = [@[] mutableCopy];
+    self.autoScrollToBottom = YES;
+    self.didSayHi = self.didSendGift = self.didFollow = NO;
+    self.haveSayHi = self.haveSendGift = self.haveFollow = NO;
+    self.newMessageShowing = NO;
+    self.autoEventShowing = NO;
+}
+- (UIButton *)newMessageButton
+{
+    if (!_newMessageButton) {
+        _newMessageButton = [[UIButton alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), self.height, 104, 20)];
+        [_newMessageButton addTarget:self action:@selector(newMessageButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_newMessageButton setImage:kLJImageNamed(kLJLocalString(@"lj_live_newmessage_icon")) forState:UIControlStateNormal];
+        _newMessageButton.alpha = 0;
+        _newMessageButton.hidden = YES;
+    }
+    return _newMessageButton;
+}
+- (UIView *)containerView
+{
+    if (!_containerView) {
+        _containerView = [[UIView alloc] initWithFrame:self.bounds];
+        _containerView.backgroundColor = UIColor.clearColor;
+    }
+    return _containerView;
+}
 - (void)lj_receiveBarrage:(LJLiveBarrage *)obj
 {
     // 加入房间
@@ -564,123 +618,69 @@ static NSString *const kCellID3 = @"LJLiveBarrageViewCellID3";
         }
     }
 }
-
-- (void)lj_receiveFrameUpdate:(BOOL)isPk
+- (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
-    // 更新布局
-    CGFloat height = isPk ? kLJLiveHelper.ui.pkBarrageRect.size.height : kLJLiveHelper.ui.barrageRect.size.height;
-    if (self.tableView.height == height) return;
-    self.tableView.height = height;
-    self.autoEventView.y = height;
-    self.privateButton.y = height - 104/2 - 5;
-    self.newMessageButton.y = height;
-    // 更新遮罩
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.bounds = CGRectMake(0, 0, self.width, height);
-    gradientLayer.locations = @[@(0), @(30/height), @(1)];
-    gradientLayer.anchorPoint = CGPointZero;
-    NSArray *colors = @[(__bridge id)UIColor.clearColor.CGColor,
-                        (__bridge id)UIColor.whiteColor.CGColor,
-                        (__bridge id)UIColor.whiteColor.CGColor];
-    gradientLayer.colors = colors;
-    self.layer.mask = gradientLayer;
-    // 滚动至底部
-    [self lj_scrollToBottomAutoControl];
-}
-
-#pragma mark - Getter
-
-- (UIView *)containerView
-{
-    if (!_containerView) {
-        _containerView = [[UIView alloc] initWithFrame:self.bounds];
-        _containerView.backgroundColor = UIColor.clearColor;
+    // 开始PK
+    if (event == LJLiveEventPKReceiveVideo) [self lj_receiveFrameUpdate:YES];
+    
+    // 收到PK数据，刷新UI显示
+    if (event == LJLiveEventPKReceiveMatchSuccessed) [self lj_receiveFrameUpdate:YES];
+    
+    // 结束PK
+    if (event == LJLiveEventPKEnded) [self lj_receiveFrameUpdate:NO];
+    
+    // 关注状态
+    if (event == LJLiveEventFollow && [obj isKindOfClass:[NSArray class]]) {
+        NSArray *array = (NSArray *)obj;
+        BOOL followed = [array.lastObject boolValue];
+        self.didFollow = followed;
     }
-    return _containerView;
-}
-
-- (UITableView *)tableView
-{
-    if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), 0, kLJWidthScale(256), self.height) style:UITableViewStyleGrouped];
-        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        _tableView.delegate = self;
-        _tableView.dataSource = self;
-        _tableView.showsVerticalScrollIndicator = NO;
-        _tableView.backgroundColor = UIColor.clearColor;
-        _tableView.estimatedRowHeight = 0;
-        _tableView.estimatedSectionHeaderHeight = 0;
-        _tableView.estimatedSectionFooterHeight = 0;
-        _tableView.rowHeight = UITableViewAutomaticDimension;
-        _tableView.clipsToBounds = NO;
-        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID1];
-        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID2];
-        [_tableView registerClass:[LJLiveBarrageCell class] forCellReuseIdentifier:kCellID3];
-    }
-    return _tableView;
-}
-
-- (UIButton *)privateButton
-{
-    if (!_privateButton) {
-        _privateButton = [[UIButton alloc] initWithFrame:CGRectMake(kLJScreenWidth - 200/2, self.height - 104/2 - 5, 200/2, 104/2)];
-        [_privateButton addTarget:self action:@selector(privateButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        NSMutableArray *marr = [@[] mutableCopy];
-        for (int i = 0; i < 40; i++) {
-            NSString *imagename = [NSString stringWithFormat:@"lj_live_private_%@_%02d", kLJLiveManager.inside.localizableAbbr, i];
-            [marr addObject:kLJImageNamed(imagename)];
+    
+    // 清屏
+    if (event == LJLiveEventRoomLeave) {
+        // 关闭定时器
+        if (self.autoEventTimer) {
+            [self.autoEventTimer invalidate];
+            self.autoEventTimer = nil;
         }
-        [_privateButton setImage:marr.firstObject forState:UIControlStateNormal];
-        _privateButton.imageView.animationImages = marr;
-        _privateButton.imageView.animationDuration = 5;
-        [_privateButton.imageView startAnimating];
-        _privateButton.hidden = YES;
+        // 清空
+        [self lj_setupDataSource];
+        [self.tableView reloadData];
+        //
+        [self lj_newMessageDownAnimationCompletion:^{
+        }];
+        [self lj_autoEventDownWithCompletion:^{
+        }];
+        self.privateButton.hidden = YES;
+        LJLog(@"live debug - barrage leave.");
     }
-    return _privateButton;
-}
 
-- (UIButton *)newMessageButton
-{
-    if (!_newMessageButton) {
-        _newMessageButton = [[UIButton alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), self.height, 104, 20)];
-        [_newMessageButton addTarget:self action:@selector(newMessageButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-        [_newMessageButton setImage:kLJImageNamed(kLJLocalString(@"lj_live_newmessage_icon")) forState:UIControlStateNormal];
-        _newMessageButton.alpha = 0;
-        _newMessageButton.hidden = YES;
-    }
-    return _newMessageButton;
-}
-
-- (LJLiveBarrageAutoEventView *)autoEventView
-{
-    if (!_autoEventView) {
-        _autoEventView = [[LJLiveBarrageAutoEventView alloc] initWithFrame:CGRectMake(kLJIpnsWidthScale(15), self.height, 190, 44)];
-        _autoEventView.alpha = 0;
-        _autoEventView.hidden = YES;
-    }
-    return _autoEventView;
-}
-
-#pragma mark - Setter
-
-- (void)setLiveRoom:(LJLiveRoom *)liveRoom
-{
-    _liveRoom = liveRoom;
-    // 私聊按钮
-    if (kLJLiveManager.config.privateEnable) {
-        if (liveRoom.isUgc) {
-            self.privateButton.hidden = YES;
-        } else {
-            if (liveRoom.pking) {
+    // 更新私聊按钮
+    if (event == LJLiveEventUpdatePrivateChat && [obj isKindOfClass:[LJLivePrivateChatFlagMsg class]]) {
+        if (kLJLiveManager.config.privateEnable) {
+            if (self.liveRoom.isUgc) {
                 self.privateButton.hidden = YES;
             } else {
-                self.privateButton.hidden = liveRoom.privateChatFlag == 2;
+                LJLivePrivateChatFlagMsg *private = (LJLivePrivateChatFlagMsg *)obj;
+                self.privateButton.hidden = private.privateChatFlag == 2;
             }
+        } else {
+            self.privateButton.hidden = YES;
         }
-    } else {
-        self.privateButton.hidden = YES;
     }
-    self.didFollow = liveRoom.isHostFollowed;
+    
+    // 收到弹幕
+    if (event == LJLiveEventReceivedBarrage && [obj isKindOfClass:[LJLiveBarrage class]]) {
+        [self lj_receiveBarrage:(LJLiveBarrage *)obj];
+    }
 }
-
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    LJLiveBarrageViewModel *barrage = self.barrages[indexPath.section];
+    return barrage.contentSize.height;
+}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    return nil;
+}
 @end

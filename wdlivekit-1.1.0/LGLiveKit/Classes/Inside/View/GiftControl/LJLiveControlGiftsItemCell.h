@@ -11,18 +11,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveControlGiftsItemCell : UICollectionViewCell
 
-@property (nonatomic, strong) LJLiveGift *giftConfig;
 
-@property (weak, nonatomic) IBOutlet UIImageView *giftImageView;
 
-@property (weak, nonatomic) IBOutlet UILabel *coinsLabel;
 
-@property (weak, nonatomic) IBOutlet UIButton *topRightButton;
 
-@property (nonatomic, copy) LJLiveVoidBlock clickBlindboxDetail;
+
 
 @property (nonatomic, copy) LJLiveVoidBlock sendGiftBlock;
-
+@property (nonatomic, copy) LJLiveVoidBlock clickBlindboxDetail;
+@property (weak, nonatomic) IBOutlet UIImageView *giftImageView;
+@property (weak, nonatomic) IBOutlet UIButton *topRightButton;
+@property (weak, nonatomic) IBOutlet UILabel *coinsLabel;
+@property (nonatomic, strong) LJLiveGift *giftConfig;
 @end
 
 NS_ASSUME_NONNULL_END

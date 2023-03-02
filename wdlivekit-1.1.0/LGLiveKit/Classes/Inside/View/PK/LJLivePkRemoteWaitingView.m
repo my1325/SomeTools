@@ -9,8 +9,8 @@
 
 @interface LJLivePkRemoteWaitingView ()
 
-@property (weak, nonatomic) IBOutlet YYAnimatedImageView *waitingView;
 
+@property (weak, nonatomic) IBOutlet YYAnimatedImageView *waitingView;
 @end
 
 @implementation LJLivePkRemoteWaitingView
@@ -26,13 +26,9 @@
     return view;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
+
 
 - (void)lj_setupViews
 {
@@ -40,5 +36,9 @@
 //    NSString *path = [kLJLiveBundle pathForResource:@"lj_live_pk_waiting" ofType:@"gif"];
 //    self.waitingView.yy_imageURL = [NSURL fileURLWithPath:path];
 }
-
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupViews];
+}
 @end

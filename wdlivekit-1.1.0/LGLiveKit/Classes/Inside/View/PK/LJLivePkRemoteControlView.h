@@ -11,19 +11,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkRemoteControlView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-@property (nonatomic, strong) LJLivePkPlayer *remotePlayer;
 
-@property (nonatomic, assign) BOOL isMuted;
 
-+ (LJLivePkRemoteControlView *)lj_remoteControlView;
+
 
 /// 刷新内部
-/// @param event 事件
 /// @param obj 对象
+/// @param event 事件
++ (LJLivePkRemoteControlView *)lj_remoteControlView;
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, assign) BOOL isMuted;
+@property (nonatomic, strong) LJLivePkPlayer *remotePlayer;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 @end
 
 NS_ASSUME_NONNULL_END

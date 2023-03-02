@@ -11,15 +11,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkLocalControlView : UIView
 
-@property (nonatomic, strong) LJLivePkPlayer *homePlayer;
 
-+ (LJLivePkLocalControlView *)lj_localControlView;
 
+
+/// @param obj 对象
 /// 刷新内部
 /// @param event 事件
-/// @param obj 对象
++ (LJLivePkLocalControlView *)lj_localControlView;
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, strong) LJLivePkPlayer *homePlayer;
 @end
 
 NS_ASSUME_NONNULL_END

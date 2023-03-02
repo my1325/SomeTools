@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkProgressView : UIView
 
-@property (nonatomic, assign) NSInteger homePoint, awayPoint;
+
 
 /// 刷新内部
-/// @param event 事件
 /// @param obj 对象
+/// @param event 事件
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, assign) NSInteger homePoint, awayPoint;
 @end
 
 NS_ASSUME_NONNULL_END

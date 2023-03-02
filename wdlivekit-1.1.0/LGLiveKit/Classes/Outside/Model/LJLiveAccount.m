@@ -10,11 +10,11 @@
 
 @implementation LJLiveAccount
 
+
 - (BOOL)isGreen
 {
     return (self.abTestFlag & 1073741824) != 0;
 }
-
 @end
 
 
@@ -28,34 +28,34 @@
 + (NSDictionary *)mj_objectClassInArray
 {
     return @{
-//        @"giftConfigs": [LJLiveGift class],
-//        @"iapConfigs":  [LJIapConfig class],
-//        @"ppConfigs":   [LJIapConfig class],
-//        @"ccConfigs":   [LJIapConfig class],
-//        @"voiceChatRoomGiftConfigs": [LJLiveGift class],
         @"bannerInfoList": [LJBannerInfo class],
         @"voiceChatRoomBannerInfoList":[LJBannerInfo class],
         @"payConfigs": [LJPayConfig class],
-//        @"videoChatRoomConfig": [LJLiveConfig class]
     };
 }
 
 + (NSDictionary *)mj_replacedKeyFromPropertyName
 {
     return @{
-//        @"iapConfigs": @"iapConfigs.iapConfig",
-//        @"ppConfigs": @"ppConfigs.ppConfig",
-//        @"ccConfigs": @"ccConfigs.ccConfig",
-//        @"giftConfigs": @"giftConfigs.giftConfig",
-//        @"drawTypeList" : @"drawTypeList.drawT",
         @"rechargeTList": @"rechargeTList.rechargeT",
         @"bannerInfoList": @"bannerInfoList.bannerInfo",
         @"voiceChatRoomBannerInfoList":@"voiceChatRoomBannerInfoList.bannerInfo",
-//        @"voiceChatRoomGiftConfigs": @"voiceChatRoomGiftConfigs.giftConfig",
         @"liveConfig": @"videoChatRoomConfig"
     };
 }
 
+//        @"ppConfigs": @"ppConfigs.ppConfig",
+//        @"ccConfigs":   [LJIapConfig class],
+//        @"ccConfigs": @"ccConfigs.ccConfig",
+//        @"giftConfigs": [LJLiveGift class],
+//        @"iapConfigs": @"iapConfigs.iapConfig",
+//        @"ppConfigs":   [LJIapConfig class],
+//        @"voiceChatRoomGiftConfigs": [LJLiveGift class],
+//        @"giftConfigs": @"giftConfigs.giftConfig",
+//        @"voiceChatRoomGiftConfigs": @"voiceChatRoomGiftConfigs.giftConfig",
+//        @"drawTypeList" : @"drawTypeList.drawT",
+//        @"iapConfigs":  [LJIapConfig class],
+//        @"videoChatRoomConfig": [LJLiveConfig class]
 @end
 
 
@@ -88,16 +88,8 @@
 
 @implementation LJUniqueTag
 
-- (NSString *)lj_activityUrl
-{
-    if (self.imageUrl.length > 0 && self.timeInterval > 0) return self.imageUrl;
-    return @"";
-}
 
-- (NSInteger)timeInterval
-{
-    return self.expirationTime - ([[NSDate date] timeIntervalSince1970] - [self lj_timeStampFrom2017ToNow]);
-}
+
 
 - (NSInteger)lj_timeStampFrom2017ToNow
 {
@@ -111,7 +103,15 @@
     NSInteger second = [[NSNumber numberWithDouble:newDate] integerValue];
     return second;
 }
-
+- (NSString *)lj_activityUrl
+{
+    if (self.imageUrl.length > 0 && self.timeInterval > 0) return self.imageUrl;
+    return @"";
+}
+- (NSInteger)timeInterval
+{
+    return self.expirationTime - ([[NSDate date] timeIntervalSince1970] - [self lj_timeStampFrom2017ToNow]);
+}
 @end
 
 @implementation LJPayConfig

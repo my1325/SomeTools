@@ -23,16 +23,13 @@
             }
         }
     }
-    // 取当前展示的控制器
     result = window.rootViewController;
     while (result.presentedViewController) {
         result = result.presentedViewController;
     }
-    // 如果为UITabBarController：取选中控制器
     if ([result isKindOfClass:[UITabBarController class]]) {
         result = [(UITabBarController *)result selectedViewController];
     }
-    // 如果为UINavigationController：取可视控制器
     if ([result isKindOfClass:[UINavigationController class]]) {
         result = [(UINavigationController *)result visibleViewController];
     }
@@ -94,4 +91,7 @@
     return targetRect;
 }
 
+    // 取当前展示的控制器
+    // 如果为UITabBarController：取选中控制器
+    // 如果为UINavigationController：取可视控制器
 @end

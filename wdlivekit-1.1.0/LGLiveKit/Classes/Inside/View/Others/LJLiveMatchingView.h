@@ -12,12 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 匹配成功，倒计时
 @interface LJLiveMatchingView : UIView
 
-- (void)lj_matchingSuccessed:(UIView *)inView
-                anchorAvatar:(NSString *)anchorAvatar
-                  anchorName:(NSString *)anchorName
-                  userAvatar:(NSString *)userAvatar
-                    userName:(NSString *)userName
-            withDelayDismiss:(LJLiveVoidBlock)dismissBlock;
+
 
 - (void)lj_matchingCountdown:(UIView *)inView
                 anchorAvatar:(NSString *)anchorAvatar
@@ -25,7 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
                   userAvatar:(NSString *)userAvatar
                     userName:(NSString *)userName
             withDelayDismiss:(LJLiveVoidBlock)dismissBlock;
-
+- (void)lj_matchingSuccessed:(UIView *)inView
+                anchorAvatar:(NSString *)anchorAvatar
+                  anchorName:(NSString *)anchorName
+                  userAvatar:(NSString *)userAvatar
+                    userName:(NSString *)userName
+            withDelayDismiss:(LJLiveVoidBlock)dismissBlock;
 @end
 
 NS_ASSUME_NONNULL_END

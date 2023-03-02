@@ -9,69 +9,37 @@
 
 @interface LJLiveBarrageCell ()
 
+
+
+
+
 @property (nonatomic, strong) UIView *containerView;
-
 @property (nonatomic, strong) UIButton *nameButton;
-
-@property (nonatomic, strong) UILabel *contentLabel;
-
 @property (nonatomic, strong) UIImageView *backgroudImageView;
-
+@property (nonatomic, strong) UILabel *contentLabel;
 @end
 
 @implementation LJLiveBarrageCell
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
 
-- (void)lj_setupViews
-{
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.backgroundColor = UIColor.clearColor;
-    self.contentView.backgroundColor = UIColor.clearColor;
-    
-    self.containerView.layer.cornerRadius = 6;
-    self.containerView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
-    
-    [self.contentView addSubview:self.containerView];
-    [self.containerView addSubview:self.backgroudImageView];
-    [self.containerView addSubview:self.contentLabel];
-    [self.containerView addSubview:self.nameButton];
-    [self lj_updateConstraints];
-}
 
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    [self.contentLabel sizeToFit];
-}
 
-- (void)lj_updateConstraints
-{
-    [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsMake(2, 6, 4, 6));
-    }];
-}
 
 #pragma mark - Event
 
-- (void)nameButtonClick:(UIButton *)sender
-{
-    // 点击名字
-    if (self.nameBlock) self.nameBlock();
-}
 
 #pragma mark - Getter
+
+
+
+
+
+#pragma mark - Setter
+
 
 - (UIView *)containerView
 {
@@ -80,35 +48,6 @@
     }
     return _containerView;
 }
-
-- (UIButton *)nameButton
-{
-    if (!_nameButton) {
-        _nameButton = [[UIButton alloc] init];
-        [_nameButton addTarget:self action:@selector(nameButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _nameButton;
-}
-
-- (UILabel *)contentLabel
-{
-    if (!_contentLabel) {
-        _contentLabel = [[UILabel alloc] init];
-        _contentLabel.numberOfLines = 0;
-    }
-    return _contentLabel;
-}
-
-- (UIImageView *)backgroudImageView
-{
-    if (!_backgroudImageView) {
-        _backgroudImageView = [[UIImageView alloc] init];
-    }
-    return _backgroudImageView;;
-}
-
-#pragma mark - Setter
-
 - (void)setViewModel:(LJLiveBarrageViewModel *)viewModel
 {
     _viewModel = viewModel;
@@ -130,5 +69,66 @@
     }
     [self lj_updateConstraints];
 }
-
+- (UILabel *)contentLabel
+{
+    if (!_contentLabel) {
+        _contentLabel = [[UILabel alloc] init];
+        _contentLabel.numberOfLines = 0;
+    }
+    return _contentLabel;
+}
+- (UIButton *)nameButton
+{
+    if (!_nameButton) {
+        _nameButton = [[UIButton alloc] init];
+        [_nameButton addTarget:self action:@selector(nameButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _nameButton;
+}
+- (void)lj_updateConstraints
+{
+    [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsMake(2, 6, 4, 6));
+    }];
+}
+- (UIImageView *)backgroudImageView
+{
+    if (!_backgroudImageView) {
+        _backgroudImageView = [[UIImageView alloc] init];
+    }
+    return _backgroudImageView;;
+}
+- (void)nameButtonClick:(UIButton *)sender
+{
+    // 点击名字
+    if (self.nameBlock) self.nameBlock();
+}
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        [self lj_setupViews];
+    }
+    return self;
+}
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self.contentLabel sizeToFit];
+}
+- (void)lj_setupViews
+{
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    self.backgroundColor = UIColor.clearColor;
+    self.contentView.backgroundColor = UIColor.clearColor;
+    
+    self.containerView.layer.cornerRadius = 6;
+    self.containerView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];
+    
+    [self.contentView addSubview:self.containerView];
+    [self.containerView addSubview:self.backgroudImageView];
+    [self.containerView addSubview:self.contentLabel];
+    [self.containerView addSubview:self.nameButton];
+    [self lj_updateConstraints];
+}
 @end

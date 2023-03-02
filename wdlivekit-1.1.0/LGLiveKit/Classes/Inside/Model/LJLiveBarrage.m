@@ -15,7 +15,6 @@
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
     LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeJoinLive;
     barrage.userId = account.accountId;
@@ -35,7 +34,6 @@
 + (LJLiveBarrage *)hintMessage
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeHint;
     barrage.userId = account.accountId;
@@ -51,8 +49,6 @@
 + (LJLiveBarrage *)pkEndMessage
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
-//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeHint;
     barrage.systemMsgType = 1;
@@ -70,7 +66,6 @@
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
     LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeTextMessage;
     barrage.userId = account.accountId;
@@ -90,7 +85,6 @@
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
     LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;//模型转换
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeGift;
     barrage.userId = account.accountId;
@@ -101,8 +95,6 @@
     barrage.uniqueTagUrl = [accountConfig.defaultEventLabel lj_activityUrl];
     barrage.uniqueTagHeight = accountConfig.defaultEventLabel.imageHeight;
     barrage.uniqueTagWidth = accountConfig.defaultEventLabel.imageWidth;
-    // 协定
-//    barrage.content = @"";
     barrage.content = [giftConfig mj_JSONString];
     barrage.giftId = giftConfig.giftId;
     barrage.combo = combo;
@@ -114,8 +106,6 @@
                                privateRoom:(LJLivePrivate *)room
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
-//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeTakeAnchor;
     barrage.userId = account.accountId;
@@ -123,9 +113,7 @@
     barrage.avatar = account.avatar;
     barrage.isVip = account.rechargeAmount > 0.1;
     barrage.isSvip = account.isSVip;
-    //
     NSMutableDictionary *mdit = [room.dictionary mutableCopy];
-    // 协定改为自己的支持状态（真心话大冒险遗弃）
     BOOL enable = NO;//kLJLiveManager.inside.accountConfig.truthOrDareConfig.isTruthOrDareOn;
     [mdit setValue:[NSNumber numberWithBool:enable] forKey:@"isTruthOrDareOn"];
     [mdit setValue:account.dictionary forKey:@"callUser"];
@@ -139,8 +127,6 @@
 + (LJLiveBarrage *)messageWithLive:(LJLiveRoom *)live
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
-//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeLiveRoomInfo;
     barrage.userId = account.accountId;
@@ -148,7 +134,6 @@
     barrage.avatar = account.avatar;
     barrage.isVip = account.rechargeAmount > 0.1;
     barrage.isSvip = account.isSVip;
-    // RTM限制32K长度，为了避免超长，剔除部分无用数据
     LJLiveRoom *room = [[LJLiveRoom alloc] initWithDictionary:live.mj_keyValues];
     room.dictionary = @{};
     room.gifts = @[];
@@ -160,8 +145,6 @@
 + (LJLiveBarrage *)messageWithMembers:(NSArray<LJLiveRoomMember *> *)members
 {
     LJLiveAccount *account = kLJLiveManager.inside.account;
-//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
-    //
     LJLiveBarrage *barrage = [[LJLiveBarrage alloc] init];
     barrage.type = LJLiveBarrageTypeMembersInfo;
     barrage.userId = account.accountId;
@@ -169,7 +152,6 @@
     barrage.avatar = account.avatar;
     barrage.isVip = account.rechargeAmount > 0.1;
     barrage.isSvip = account.isSVip;
-    // 协定
     barrage.content = [[LJLiveRoomMember mj_keyValuesArrayWithObjectArray:members] mj_JSONString];
     barrage.userType = LJLiveUserTypeUser;
     return barrage;
@@ -177,13 +159,46 @@
 
 #pragma mark - Methods
 
+
+
+
+
+
+    //
+    // 协定改为自己的支持状态（真心话大冒险遗弃）
+    // 协定
+//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
+    //
+    // RTM限制32K长度，为了避免超长，剔除部分无用数据
+    //
+    //
+/// 需要显示的消息
+    //
+//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
+    //
+    // 协定
+//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
+//    barrage.content = @"";
+//    LJLiveAccountConfig *accountConfig = kLJLiveManager.inside.accountConfig;
+    //
 /// 3s自动消失的消息
+    //
+    //
+- (NSString *)content{
+    NSString *result = [(NSString *)_content stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    return [result stringByRemovingPercentEncoding];
+}
 - (BOOL)lj_isSystemBarrage
 {
     return self.type == LJLiveBarrageTypeJoinLive || self.type == LJLiveBarrageTypeBeMute;
 }
-
-/// 需要显示的消息
+- (BOOL)lj_isSameGiftBarrageWith:(LJLiveBarrage *)barrage
+{
+    if (self.giftId == barrage.giftId && self.userId == barrage.userId) {
+        return YES;
+    }
+    return NO;
+}
 - (BOOL)lj_isDisplayedBarrage
 {
     switch (self.type) {
@@ -199,21 +214,6 @@
             return NO;
     }
 }
-
-- (BOOL)lj_isSameGiftBarrageWith:(LJLiveBarrage *)barrage
-{
-    if (self.giftId == barrage.giftId && self.userId == barrage.userId) {
-        return YES;
-    }
-    return NO;
-}
-
-- (NSString *)content{
-    NSString *result = [(NSString *)_content stringByReplacingOccurrencesOfString:@"+" withString:@" "];
-    return [result stringByRemovingPercentEncoding];
-}
-
-
 @end
 
 

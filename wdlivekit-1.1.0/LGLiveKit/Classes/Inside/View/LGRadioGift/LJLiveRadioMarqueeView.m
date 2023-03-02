@@ -34,64 +34,64 @@ static NSTimeInterval const DEFAULT_TIME_DURATION = 1.0;
 static float const DEFAULT_SCROLL_SPEED = 40.0f;
 static float const DEFAULT_ITEM_SPACING = 20.0f;
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    if (self = [super initWithCoder:aDecoder]) {
-        _timeIntervalPerScroll = DEFAULT_TIME_INTERVAL;
-        _timeDurationPerScroll = DEFAULT_TIME_DURATION;
-        _scrollSpeed = DEFAULT_SCROLL_SPEED;
-        _itemSpacing = DEFAULT_ITEM_SPACING;
-        _touchEnabled = NO;
-        _stopWhenLessData = NO;
 
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        _contentView.clipsToBounds = YES;
-        [self addSubview:_contentView];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleResignActiveNotification:)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleBecomeActiveNotification:)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-    }
-    return self;
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - Override(private)
+
+
+
+#pragma mark - Notification
+
+
+#pragma mark - ItemView(private)
+
+
+
+
+
+
+
+
+#pragma mark - Timer & Animation(private)
+
+#pragma mark - Data source(private)
+
+#pragma mark - Touch handler(private)
+
+#pragma mark - LJMarqueeViewTouchResponder(private)
+
+
+
+- (void)setClipsToBounds:(BOOL)clipsToBounds {
+    _contentView.clipsToBounds = clipsToBounds;
 }
-
-- (instancetype)initWithDirection:(LJMarqueeViewDirection)direction {
-    if (self = [super init]) {
-        _direction = direction;
+- (void)startAfterTimeInterval:(BOOL)afterTimeInterval animationFinished:(BOOL)finished {
+    if (_isScrolling || _items.count <= 0) {
+        return;
     }
-    return self;
-}
 
-- (instancetype)initWithFrame:(CGRect)frame direction:(LJMarqueeViewDirection)direction {
-    if (self = [super initWithFrame:frame]) {
-        _direction = direction;
-        _timeIntervalPerScroll = DEFAULT_TIME_INTERVAL;
-        _timeDurationPerScroll = DEFAULT_TIME_DURATION;
-        _scrollSpeed = DEFAULT_SCROLL_SPEED;
-        _itemSpacing = DEFAULT_ITEM_SPACING;
-        _touchEnabled = NO;
-        _stopWhenLessData = NO;
-
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        _contentView.clipsToBounds = YES;
-        [self addSubview:_contentView];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleResignActiveNotification:)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleBecomeActiveNotification:)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
+    self.isWaiting = YES;
+    NSTimeInterval timeInterval = 1.0;
+    if (finished) {
+        timeInterval = afterTimeInterval ? _timeIntervalPerScroll : 0.0;
     }
-    return self;
+    self.scrollTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval
+                                                        target:self
+                                                      selector:@selector(scrollTimerDidFire:)
+                                                      userInfo:nil
+                                                       repeats:NO];
 }
-
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _timeIntervalPerScroll = DEFAULT_TIME_INTERVAL;
@@ -116,88 +116,6 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
     }
     return self;
 }
-
-- (void)setClipsToBounds:(BOOL)clipsToBounds {
-    _contentView.clipsToBounds = clipsToBounds;
-}
-
-- (void)setTouchEnabled:(BOOL)touchEnabled {
-    _touchEnabled = touchEnabled;
-    [self resetTouchReceiver];
-}
-
-- (void)reloadData {
-    if (_isWaiting) {
-        if (_scrollTimer) {
-            [_scrollTimer invalidate];
-            self.scrollTimer = nil;
-        }
-        [self resetAll];
-        [self startAfterTimeInterval:YES];
-    } else if (_isScrolling) {
-        [self resetAll];
-    } else {
-        // stopped
-        [self resetAll];
-        [self startAfterTimeInterval:YES];
-    }
-}
-
-- (void)start {
-    self.isScrollNeedsToStop = NO;
-    if (!_isScrolling && !_isWaiting) {
-        [self startAfterTimeInterval:NO];
-    }
-}
-
-- (void)pause {
-    self.isScrollNeedsToStop = YES;
-}
-
-- (void)repeat {
-    if (!_isScrollNeedsToStop) {
-        [self startAfterTimeInterval:YES];
-    }
-}
-
-- (void)repeatWithAnimationFinished:(BOOL)finished {
-    if (!_isScrollNeedsToStop) {
-        [self startAfterTimeInterval:YES animationFinished:finished];
-    }
-}
-
-- (void)startAfterTimeInterval:(BOOL)afterTimeInterval {
-    [self startAfterTimeInterval:afterTimeInterval animationFinished:YES];
-}
-
-- (void)startAfterTimeInterval:(BOOL)afterTimeInterval animationFinished:(BOOL)finished {
-    if (_isScrolling || _items.count <= 0) {
-        return;
-    }
-
-    self.isWaiting = YES;
-    NSTimeInterval timeInterval = 1.0;
-    if (finished) {
-        timeInterval = afterTimeInterval ? _timeIntervalPerScroll : 0.0;
-    }
-    self.scrollTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval
-                                                        target:self
-                                                      selector:@selector(scrollTimerDidFire:)
-                                                      userInfo:nil
-                                                       repeats:NO];
-}
-
-#pragma mark - Override(private)
-- (void)layoutSubviews {
-    [super layoutSubviews];
-
-    [_contentView setFrame:self.bounds];
-    [self repositionItemViews];
-    if (_touchEnabled && _touchReceiver) {
-        [_touchReceiver setFrame:self.bounds];
-    }
-}
-
 - (void)dealloc {
     if (_scrollTimer) {
         [_scrollTimer invalidate];
@@ -205,21 +123,6 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
     }
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
-
-#pragma mark - Notification
-- (void)handleResignActiveNotification:(NSNotification*)notification {
-    self.isPausingBeforeResignActive = _isScrollNeedsToStop;
-    [self pause];
-}
-
-- (void)handleBecomeActiveNotification:(NSNotification*)notification {
-    if (!_isPausingBeforeResignActive) {
-        [self start];
-    }
-}
-
-#pragma mark - ItemView(private)
 - (void)resetAll {
     self.dataIndex = -1;
     self.firstItemIndex = 0;
@@ -331,78 +234,40 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
 
     [self resetTouchReceiver];
 }
+- (void)layoutSubviews {
+    [super layoutSubviews];
 
-- (void)repositionItemViews {
-    if (_direction == LJMarqueeViewDirectionLeftward) {
-        CGFloat itemHeight = CGRectGetHeight(self.frame) / _visibleItemCount;
-        CGFloat lastMaxX = 0.0f;
-        for (int i = 0; i < _items.count; i++) {
-            int index = (i + _firstItemIndex) % _items.count;
-
-            CGFloat itemWidth = MAX(_items[index].width + _itemSpacing, CGRectGetWidth(self.frame));
-
-            if (i == 0) {
-                [_items[index] setFrame:CGRectMake(-itemWidth, 0.0f, itemWidth, itemHeight)];
-                lastMaxX = 0.0f;
-            } else {
-                [_items[index] setFrame:CGRectMake(lastMaxX, 0.0f, itemWidth, itemHeight)];
-                lastMaxX = lastMaxX + itemWidth;
-            }
-        }
-    } else {
-        if (_useDynamicHeight) {
-            CGFloat itemWidth = CGRectGetWidth(self.frame);
-            CGFloat lastMaxY = 0.0f;
-            for (int i = 0; i < _items.count; i++) {
-                int index = (i + _firstItemIndex) % _items.count;
-                if (i == 0) {
-                    [_items[index] setFrame:CGRectMake(0.0f, 0.0f, itemWidth, 0.0f)];
-                    lastMaxY = 0.0f;
-                } else if (i == _items.count - 1) {
-                    [_items[index] setFrame:CGRectMake(0.0f, CGRectGetMaxY(self.bounds), itemWidth, _items[index].height)];
-                } else {
-                    [_items[index] setFrame:CGRectMake(0.0f, lastMaxY, itemWidth, _items[index].height)];
-                    lastMaxY = lastMaxY + _items[index].height;
-                }
-            }
-
-            CGFloat offsetY = CGRectGetHeight(self.frame) - lastMaxY;
-            for (int i = 0; i < _items.count; i++) {
-                int index = (i + _firstItemIndex) % _items.count;
-                if (i > 0 && i < _items.count - 1) {
-                    [_items[index] setFrame:CGRectMake(CGRectGetMinX(_items[index].frame),
-                                                       CGRectGetMinY(_items[index].frame) + offsetY,
-                                                       itemWidth,
-                                                       _items[index].height)];
-                }
-            }
-        } else {
-            CGFloat itemWidth = CGRectGetWidth(self.frame);
-            CGFloat itemHeight = CGRectGetHeight(self.frame) / _visibleItemCount;
-            for (int i = 0; i < _items.count; i++) {
-                int index = (i + _firstItemIndex) % _items.count;
-                if (i == 0) {
-                    [_items[index] setFrame:CGRectMake(0.0f, -itemHeight, itemWidth, itemHeight)];
-                } else {
-                    [_items[index] setFrame:CGRectMake(0.0f, itemHeight * (i - 1), itemWidth, itemHeight)];
-                }
-            }
-        }
+    [_contentView setFrame:self.bounds];
+    [self repositionItemViews];
+    if (_touchEnabled && _touchReceiver) {
+        [_touchReceiver setFrame:self.bounds];
     }
 }
-
-- (int)itemIndexWithOffsetFromTop:(int)offsetFromTop {
-    return (_firstItemIndex + offsetFromTop) % (_visibleItemCount + 2);
-}
-
-- (void)moveToNextItemIndex {
-    if (_firstItemIndex >= _items.count - 1) {
-        self.firstItemIndex = 0;
-    } else {
-        self.firstItemIndex++;
+- (void)touchesCancelled {
+    if (!_isPausingBeforeTouchesBegan) {
+        [self start];
     }
 }
+- (void)touchesEndedAtPoint:(CGPoint)point {
+    for (LJMarqueeItemView *itemView in _items) {
+        if ([itemView.layer.presentationLayer hitTest:point]) {
+            NSUInteger dataCount = 0;
+            if ([_delegate respondsToSelector:@selector(numberOfDataForMarqueeView:)]) {
+                dataCount = [_delegate numberOfDataForMarqueeView:self];
+            }
 
+            if (dataCount > 0 && itemView.tag >= 0 && itemView.tag < dataCount) {
+                if ([self.delegate respondsToSelector:@selector(didTouchItemViewAtIndex:forMarqueeView:)]) {
+                    [self.delegate didTouchItemViewAtIndex:itemView.tag forMarqueeView:self];
+                }
+            }
+            break;
+        }
+    }
+    if (!_isPausingBeforeTouchesBegan) {
+        [self start];
+    }
+}
 - (CGFloat)itemWidthAtIndex:(NSInteger)index {
     CGFloat itemWidth = 0.0f;
     if (index >= 0) {
@@ -412,26 +277,24 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
     }
     return itemWidth;
 }
-
-- (CGFloat)itemHeightAtIndex:(NSInteger)index {
-    CGFloat itemHeight = 0.0f;
-    if (index >= 0) {
-        if ([_delegate respondsToSelector:@selector(itemViewHeightAtIndex:forMarqueeView:)]) {
-            itemHeight = [_delegate itemViewHeightAtIndex:index forMarqueeView:self];
-        }
-    }
-    return itemHeight;
+- (void)touchesBegan {
+    self.isPausingBeforeTouchesBegan = _isScrollNeedsToStop;
+    [self pause];
 }
-
-- (void)createItemView:(LJMarqueeItemView*)itemView {
-    if (!itemView.didFinishCreate) {
-        if ([_delegate respondsToSelector:@selector(createItemView:forMarqueeView:)]) {
-            [_delegate createItemView:itemView forMarqueeView:self];
-            itemView.didFinishCreate = YES;
-        }
+- (int)itemIndexWithOffsetFromTop:(int)offsetFromTop {
+    return (_firstItemIndex + offsetFromTop) % (_visibleItemCount + 2);
+}
+- (void)moveToNextItemIndex {
+    if (_firstItemIndex >= _items.count - 1) {
+        self.firstItemIndex = 0;
+    } else {
+        self.firstItemIndex++;
     }
 }
-
+- (void)setTouchEnabled:(BOOL)touchEnabled {
+    _touchEnabled = touchEnabled;
+    [self resetTouchReceiver];
+}
 - (void)updateItemView:(LJMarqueeItemView*)itemView atIndex:(NSInteger)index {
     if (index < 0) {
         [itemView clear];
@@ -450,8 +313,59 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
         }
     }
 }
+- (void)repeatWithAnimationFinished:(BOOL)finished {
+    if (!_isScrollNeedsToStop) {
+        [self startAfterTimeInterval:YES animationFinished:finished];
+    }
+}
+- (void)pause {
+    self.isScrollNeedsToStop = YES;
+}
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        _timeIntervalPerScroll = DEFAULT_TIME_INTERVAL;
+        _timeDurationPerScroll = DEFAULT_TIME_DURATION;
+        _scrollSpeed = DEFAULT_SCROLL_SPEED;
+        _itemSpacing = DEFAULT_ITEM_SPACING;
+        _touchEnabled = NO;
+        _stopWhenLessData = NO;
 
-#pragma mark - Timer & Animation(private)
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        _contentView.clipsToBounds = YES;
+        [self addSubview:_contentView];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleResignActiveNotification:)
+                                                     name:UIApplicationWillResignActiveNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleBecomeActiveNotification:)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+    }
+    return self;
+}
+- (void)moveToNextDataIndex {
+    NSUInteger dataCount = 0;
+    if ([_delegate respondsToSelector:@selector(numberOfDataForMarqueeView:)]) {
+        dataCount = [_delegate numberOfDataForMarqueeView:self];
+    }
+
+    if (dataCount <= 0) {
+        self.dataIndex = -1;
+    } else {
+        self.dataIndex = _dataIndex + 1;
+        if (_dataIndex < 0 || _dataIndex > dataCount - 1) {
+            self.dataIndex = 0;
+        }
+    }
+}
+- (void)start {
+    self.isScrollNeedsToStop = NO;
+    if (!_isScrolling && !_isWaiting) {
+        [self startAfterTimeInterval:NO];
+    }
+}
 - (void)scrollTimerDidFire:(NSTimer *)timer {
     self.isWaiting = NO;
     if (_isScrollNeedsToStop) {
@@ -634,25 +548,120 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
         }
     });
 }
-
-#pragma mark - Data source(private)
-- (void)moveToNextDataIndex {
-    NSUInteger dataCount = 0;
-    if ([_delegate respondsToSelector:@selector(numberOfDataForMarqueeView:)]) {
-        dataCount = [_delegate numberOfDataForMarqueeView:self];
+- (CGFloat)itemHeightAtIndex:(NSInteger)index {
+    CGFloat itemHeight = 0.0f;
+    if (index >= 0) {
+        if ([_delegate respondsToSelector:@selector(itemViewHeightAtIndex:forMarqueeView:)]) {
+            itemHeight = [_delegate itemViewHeightAtIndex:index forMarqueeView:self];
+        }
     }
-
-    if (dataCount <= 0) {
-        self.dataIndex = -1;
-    } else {
-        self.dataIndex = _dataIndex + 1;
-        if (_dataIndex < 0 || _dataIndex > dataCount - 1) {
-            self.dataIndex = 0;
+    return itemHeight;
+}
+- (void)createItemView:(LJMarqueeItemView*)itemView {
+    if (!itemView.didFinishCreate) {
+        if ([_delegate respondsToSelector:@selector(createItemView:forMarqueeView:)]) {
+            [_delegate createItemView:itemView forMarqueeView:self];
+            itemView.didFinishCreate = YES;
         }
     }
 }
+- (void)repeat {
+    if (!_isScrollNeedsToStop) {
+        [self startAfterTimeInterval:YES];
+    }
+}
+- (void)handleBecomeActiveNotification:(NSNotification*)notification {
+    if (!_isPausingBeforeResignActive) {
+        [self start];
+    }
+}
+- (void)handleResignActiveNotification:(NSNotification*)notification {
+    self.isPausingBeforeResignActive = _isScrollNeedsToStop;
+    [self pause];
+}
+- (void)reloadData {
+    if (_isWaiting) {
+        if (_scrollTimer) {
+            [_scrollTimer invalidate];
+            self.scrollTimer = nil;
+        }
+        [self resetAll];
+        [self startAfterTimeInterval:YES];
+    } else if (_isScrolling) {
+        [self resetAll];
+    } else {
+        // stopped
+        [self resetAll];
+        [self startAfterTimeInterval:YES];
+    }
+}
+- (void)repositionItemViews {
+    if (_direction == LJMarqueeViewDirectionLeftward) {
+        CGFloat itemHeight = CGRectGetHeight(self.frame) / _visibleItemCount;
+        CGFloat lastMaxX = 0.0f;
+        for (int i = 0; i < _items.count; i++) {
+            int index = (i + _firstItemIndex) % _items.count;
 
-#pragma mark - Touch handler(private)
+            CGFloat itemWidth = MAX(_items[index].width + _itemSpacing, CGRectGetWidth(self.frame));
+
+            if (i == 0) {
+                [_items[index] setFrame:CGRectMake(-itemWidth, 0.0f, itemWidth, itemHeight)];
+                lastMaxX = 0.0f;
+            } else {
+                [_items[index] setFrame:CGRectMake(lastMaxX, 0.0f, itemWidth, itemHeight)];
+                lastMaxX = lastMaxX + itemWidth;
+            }
+        }
+    } else {
+        if (_useDynamicHeight) {
+            CGFloat itemWidth = CGRectGetWidth(self.frame);
+            CGFloat lastMaxY = 0.0f;
+            for (int i = 0; i < _items.count; i++) {
+                int index = (i + _firstItemIndex) % _items.count;
+                if (i == 0) {
+                    [_items[index] setFrame:CGRectMake(0.0f, 0.0f, itemWidth, 0.0f)];
+                    lastMaxY = 0.0f;
+                } else if (i == _items.count - 1) {
+                    [_items[index] setFrame:CGRectMake(0.0f, CGRectGetMaxY(self.bounds), itemWidth, _items[index].height)];
+                } else {
+                    [_items[index] setFrame:CGRectMake(0.0f, lastMaxY, itemWidth, _items[index].height)];
+                    lastMaxY = lastMaxY + _items[index].height;
+                }
+            }
+
+            CGFloat offsetY = CGRectGetHeight(self.frame) - lastMaxY;
+            for (int i = 0; i < _items.count; i++) {
+                int index = (i + _firstItemIndex) % _items.count;
+                if (i > 0 && i < _items.count - 1) {
+                    [_items[index] setFrame:CGRectMake(CGRectGetMinX(_items[index].frame),
+                                                       CGRectGetMinY(_items[index].frame) + offsetY,
+                                                       itemWidth,
+                                                       _items[index].height)];
+                }
+            }
+        } else {
+            CGFloat itemWidth = CGRectGetWidth(self.frame);
+            CGFloat itemHeight = CGRectGetHeight(self.frame) / _visibleItemCount;
+            for (int i = 0; i < _items.count; i++) {
+                int index = (i + _firstItemIndex) % _items.count;
+                if (i == 0) {
+                    [_items[index] setFrame:CGRectMake(0.0f, -itemHeight, itemWidth, itemHeight)];
+                } else {
+                    [_items[index] setFrame:CGRectMake(0.0f, itemHeight * (i - 1), itemWidth, itemHeight)];
+                }
+            }
+        }
+    }
+}
+- (void)startAfterTimeInterval:(BOOL)afterTimeInterval {
+    [self startAfterTimeInterval:afterTimeInterval animationFinished:YES];
+}
+- (instancetype)initWithDirection:(LJMarqueeViewDirection)direction {
+    if (self = [super init]) {
+        _direction = direction;
+    }
+    return self;
+}
 - (void)resetTouchReceiver {
     if (_touchEnabled) {
         if (!_touchReceiver) {
@@ -669,51 +678,44 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
         }
     }
 }
+- (instancetype)initWithFrame:(CGRect)frame direction:(LJMarqueeViewDirection)direction {
+    if (self = [super initWithFrame:frame]) {
+        _direction = direction;
+        _timeIntervalPerScroll = DEFAULT_TIME_INTERVAL;
+        _timeDurationPerScroll = DEFAULT_TIME_DURATION;
+        _scrollSpeed = DEFAULT_SCROLL_SPEED;
+        _itemSpacing = DEFAULT_ITEM_SPACING;
+        _touchEnabled = NO;
+        _stopWhenLessData = NO;
 
-#pragma mark - LJMarqueeViewTouchResponder(private)
-- (void)touchesBegan {
-    self.isPausingBeforeTouchesBegan = _isScrollNeedsToStop;
-    [self pause];
-}
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        _contentView.clipsToBounds = YES;
+        [self addSubview:_contentView];
 
-- (void)touchesEndedAtPoint:(CGPoint)point {
-    for (LJMarqueeItemView *itemView in _items) {
-        if ([itemView.layer.presentationLayer hitTest:point]) {
-            NSUInteger dataCount = 0;
-            if ([_delegate respondsToSelector:@selector(numberOfDataForMarqueeView:)]) {
-                dataCount = [_delegate numberOfDataForMarqueeView:self];
-            }
-
-            if (dataCount > 0 && itemView.tag >= 0 && itemView.tag < dataCount) {
-                if ([self.delegate respondsToSelector:@selector(didTouchItemViewAtIndex:forMarqueeView:)]) {
-                    [self.delegate didTouchItemViewAtIndex:itemView.tag forMarqueeView:self];
-                }
-            }
-            break;
-        }
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleResignActiveNotification:)
+                                                     name:UIApplicationWillResignActiveNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleBecomeActiveNotification:)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
     }
-    if (!_isPausingBeforeTouchesBegan) {
-        [self start];
-    }
+    return self;
 }
-
-- (void)touchesCancelled {
-    if (!_isPausingBeforeTouchesBegan) {
-        [self start];
-    }
-}
-
 @end
 
 #pragma mark - LJMarqueeViewTouchReceiver(private)
 @implementation LJMarqueeViewTouchReceiver
+
+
+
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if (_touchDelegate) {
         [_touchDelegate touchesBegan];
     }
 }
-
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint touchLocation = [touch locationInView:self];
@@ -721,21 +723,19 @@ static float const DEFAULT_ITEM_SPACING = 20.0f;
         [_touchDelegate touchesEndedAtPoint:touchLocation];
     }
 }
-
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if (_touchDelegate) {
         [_touchDelegate touchesCancelled];
     }
 }
-
 @end
 
 #pragma mark - LJMarqueeItemView(Private)
 @implementation LJMarqueeItemView
 
+
 - (void)clear {
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     _didFinishCreate = NO;
 }
-
 @end

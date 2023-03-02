@@ -10,46 +10,70 @@
 
 @interface LJLiveGiftBarrageView ()
 
-@property (nonatomic, strong) LJLiveGiftBarrageItemView *topView, *bottomView, *busyView;
+
 
 /// 等待队列
 @property (nonatomic, strong) NSMutableArray *waittings;
-
+@property (nonatomic, strong) LJLiveGiftBarrageItemView *topView, *bottomView, *busyView;
 @end
 
 @implementation LJLiveGiftBarrageView
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupDataSource];
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
-{
-    self.waittings = [@[] mutableCopy];
-}
 
+
+#pragma mark - Methods
+
+
+
+
+#pragma mark - Getter
+
+
+
+
+#pragma mark - Setter
+
+
+/// @param event 事件
+/// @param obj 对象
+/// 刷新内部
+- (LJLiveGiftBarrageItemView *)topView
+{
+    if (!_topView) {
+        _topView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 42+6, 250, 42), self.frame)];
+        _topView.hidden = YES;
+        kLJWeakSelf;
+        _topView.dismissBlock = ^{
+            weakSelf.topView.gift = nil;
+            [weakSelf lj_giftViewAutoDismiss];
+        };
+    }
+    return _topView;
+}
+- (LJLiveGiftBarrageItemView *)busyView
+{
+    if (!_busyView) {
+        _busyView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 0, 250, 42), self.frame)];
+        _busyView.hidden = YES;
+        kLJWeakSelf;
+        _busyView.dismissBlock = ^{
+            weakSelf.busyView.gift = nil;
+            [weakSelf lj_giftViewAutoDismiss];
+        };
+    }
+    return _busyView;
+}
 - (void)lj_setupViews
 {
     [self addSubview:self.busyView];
     [self addSubview:self.topView];
     [self addSubview:self.bottomView];
 }
-
-#pragma mark - Methods
-
-/// 刷新内部
-/// @param event 事件
-/// @param obj 对象
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
     if (event == LJLiveEventReceivedBarrage && [obj isKindOfClass:[LJLiveBarrage class]]) {
@@ -61,7 +85,28 @@
         }
     }
 }
-
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupDataSource];
+        [self lj_setupViews];
+    }
+    return self;
+}
+- (LJLiveGiftBarrageItemView *)bottomView
+{
+    if (!_bottomView) {
+        _bottomView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 42+6+42+6, 250, 42), self.frame)];
+        _bottomView.hidden = YES;
+        kLJWeakSelf;
+        _bottomView.dismissBlock = ^{
+            weakSelf.bottomView.gift = nil;
+            [weakSelf lj_giftViewAutoDismiss];
+        };
+    }
+    return _bottomView;
+}
 - (void)lj_giftViewAutoDismiss
 {
     if (self.waittings.count > 0) {
@@ -70,7 +115,10 @@
         [self lj_intoGift:gift];
     }
 }
-
+- (void)lj_setupDataSource
+{
+    self.waittings = [@[] mutableCopy];
+}
 - (void)lj_intoGift:(LJLiveBarrage *)gift
 {
     // 显示
@@ -126,52 +174,4 @@
         [self.waittings replaceObjectAtIndex:index withObject:gift];
     }
 }
-
-#pragma mark - Getter
-
-- (LJLiveGiftBarrageItemView *)topView
-{
-    if (!_topView) {
-        _topView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 42+6, 250, 42), self.frame)];
-        _topView.hidden = YES;
-        kLJWeakSelf;
-        _topView.dismissBlock = ^{
-            weakSelf.topView.gift = nil;
-            [weakSelf lj_giftViewAutoDismiss];
-        };
-    }
-    return _topView;
-}
-
-- (LJLiveGiftBarrageItemView *)bottomView
-{
-    if (!_bottomView) {
-        _bottomView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 42+6+42+6, 250, 42), self.frame)];
-        _bottomView.hidden = YES;
-        kLJWeakSelf;
-        _bottomView.dismissBlock = ^{
-            weakSelf.bottomView.gift = nil;
-            [weakSelf lj_giftViewAutoDismiss];
-        };
-    }
-    return _bottomView;
-}
-
-- (LJLiveGiftBarrageItemView *)busyView
-{
-    if (!_busyView) {
-        _busyView = [LJLiveGiftBarrageItemView giftBarrageWithFrame:LJFlipedBy(CGRectMake(-250, 0, 250, 42), self.frame)];
-        _busyView.hidden = YES;
-        kLJWeakSelf;
-        _busyView.dismissBlock = ^{
-            weakSelf.busyView.gift = nil;
-            [weakSelf lj_giftViewAutoDismiss];
-        };
-    }
-    return _busyView;
-}
-
-#pragma mark - Setter
-
-
 @end

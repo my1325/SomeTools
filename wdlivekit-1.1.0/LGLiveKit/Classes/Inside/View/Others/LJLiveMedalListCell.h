@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveMedalListCell : UICollectionViewCell
 
-@property (nonatomic, strong) LJUniqueTag *eventLabel;
 
+@property (nonatomic, strong) LJUniqueTag *eventLabel;
 @end
 
 NS_ASSUME_NONNULL_END

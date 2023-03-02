@@ -21,13 +21,13 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
 
 #import <MJExtension/MJExtension.h>
 @interface LJLiveRadioGift()
-@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *waitArr;
-@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *enterArr;//进场队列
-@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *showArr;//展示队列
-@property (nonatomic, assign) BOOL isWait;
-@property (nonatomic, assign) BOOL canClick;
-@property (nonatomic, strong) LJLiveRadioGiftModel *model;
 
+@property (nonatomic, assign) BOOL canClick;
+@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *enterArr;//进场队列
+@property (nonatomic, strong) LJLiveRadioGiftModel *model;
+@property (nonatomic, assign) BOOL isWait;
+@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *showArr;//展示队列
+@property (nonatomic, strong) NSMutableArray<LJLiveRadioGiftCell *> *waitArr;
 @end
 
 @implementation LJLiveRadioGift
@@ -42,6 +42,57 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     return obj;
 }
 
+
+
+
+
+
+
+
+
+#pragma mark - Channel代理 广播消息
+
+
+
+- (void)lj_receiveRtmRespone:(NSDictionary *)dic
+{
+    if (!dic || ![dic isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+    
+    if ([dic[@"opCode"] integerValue] != 3) {
+        return;
+    }
+    
+    if ([dic[@"subCode"] integerValue] == 75) {
+        int roomType = [[dic[@"data"] objectForKey:@"roomType"] intValue];
+        //支持语聊房
+        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeChatRoom)) && roomType == LJRadioGiftRoomTypeChatRoom) {
+            return;
+        }
+        //支持直播间
+        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeLive)) && roomType == LJRadioGiftRoomTypeLive) {
+            return;
+        }
+        //支持UGC
+        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeUGC)) && roomType == LJRadioGiftRoomTypeUGC) {
+            return;
+        }
+        [self lj_recieveRadioGift:dic[@"data"]];
+    }
+}
+-(void)lj_clearAllRadioGift{
+    [_waitArr removeAllObjects];
+    [_enterArr removeAllObjects];
+    if (_showArr.count > 0) {
+        _showArr.firstObject.state = LJLiveRadioGiftCellStateExit;
+        [_showArr removeAllObjects];
+    }
+    _isWait = NO;
+}
+- (BOOL)enable{
+    return !_radioGiftView.hidden;
+}
 - (instancetype)init
 {
     self = [super init];
@@ -66,14 +117,12 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     }
     return self;
 }
-
 - (void)lj_initRadioGiftViewInView:(UIView *)view boldFontName:(NSString *)boldFontName{
     _boldFontName = boldFontName;
     
     [_radioGiftView removeFromSuperview];
     [view addSubview:_radioGiftView];
 }
-
 - (void)lj_recieveRadioGift:(NSDictionary *)gift{
     
     if (!_radioGiftView) {
@@ -127,25 +176,10 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
     });
 
 }
-
--(void)lj_clickCell{
-    
-    if (_canClick) {
-        if ([self.delegate respondsToSelector:@selector(lj_clickRadioGiftWithRoomType:andRoomId:andAgoraRoomId:andHostAccountId:)]) {
-            [self.delegate lj_clickRadioGiftWithRoomType:_model.roomType andRoomId:_model.roomId andAgoraRoomId:_model.agoraRoomId andHostAccountId:_model.recieverUserId];
-            if ([self.delegate respondsToSelector:@selector(lj_thinkingEventName:)]) {
-                [self.delegate lj_thinkingEventName:@"click_gift_broadcast"];
-            }
-        }
-        _canClick = NO;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            _canClick = YES;
-        });
-    }
-
-
+- (void)setEnable:(BOOL)enable{
+    [[NSUserDefaults standardUserDefaults] setBool:enable forKey:@"radioGiftEnable"];
+    _radioGiftView.hidden = !enable;
 }
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if([keyPath isEqualToString:@"enterArr"]){
@@ -189,55 +223,21 @@ isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bo
         }
     }
 }
-
--(void)lj_clearAllRadioGift{
-    [_waitArr removeAllObjects];
-    [_enterArr removeAllObjects];
-    if (_showArr.count > 0) {
-        _showArr.firstObject.state = LJLiveRadioGiftCellStateExit;
-        [_showArr removeAllObjects];
-    }
-    _isWait = NO;
-}
-
-- (BOOL)enable{
-    return !_radioGiftView.hidden;
-}
-
-- (void)setEnable:(BOOL)enable{
-    [[NSUserDefaults standardUserDefaults] setBool:enable forKey:@"radioGiftEnable"];
-    _radioGiftView.hidden = !enable;
-}
-
-#pragma mark - Channel代理 广播消息
-- (void)lj_receiveRtmRespone:(NSDictionary *)dic
-{
-    if (!dic || ![dic isKindOfClass:[NSDictionary class]]) {
-        return;
-    }
+-(void)lj_clickCell{
     
-    if ([dic[@"opCode"] integerValue] != 3) {
-        return;
+    if (_canClick) {
+        if ([self.delegate respondsToSelector:@selector(lj_clickRadioGiftWithRoomType:andRoomId:andAgoraRoomId:andHostAccountId:)]) {
+            [self.delegate lj_clickRadioGiftWithRoomType:_model.roomType andRoomId:_model.roomId andAgoraRoomId:_model.agoraRoomId andHostAccountId:_model.recieverUserId];
+            if ([self.delegate respondsToSelector:@selector(lj_thinkingEventName:)]) {
+                [self.delegate lj_thinkingEventName:@"click_gift_broadcast"];
+            }
+        }
+        _canClick = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            _canClick = YES;
+        });
     }
-    
-    if ([dic[@"subCode"] integerValue] == 75) {
-        int roomType = [[dic[@"data"] objectForKey:@"roomType"] intValue];
-        //支持语聊房
-        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeChatRoom)) && roomType == LJRadioGiftRoomTypeChatRoom) {
-            return;
-        }
-        //支持直播间
-        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeLive)) && roomType == LJRadioGiftRoomTypeLive) {
-            return;
-        }
-        //支持UGC
-        if ((!(_supportRoomType & LJRadioGiftSupportRoomTypeUGC)) && roomType == LJRadioGiftRoomTypeUGC) {
-            return;
-        }
-        [self lj_recieveRadioGift:dic[@"data"]];
-    }
+
+
 }
-
-
-
 @end

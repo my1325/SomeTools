@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGoalView : UIView
 
-@property (nonatomic, assign) BOOL isOpen;
 
-@property (nonatomic, copy) LJLiveBoolBlock openAction;
+
 
 - (void)updateUIWithModel:(LJLiveRoomGoal *)model;
-
+@property (nonatomic, copy) LJLiveBoolBlock openAction;
+@property (nonatomic, assign) BOOL isOpen;
 @end
 
 NS_ASSUME_NONNULL_END

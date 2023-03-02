@@ -9,16 +9,6 @@
 
 @implementation LJLiveRoom
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
-    self = [super initWithDictionary:dictionary];
-    // ugc
-    if (self.isUgc) {
-        self.videoChatRoomMembers = self.members;
-        self.isHostFollowed = YES;
-    }
-    return self;
-}
 
 + (NSDictionary *)mj_objectClassInArray
 {
@@ -30,19 +20,14 @@
     };
 }
 
-- (BOOL)beActive
-{
-    switch (self.roomStatus) {
-        case 1:
-        case 3:
-        case 4:
-            return NO;
-            
-        default:
-            return YES;
-    }
-}
 
+
+
+- (void)setIsHostFollowed:(BOOL)isHostFollowed
+{
+    _isHostFollowed = isHostFollowed;
+    if (self.isUgc) _isHostFollowed = YES;
+}
 - (BOOL)pking
 {
     if (self.pkData != nil) {
@@ -55,13 +40,28 @@
     }
     return NO;
 }
-
-- (void)setIsHostFollowed:(BOOL)isHostFollowed
+- (BOOL)beActive
 {
-    _isHostFollowed = isHostFollowed;
-    if (self.isUgc) _isHostFollowed = YES;
+    switch (self.roomStatus) {
+        case 1:
+        case 3:
+        case 4:
+            return NO;
+            
+        default:
+            return YES;
+    }
 }
-
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
+{
+    self = [super initWithDictionary:dictionary];
+    // ugc
+    if (self.isUgc) {
+        self.videoChatRoomMembers = self.members;
+        self.isHostFollowed = YES;
+    }
+    return self;
+}
 @end
 
 @implementation LJLiveRoomMember

@@ -11,15 +11,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveHeadView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-@property (nonatomic, strong) LJLiveRoom *liveRoom;
 
-/// 刷新内部
-/// @param event 事件
+
 /// @param obj 对象
+/// @param event 事件
+/// 刷新内部
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+@property (nonatomic, strong) LJLiveRoom *liveRoom;
 @end
 
 NS_ASSUME_NONNULL_END

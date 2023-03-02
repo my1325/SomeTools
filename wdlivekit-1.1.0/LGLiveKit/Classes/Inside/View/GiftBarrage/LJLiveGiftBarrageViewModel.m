@@ -9,11 +9,13 @@
 
 @interface LJLiveGiftBarrageViewModel ()
 
-@property (nonatomic, strong) NSTimer *timer;
 
+@property (nonatomic, strong) NSTimer *timer;
 @end
 
 @implementation LJLiveGiftBarrageViewModel
+
+
 
 - (void)dealloc
 {
@@ -22,7 +24,6 @@
         self.timer = nil;
     }
 }
-
 - (void)setCountdown:(NSInteger)countdown
 {
     _countdown = countdown;
@@ -40,5 +41,4 @@
         }];
     }
 }
-
 @end

@@ -11,15 +11,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveRoomGoal : LJLiveBaseObject
+
+
+
+
 /** 房间号 */
-@property (nonatomic, strong) NSNumber *roomId;
-
-@property (nonatomic, strong) NSNumber *goalIncome;
-
-@property (nonatomic, strong) NSNumber *currentIncome;
-
 @property (nonatomic, copy) NSString *goalDesc;
-
+@property (nonatomic, strong) NSNumber *roomId;
+@property (nonatomic, strong) NSNumber *goalIncome;
+@property (nonatomic, strong) NSNumber *currentIncome;
 @end
 
 NS_ASSUME_NONNULL_END

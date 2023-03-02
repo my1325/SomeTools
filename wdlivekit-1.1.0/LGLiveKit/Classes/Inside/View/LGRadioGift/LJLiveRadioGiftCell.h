@@ -19,9 +19,9 @@ typedef NS_ENUM(NSInteger, LJLiveRadioGiftCellState) {
 
 @interface LJLiveRadioGiftCell : UIView
 
+
 @property (nonatomic, assign) LJLiveRadioGiftCellState state;
 @property (nonatomic, strong) LJLiveRadioGiftModel *model;
-
 @end
 
 NS_ASSUME_NONNULL_END

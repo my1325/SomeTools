@@ -12,14 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveAlertWebView : UIView
 
-@property (strong, nonatomic) NSString *reloadURL;
+
+
+
 
 + (LJLiveAlertWebView *)activityPopView;
-
-- (void)showInView:(UIView *)view;
-
 - (void)dismiss;
-
+- (void)showInView:(UIView *)view;
+@property (strong, nonatomic) NSString *reloadURL;
 @end
 
 NS_ASSUME_NONNULL_END

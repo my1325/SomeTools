@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkRankCell : UITableViewCell
 
-@property (nonatomic, strong) LJLivePkTopFan *fan;
 
-@property (nonatomic, copy) LJLiveVoidBlock avatarBlock;
+
 
 @property (weak, nonatomic) IBOutlet UILabel *rankLabel;
-
+@property (nonatomic, strong) LJLivePkTopFan *fan;
+@property (nonatomic, copy) LJLiveVoidBlock avatarBlock;
 @end
 
 NS_ASSUME_NONNULL_END

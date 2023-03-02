@@ -9,21 +9,21 @@
 
 @interface LJLivePkPromptView ()
 
+
+
+
 /// 中间背景
-@property (weak, nonatomic) IBOutlet UIImageView *bgdView;
-/// vs
-@property (weak, nonatomic) IBOutlet UIStackView *vsView;
-/// 惩罚中
-@property (weak, nonatomic) IBOutlet UIImageView *punishingView;
 /// 提示文案
-@property (weak, nonatomic) IBOutlet UILabel *promptLabel;
+/// 惩罚中
+/// vs
 /// 倒计时
-@property (weak, nonatomic) IBOutlet UILabel *countdownLabel;
-
-@property (nonatomic, strong) NSTimer *countdownTimer;
-
+@property (weak, nonatomic) IBOutlet UIStackView *vsView;
+@property (weak, nonatomic) IBOutlet UIImageView *punishingView;
+@property (weak, nonatomic) IBOutlet UILabel *promptLabel;
 @property (nonatomic, assign) NSInteger countdown;
-
+@property (nonatomic, strong) NSTimer *countdownTimer;
+@property (weak, nonatomic) IBOutlet UIImageView *bgdView;
+@property (weak, nonatomic) IBOutlet UILabel *countdownLabel;
 @end
 
 @implementation LJLivePkPromptView
@@ -36,30 +36,21 @@
     return view;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupDataSource];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
-{
-    
-}
 
-- (void)lj_setupViews
-{
-    self.promptLabel.hidden = YES;
-    self.vsView.hidden = YES;
-    self.countdownLabel.hidden = YES;
-    self.punishingView.hidden = YES;
-    self.bgdView.hidden = YES;
-    //
-    self.bgdView.image = [kLJImageNamed(@"lj_live_pk_prompt_bgd_icon") stretchableImageWithLeftCapWidth:30 topCapHeight:0];
-}
+
+
+
+#pragma mark - Public Methods
+
+
+#pragma mark - Methods
+
+#pragma mark - Getter
+
+#pragma mark - Setter
 
 - (void)lj_initTimer
 {
@@ -110,19 +101,16 @@
         
     } repeats:YES];
 }
-
-- (void)lj_clearTimer
+- (void)lj_setupDataSource
 {
-    if (self.countdownTimer) {
-        self.countdown = 0;
-        [self.countdownTimer setFireDate:[NSDate distantFuture]];
-        [self.countdownTimer invalidate];
-        self.countdownTimer = nil;
-    }
+    
 }
-
-#pragma mark - Public Methods
-
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self lj_setupDataSource];
+    [self lj_setupViews];
+}
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
     // 收到PK数据，刷新UI显示
@@ -174,11 +162,23 @@
     // 清理定时器
     if (event == LJLiveEventRoomLeave) [self lj_clearTimer];
 }
-
-#pragma mark - Methods
-
-#pragma mark - Getter
-
-#pragma mark - Setter
-
+- (void)lj_setupViews
+{
+    self.promptLabel.hidden = YES;
+    self.vsView.hidden = YES;
+    self.countdownLabel.hidden = YES;
+    self.punishingView.hidden = YES;
+    self.bgdView.hidden = YES;
+    //
+    self.bgdView.image = [kLJImageNamed(@"lj_live_pk_prompt_bgd_icon") stretchableImageWithLeftCapWidth:30 topCapHeight:0];
+}
+- (void)lj_clearTimer
+{
+    if (self.countdownTimer) {
+        self.countdown = 0;
+        [self.countdownTimer setFireDate:[NSDate distantFuture]];
+        [self.countdownTimer invalidate];
+        self.countdownTimer = nil;
+    }
+}
 @end

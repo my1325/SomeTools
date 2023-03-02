@@ -11,20 +11,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGeneralAlertView : UIView
 
-@property (nonatomic, copy) LJLiveVoidBlock eventBlock, spaceDismissBlock;
 
-@property (nonatomic, strong) NSString *content;
 
-@property (nonatomic, strong) UIImage *iconImage;
+
+
+
+
 
 + (LJLiveGeneralAlertView *)remindAlertView;
-
-+ (LJLiveGeneralAlertView *)moreAlertView;
-
-- (void)lj_open;
-
 - (void)lj_dismiss;
-
++ (LJLiveGeneralAlertView *)moreAlertView;
+- (void)lj_open;
+@property (nonatomic, copy) LJLiveVoidBlock eventBlock, spaceDismissBlock;
+@property (nonatomic, strong) UIImage *iconImage;
+@property (nonatomic, strong) NSString *content;
 @end
 
 NS_ASSUME_NONNULL_END

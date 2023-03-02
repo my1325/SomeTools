@@ -9,20 +9,19 @@
 
 @implementation LJLiveBarrageViewModel
 
-- (instancetype)initWithBarrage:(LJLiveBarrage *)barrage
-{
-    self = [super init];
-    if (self) {
-        self.barrage = barrage;
-        self.isSvip = barrage.isSvip;
-        self.isVip = barrage.isVip;
-        [self lj_styleCalculate];
-    }
-    return self;
-}
 
 #pragma mark - Public
 
+
+
+
+
+
+
+- (BOOL)isVip
+{
+    return self.barrage.isVip;
+}
 - (NSAttributedString *)lj_svipUniqueTagText
 {
     NSMutableAttributedString *attText = [[NSMutableAttributedString alloc] init];
@@ -54,32 +53,10 @@
     }
     return attText;
 }
-
-- (NSString * __nullable)lj_giftUrl
+- (LJLiveBarrageType)barrageType
 {
-    NSString *giftImageUrl = @"";
-    LJLiveGift *giftConfig;
-    NSArray *giftConfigs = kLJLiveManager.inside.accountConfig.liveConfig.giftConfigs;//模型转换
-    for (LJLiveGift *config in giftConfigs) {
-        if (config.giftId == self.barrage.giftId) {
-            giftConfig = config;
-            break;
-        }
-    }
-    // 兼容老版本礼物
-    if (!giftConfig) {
-        NSArray *giftConfigs = kLJLiveManager.inside.accountConfig.liveConfig.videoChatRoomReplacedGiftConfigs;
-        for (LJLiveGift *config in giftConfigs) {
-            if (config.giftId == self.barrage.giftId) {
-                giftConfig = config;
-                break;
-            }
-        }
-    }
-    if (giftConfig) giftImageUrl = giftConfig.iconUrl;
-    return giftImageUrl;
+    return self.barrage.type;
 }
-
 - (void)lj_styleCalculate
 {
     // 需要显示的消息
@@ -212,20 +189,43 @@
         self.barrageText = attText;
     }
 }
-
-- (LJLiveBarrageType)barrageType
+- (NSString * __nullable)lj_giftUrl
 {
-    return self.barrage.type;
+    NSString *giftImageUrl = @"";
+    LJLiveGift *giftConfig;
+    NSArray *giftConfigs = kLJLiveManager.inside.accountConfig.liveConfig.giftConfigs;//模型转换
+    for (LJLiveGift *config in giftConfigs) {
+        if (config.giftId == self.barrage.giftId) {
+            giftConfig = config;
+            break;
+        }
+    }
+    // 兼容老版本礼物
+    if (!giftConfig) {
+        NSArray *giftConfigs = kLJLiveManager.inside.accountConfig.liveConfig.videoChatRoomReplacedGiftConfigs;
+        for (LJLiveGift *config in giftConfigs) {
+            if (config.giftId == self.barrage.giftId) {
+                giftConfig = config;
+                break;
+            }
+        }
+    }
+    if (giftConfig) giftImageUrl = giftConfig.iconUrl;
+    return giftImageUrl;
 }
-
+- (instancetype)initWithBarrage:(LJLiveBarrage *)barrage
+{
+    self = [super init];
+    if (self) {
+        self.barrage = barrage;
+        self.isSvip = barrage.isSvip;
+        self.isVip = barrage.isVip;
+        [self lj_styleCalculate];
+    }
+    return self;
+}
 - (BOOL)isSvip
 {
     return self.barrage.isSvip;
 }
-
-- (BOOL)isVip
-{
-    return self.barrage.isVip;
-}
-
 @end

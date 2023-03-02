@@ -4,29 +4,21 @@
 
 @interface LJLiveThrottle ()
 
+
+
+
 /// 节流触发的事件
-@property (nonatomic, copy) void(^action)(void);
-
-/// 上一次执行的时间
-@property (nonatomic, assign) NSTimeInterval fireDate;
-
 /// 线程安全队列
+/// 上一次执行的时间
 @property (nonatomic, strong) dispatch_queue_t syncQueue;
-
+@property (nonatomic, assign) NSTimeInterval fireDate;
+@property (nonatomic, copy) void(^action)(void);
 @end
 
 @implementation LJLiveThrottle
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.threshold = 1.0;
-        self.queue = dispatch_get_main_queue();
-        const char *label = [NSString stringWithFormat:@"GCDThrottle_%p", self].UTF8String;
-        self.syncQueue = dispatch_queue_create(label, DISPATCH_QUEUE_SERIAL);
-    }
-    return self;
-}
+
+
 
 - (void)doAction:(void(^)(void))block {
     dispatch_async(self.syncQueue, ^{
@@ -52,7 +44,6 @@
         }
     });
 }
-
 - (void)fire {
     dispatch_async(self.syncQueue, ^{
         if (self.action) {
@@ -69,5 +60,14 @@
         }
     });
 }
-
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.threshold = 1.0;
+        self.queue = dispatch_get_main_queue();
+        const char *label = [NSString stringWithFormat:@"GCDThrottle_%p", self].UTF8String;
+        self.syncQueue = dispatch_queue_create(label, DISPATCH_QUEUE_SERIAL);
+    }
+    return self;
+}
 @end

@@ -27,66 +27,66 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveInside : NSObject
 
-/*-------------------------------------------------------------------
- 直播间所需外部数据（中转数据）
- */
-/// 网络状态
-@property (nonatomic, assign) NSInteger networkStatus, sseStatus;
-///
-@property (nonatomic, strong) NSString *session;
-/// 账号信息
-@property (nonatomic, strong) LJLiveAccount *account;
-/// 账号配置
-@property (nonatomic, strong) LJLiveAccountConfig *accountConfig;
-/// 阿语适配
-@property (nonatomic, assign) BOOL appRTL;
-///
-@property (nonatomic, strong) AgoraRtmKit *rtmKit;
-///
-@property (nonatomic, strong) NSString *localizableAbbr;
 
-/*-------------------------------------------------------------------
- 数数统计（中转数据）
- */
-/// 关注
-@property (nonatomic, strong) NSString *from;
-/// 关注
-@property (nonatomic, strong) NSString *fromDetail;
-/// 进入直播间
-@property (nonatomic, strong) NSString * _Nullable fromJoin;
-///
-@property (nonatomic, assign) BOOL joinFlag;
 
-/*-------------------------------------------------------------------
- 中转数据
- */
-/// 金币更新
-@property (nonatomic, copy) LJLiveIntegerBlock coinsUpdate;
-/// 关注
-@property (nonatomic, copy) void(^ followStatusUpdate) (NSInteger status, NSInteger targetAccountId);
-/// 标签选中
-@property (nonatomic, copy) void(^ uniqueTagDidSelected) (LJUniqueTag * __nullable uniqueTag);
 
 #pragma mark - Methods
 
-+ (void)lj_loading;
 
+
+
+
+
+
+
+/// 账号信息
+/*-------------------------------------------------------------------
+ 数数统计（中转数据）
+ */
+/// 阿语适配
+/// 账号配置
+///
+/// 关注
+/// 关注
+///
+/// 关注
+///
+/// 金币更新
+/*-------------------------------------------------------------------
+ 直播间所需外部数据（中转数据）
+ */
+/// 进入直播间
+/// 标签选中
+/*-------------------------------------------------------------------
+ 中转数据
+ */
+///
+/// 网络状态
 + (void)lj_hideLoading;
-
-+ (void)lj_reloadHomeList;
-
 + (void)lj_tipWithText:(NSString *)text status:(LJLiveTipStatus)status delay:(float)delay;
-
-+ (void)lj_firbase:(LJLiveFirbaseEventType)type
-             params:(NSDictionary * __nullable )params;
-
++ (void)lj_loading;
++ (void)lj_reloadHomeList;
 + (void)lj_thinking:(LJLiveThinkingEventType)type
            eventName:(NSString *)eventName
               params:(NSDictionary * __nullable )params;
-
 + (void)lj_other:(NSString *)eventName
            params:(NSDictionary * __nullable )params;
-
++ (void)lj_firbase:(LJLiveFirbaseEventType)type
+             params:(NSDictionary * __nullable )params;
+@property (nonatomic, assign) NSInteger networkStatus, sseStatus;
+@property (nonatomic, strong) NSString * _Nullable fromJoin;
+@property (nonatomic, assign) BOOL appRTL;
+@property (nonatomic, copy) void(^ followStatusUpdate) (NSInteger status, NSInteger targetAccountId);
+@property (nonatomic, strong) NSString *session;
+@property (nonatomic, strong) LJLiveAccount *account;
+@property (nonatomic, copy) LJLiveIntegerBlock coinsUpdate;
+@property (nonatomic, strong) NSString *from;
+@property (nonatomic, copy) void(^ uniqueTagDidSelected) (LJUniqueTag * __nullable uniqueTag);
+@property (nonatomic, strong) LJLiveAccountConfig *accountConfig;
+@property (nonatomic, assign) BOOL joinFlag;
+@property (nonatomic, strong) NSString *localizableAbbr;
+@property (nonatomic, strong) AgoraRtmKit *rtmKit;
+@property (nonatomic, strong) NSString *fromDetail;
 @end
 
 NS_ASSUME_NONNULL_END

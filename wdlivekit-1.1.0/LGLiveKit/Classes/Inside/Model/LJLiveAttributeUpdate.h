@@ -16,11 +16,11 @@ static NSString *const kLJLiveAttributeKeyMuteOpVideo = @"muteOpVideo";
 
 @interface LJLiveAttributeUpdate : LJLiveBaseObject
 
+
+
 /// AccountID
-@property (nonatomic, strong) NSString *key;
-
 @property (nonatomic, strong) LJLiveAttribute *attribute;
-
+@property (nonatomic, strong) NSString *key;
 @end
 
 /*
@@ -40,14 +40,14 @@ static NSString *const kLJLiveAttributeKeyMuteOpVideo = @"muteOpVideo";
 
 @interface LJLiveAttribute : LJLiveBaseObject
 
-/// 声网房间（频道）
-@property (nonatomic, strong) NSString *agoraRoomId;
+
+
 /// 禁言到期时间轴
-@property (nonatomic, assign) NSInteger muteExpire;
-
 /// 音频开关（仅PK使用）
+/// 声网房间（频道）
 @property (nonatomic, assign) BOOL isMuted;
-
+@property (nonatomic, strong) NSString *agoraRoomId;
+@property (nonatomic, assign) NSInteger muteExpire;
 @end
 
 NS_ASSUME_NONNULL_END

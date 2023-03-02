@@ -9,15 +9,8 @@
 
 @implementation UIImage (LJLiveAdd)
 
-- (UIImage *)lj_flipedByRTL
-{
-    if (kLJLiveManager.inside.appRTL && kLJLiveManager.config.flipRTLEnable) {
-        return [UIImage imageWithCGImage:self.CGImage
-                                   scale:self.scale
-                             orientation:UIImageOrientationUpMirrored];
-    }
-    return self;
-}
+
+
 
 - (CGImageRef)lj_newCGImageRenderedInBitmapContext
 {
@@ -46,6 +39,13 @@
     //Note that we're not returning an autoreleased ref and that the method name reflects this by using 'new' as a prefix
     return renderedImage;
 }
-
-
+- (UIImage *)lj_flipedByRTL
+{
+    if (kLJLiveManager.inside.appRTL && kLJLiveManager.config.flipRTLEnable) {
+        return [UIImage imageWithCGImage:self.CGImage
+                                   scale:self.scale
+                             orientation:UIImageOrientationUpMirrored];
+    }
+    return self;
+}
 @end

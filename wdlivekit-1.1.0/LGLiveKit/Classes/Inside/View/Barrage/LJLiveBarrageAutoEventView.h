@@ -17,12 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBarrageAutoEventView : UIView
 
-@property (nonatomic, strong) NSString *avatarUrl;
 
-@property (nonatomic, assign) LJLiveBarrageAutoEventType type;
+
 
 @property (nonatomic, copy) LJLiveEventBlock eventBlock;
-
+@property (nonatomic, strong) NSString *avatarUrl;
+@property (nonatomic, assign) LJLiveBarrageAutoEventType type;
 @end
 
 NS_ASSUME_NONNULL_END

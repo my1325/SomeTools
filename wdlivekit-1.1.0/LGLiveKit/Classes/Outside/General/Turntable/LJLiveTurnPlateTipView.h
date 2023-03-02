@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveTurnPlateTipView : UIView
 
-@property (weak, nonatomic) IBOutlet UILabel *resultLabel;
 
+@property (weak, nonatomic) IBOutlet UILabel *resultLabel;
 @end
 
 NS_ASSUME_NONNULL_END

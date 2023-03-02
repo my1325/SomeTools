@@ -10,43 +10,33 @@
 
 @interface LJLiveRankPopViewCell ()
 
-@property (strong, nonatomic) UIButton *avatarButton;
 
-@property (strong, nonatomic) UILabel *nameLabel;
+
+
 
 @property (strong, nonatomic) UILabel *coinsLabel;
-
+@property (strong, nonatomic) UILabel *nameLabel;
+@property (strong, nonatomic) UIButton *avatarButton;
 @property (nonatomic, strong) UIView *marksView;
-
 @end
 
 @implementation LJLiveRankPopViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
-        [self lj_setupViews];
-    }
-    return self;
-}
 
-- (void)lj_setupViews
-{
-    [self.contentView addSubview:self.rankLabel];
-    [self.contentView addSubview:self.avatarButton];
-    [self.contentView addSubview:self.nameLabel];
-    [self.contentView addSubview:self.maskView];
-    [self.contentView addSubview:self.coinsLabel];
-    [self.contentView addSubview:self.marksView];
-}
 
 #pragma mark - Events
 
-- (void)avatarButtonClick:(UIButton *)sender
-{
-    if (self.avatarBlock) self.avatarBlock();
-}
 
 #pragma mark - Setter
+
+
+
+#pragma mark - Getter
+
+
+
+
+
 
 - (void)setMember:(LJLiveRoomMember *)member
 {
@@ -58,7 +48,13 @@
     //
     [self lj_configMarksViewWithAnchor:member];
 }
-
+- (UIView *)marksView
+{
+    if (!_marksView) {
+        _marksView = [[UIView alloc] initWithFrame:CGRectMake(81, 31, 200, 15)];
+    }
+    return _marksView;
+}
 - (void)lj_configMarksViewWithAnchor:(LJLiveRoomMember *)member
 {
     for (UIView *subview in self.marksView.subviews) {
@@ -128,26 +124,10 @@
         subview.frame = LJFlipedBy(subview.frame, self.marksView.frame);
     }
 }
-
-#pragma mark - Getter
-
-- (UIView *)marksView
+- (void)avatarButtonClick:(UIButton *)sender
 {
-    if (!_marksView) {
-        _marksView = [[UIView alloc] initWithFrame:CGRectMake(81, 31, 200, 15)];
-    }
-    return _marksView;
+    if (self.avatarBlock) self.avatarBlock();
 }
-
-- (UILabel *)rankLabel{
-    if (!_rankLabel) {
-        _rankLabel = [[UILabel alloc] initWithFrame:CGRectMake(14, 19.5, 10, 16.5)];
-        _rankLabel.textAlignment = NSTextAlignmentCenter;
-        _rankLabel.font = kLJHurmeBoldFont(14);
-    }
-    return _rankLabel;
-}
-
 - (UIButton *)avatarButton{
     if (!_avatarButton) {
         _avatarButton = [[UIButton alloc] initWithFrame:CGRectMake(37, 9, 38, 38)];
@@ -158,16 +138,15 @@
     }
     return _avatarButton;
 }
-
-- (UILabel *)nameLabel{
-    if (!_nameLabel) {
-        _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(81, 11, kLJScreenWidth - 81 - 60, 16.5)];
-        _nameLabel.font = kLJHurmeBoldFont(14);
-        _nameLabel.textColor = kLJHexColor(0x080808);
-    }
-    return _nameLabel;
+- (void)lj_setupViews
+{
+    [self.contentView addSubview:self.rankLabel];
+    [self.contentView addSubview:self.avatarButton];
+    [self.contentView addSubview:self.nameLabel];
+    [self.contentView addSubview:self.maskView];
+    [self.contentView addSubview:self.coinsLabel];
+    [self.contentView addSubview:self.marksView];
 }
-
 - (UILabel *)coinsLabel{
     if (!_coinsLabel) {
         _coinsLabel = [[UILabel alloc] initWithFrame:CGRectMake(kLJScreenWidth - 16 - 45 , 21, 45, 14.5)];
@@ -177,5 +156,26 @@
     }
     return _coinsLabel;
 }
-
+- (UILabel *)rankLabel{
+    if (!_rankLabel) {
+        _rankLabel = [[UILabel alloc] initWithFrame:CGRectMake(14, 19.5, 10, 16.5)];
+        _rankLabel.textAlignment = NSTextAlignmentCenter;
+        _rankLabel.font = kLJHurmeBoldFont(14);
+    }
+    return _rankLabel;
+}
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        [self lj_setupViews];
+    }
+    return self;
+}
+- (UILabel *)nameLabel{
+    if (!_nameLabel) {
+        _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(81, 11, kLJScreenWidth - 81 - 60, 16.5)];
+        _nameLabel.font = kLJHurmeBoldFont(14);
+        _nameLabel.textColor = kLJHexColor(0x080808);
+    }
+    return _nameLabel;
+}
 @end

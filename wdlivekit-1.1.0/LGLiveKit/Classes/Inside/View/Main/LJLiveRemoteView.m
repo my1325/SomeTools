@@ -19,27 +19,57 @@
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupViews];
-        
-        _throttle = [[LJLiveThrottle alloc] init];
-        _throttle.threshold = 2.0;
-    }
-    return self;
-}
 
-- (void)layoutSubviews
-{
-    self.effectView.frame = self.bounds;
-    self.backgroudImageView.frame = self.bounds;
-    self.maskButton.frame = self.bounds;
-}
 
 #pragma mark - Init
 
+
+
+#pragma mark - Events
+
+
+
+#pragma mark - Getter
+
+
+
+
+
+
+#pragma mark - Setter
+
+
+
+- (void)maskButtonClick:(UIButton *)sender
+{
+    [self.throttle doAction:^{
+        if (self.maskBlock) self.maskBlock();
+    }];
+}
+- (UIVisualEffectView *)effectView
+{
+    if (!_effectView) {
+        UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        _effectView = [[UIVisualEffectView alloc] initWithEffect:blur];
+        _effectView.frame = self.bounds;
+        _effectView.alpha = 0.97;
+    }
+    return _effectView;
+}
+- (void)setPromptText:(NSString *)promptText
+{
+    _promptText = promptText;
+    self.promptLabel.text = promptText;
+    [self lj_updateConstraints];
+}
+- (UIImageView *)backgroudImageView
+{
+    if (!_backgroudImageView) {
+        _backgroudImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _backgroudImageView.contentMode = UIViewContentModeScaleAspectFill;
+    }
+    return _backgroudImageView;
+}
 - (void)lj_setupViews
 {
     [self addSubview:self.backgroudImageView];
@@ -55,7 +85,16 @@
     //
     self.clipsToBounds = YES;
 }
-
+- (void)setPkVideoView:(UIView *)pkVideoView{
+    // 移除
+    if (_pkVideoView) {
+        [_pkVideoView removeFromSuperview];
+    }
+    if (pkVideoView) {
+        [self insertSubview:pkVideoView belowSubview:self.maskButton];
+    }
+    _pkVideoView = pkVideoView;
+}
 - (void)lj_updateConstraints
 {
     kLJWeakSelf;
@@ -65,43 +104,26 @@
         make.left.equalTo(weakSelf).offset(kLJWidthScale(65));
     }];
 }
-
-#pragma mark - Events
-
-- (void)closeButtonClick:(UIButton *)sender
+- (UIButton *)closeButton
 {
-    if (self.closeBlock) self.closeBlock();
-}
-
-- (void)maskButtonClick:(UIButton *)sender
-{
-    [self.throttle doAction:^{
-        if (self.maskBlock) self.maskBlock();
-    }];
-}
-
-#pragma mark - Getter
-
-- (UIImageView *)backgroudImageView
-{
-    if (!_backgroudImageView) {
-        _backgroudImageView = [[UIImageView alloc] initWithFrame:self.bounds];
-        _backgroudImageView.contentMode = UIViewContentModeScaleAspectFill;
+    if (!_closeButton) {
+        _closeButton = [[UIButton alloc] initWithFrame:CGRectMake(self.width - 30, 0, 30, 30)];
+        [_closeButton setImage:kLJImageNamed(@"lj_live_remote_close_icon") forState:UIControlStateNormal];
+        [_closeButton addTarget:self action:@selector(closeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _backgroudImageView;
+    return _closeButton;
 }
-
-- (UIVisualEffectView *)effectView
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    if (!_effectView) {
-        UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        _effectView = [[UIVisualEffectView alloc] initWithEffect:blur];
-        _effectView.frame = self.bounds;
-        _effectView.alpha = 0.97;
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupViews];
+        
+        _throttle = [[LJLiveThrottle alloc] init];
+        _throttle.threshold = 2.0;
     }
-    return _effectView;
+    return self;
 }
-
 - (UILabel *)promptLabel
 {
     if (!_promptLabel) {
@@ -113,35 +135,12 @@
     }
     return _promptLabel;
 }
-
-- (UIButton *)closeButton
+- (void)layoutSubviews
 {
-    if (!_closeButton) {
-        _closeButton = [[UIButton alloc] initWithFrame:CGRectMake(self.width - 30, 0, 30, 30)];
-        [_closeButton setImage:kLJImageNamed(@"lj_live_remote_close_icon") forState:UIControlStateNormal];
-        [_closeButton addTarget:self action:@selector(closeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _closeButton;
+    self.effectView.frame = self.bounds;
+    self.backgroudImageView.frame = self.bounds;
+    self.maskButton.frame = self.bounds;
 }
-
-- (UIButton *)maskButton
-{
-    if (!_maskButton) {
-        _maskButton = [[UIButton alloc] initWithFrame:self.bounds];
-        [_maskButton addTarget:self action:@selector(maskButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _maskButton;
-}
-
-#pragma mark - Setter
-
-- (void)setPromptText:(NSString *)promptText
-{
-    _promptText = promptText;
-    self.promptLabel.text = promptText;
-    [self lj_updateConstraints];
-}
-
 - (void)setVideoView:(UIView *)videoView
 {
     // 移除
@@ -153,15 +152,16 @@
     }
     _videoView = videoView;
 }
-
-- (void)setPkVideoView:(UIView *)pkVideoView{
-    // 移除
-    if (_pkVideoView) {
-        [_pkVideoView removeFromSuperview];
+- (void)closeButtonClick:(UIButton *)sender
+{
+    if (self.closeBlock) self.closeBlock();
+}
+- (UIButton *)maskButton
+{
+    if (!_maskButton) {
+        _maskButton = [[UIButton alloc] initWithFrame:self.bounds];
+        [_maskButton addTarget:self action:@selector(maskButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
-    if (pkVideoView) {
-        [self insertSubview:pkVideoView belowSubview:self.maskButton];
-    }
-    _pkVideoView = pkVideoView;
+    return _maskButton;
 }
 @end

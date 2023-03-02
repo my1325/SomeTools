@@ -11,11 +11,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBaseObject : NSObject
+
+
 ///
-@property (nonatomic, strong) NSDictionary *dictionary;
-
 - (instancetype)initWithDictionary:(NSDictionary * __nullable )dictionary;
-
+@property (nonatomic, strong) NSDictionary *dictionary;
 @end
 
 NS_ASSUME_NONNULL_END

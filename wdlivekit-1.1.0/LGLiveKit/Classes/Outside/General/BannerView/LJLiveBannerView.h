@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBannerView : UIView
 
-@property (nonatomic, assign) BOOL isLive;
+
 
 @property (nonatomic, strong) NSArray *dataArray;
-
+@property (nonatomic, assign) BOOL isLive;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -11,24 +11,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveBarrageViewModel : LJLiveBaseObject
 
-@property (nonatomic, strong) LJLiveBarrage *barrage;
-/// 弹幕文案
-@property (nonatomic, strong) NSMutableAttributedString *barrageText;
+
+
+
+
 /// 高度
-@property (nonatomic, assign) CGSize contentSize;
-/// svip
-@property (nonatomic, assign) BOOL isSvip, isVip;
-/// 类型
-@property (nonatomic, assign) LJLiveBarrageType barrageType;
+/// 弹幕文案
 /// 按钮大小
-@property (nonatomic, assign) CGSize nameButtonSize;
-
-@property (nonatomic, assign) CGRect nameButtonRect;
-
-@property (nonatomic, strong) UIColor *contentColor;
-
+/// svip
+/// 类型
 - (instancetype)initWithBarrage:(LJLiveBarrage *)barrage;
-
+@property (nonatomic, assign) BOOL isSvip, isVip;
+@property (nonatomic, strong) LJLiveBarrage *barrage;
+@property (nonatomic, strong) NSMutableAttributedString *barrageText;
+@property (nonatomic, assign) CGSize contentSize;
+@property (nonatomic, strong) UIColor *contentColor;
+@property (nonatomic, assign) CGRect nameButtonRect;
+@property (nonatomic, assign) LJLiveBarrageType barrageType;
+@property (nonatomic, assign) CGSize nameButtonSize;
 @end
 
 NS_ASSUME_NONNULL_END

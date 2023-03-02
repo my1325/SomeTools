@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveMedalListView : UIView
 
-@property (nonatomic, strong) LJLiveRoomAnchor *anchor;
+
+
 
 - (void)lj_showInView:(UIView *)inView withAccountId:(NSInteger)accountId;
-
 - (void)lj_dismiss;
-
+@property (nonatomic, strong) LJLiveRoomAnchor *anchor;
 @end
 
 NS_ASSUME_NONNULL_END

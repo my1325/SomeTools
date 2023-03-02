@@ -11,12 +11,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveRankPopViewCell : UITableViewCell
 
+
+
+
 @property (strong, nonatomic) UILabel *rankLabel;
-
 @property (nonatomic, strong) LJLiveRoomMember *member;
-
 @property (nonatomic, copy) LJLiveVoidBlock avatarBlock;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -23,25 +23,24 @@ typedef NS_ENUM(NSInteger, LJRadioGiftSupportRoomType) {
 };
 
 @protocol LJRadioGiftDelegate <NSObject>
-- (void)lj_clickRadioGiftWithRoomType:(LJRadioGiftRoomType)roomType andRoomId:(NSInteger)roomId andAgoraRoomId:(NSString *)agoraRoomId andHostAccountId:(NSInteger)hostAccountId;
-@optional
-/// 数数统计
 - (void)lj_thinkingEventName:(NSString *)eventName;
-@end
+@optional/// 数数统计
+- (void)lj_clickRadioGiftWithRoomType:(LJRadioGiftRoomType)roomType andRoomId:(NSInteger)roomId andAgoraRoomId:(NSString *)agoraRoomId andHostAccountId:(NSInteger)hostAccountId;
+@required@end
 
 @interface LJLiveRadioGift : UIView
-@property (nonatomic, weak) id<LJRadioGiftDelegate> delegate;
-//public 是否显示
-@property (nonatomic, assign) BOOL enable;
+
+
 //private
-@property (nonatomic, strong) UIView *radioGiftView;
-@property (nonatomic, assign) LJRadioGiftSupportRoomType supportRoomType;
-@property (nonatomic, copy  ) NSString *boldFontName;
-
-+ (LJLiveRadioGift *)shared;
-
-- (void)lj_initRadioGiftViewInView:(UIView *)view boldFontName:(NSString *)boldFontName;
+//public 是否显示
 - (void)lj_receiveRtmRespone:(NSDictionary *)dic;
+- (void)lj_initRadioGiftViewInView:(UIView *)view boldFontName:(NSString *)boldFontName;
++ (LJLiveRadioGift *)shared;
+@property (nonatomic, assign) BOOL enable;
+@property (nonatomic, assign) LJRadioGiftSupportRoomType supportRoomType;
+@property (nonatomic, strong) UIView *radioGiftView;
+@property (nonatomic, weak) id<LJRadioGiftDelegate> delegate;
+@property (nonatomic, copy  ) NSString *boldFontName;
 @end
 
 NS_ASSUME_NONNULL_END

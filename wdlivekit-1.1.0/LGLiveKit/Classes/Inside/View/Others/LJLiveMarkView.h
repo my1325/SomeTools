@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveMarkView : UIView
 
-@property (nonatomic, strong) UIImage *icon;
 
-@property (nonatomic, strong) NSAttributedString *content;
+
 
 + (CGFloat)lj_widthForContent:(NSAttributedString *)content
                        height:(CGFloat)height;
-
+@property (nonatomic, strong) UIImage *icon;
+@property (nonatomic, strong) NSAttributedString *content;
 @end
 
 NS_ASSUME_NONNULL_END

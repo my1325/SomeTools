@@ -28,49 +28,39 @@
     return rank;
 }
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.backgroundColor = [UIColor clearColor];
-        self.frame = CGRectMake(0, kLJScreenHeight, kLJScreenWidth, kLJScreenHeight);
-        [self lj_creatUI];
-    }
-    return self;
-}
 
-- (void)lj_showInView:(UIView *)inView{
-    for (UIView *subview in inView.subviews) {
-        if ([subview isKindOfClass:[self class]]) {
-            return;
-        }
-    }
-    [inView addSubview:self];
-    self.y = 0;
-    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:0.95 initialSpringVelocity:20 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        self.contentView.y = kLJScreenHeight - (kLJBottomSafeHeight + self.contentHeight);
-        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.1];
-    } completion:^(BOOL finished) {}];
-}
 
-- (void)lj_dismiss{
-    [UIView animateWithDuration:0.1 animations:^{
-        self.contentView.y = kLJScreenHeight;
-        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
-    }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self removeFromSuperview];
-    });
-}
 
-- (void)lj_reloadData
-{
-    [self.members removeAllObjects];
-    [self.members addObjectsFromArray:kLJLiveHelper.data.current.videoChatRoomMembers];
-    [self.tableView reloadData];
-}
 
 #pragma mark - UI
+
+#pragma mark - UITableViewDelegate
+
+
+
+
+
+#pragma mark - Getter
+
+
+#pragma mark - Setter
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+- (UITableView *)tableView
+{
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 71, kLJScreenWidth, self.contentHeight - 71 - kLJBottomSafeHeight - 26)];
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.backgroundColor = UIColor.whiteColor;
+    }
+    return _tableView;
+}
 -(void)lj_creatUI{
     UIButton *closeBtn = [[UIButton alloc] initWithFrame:self.bounds];
     [self addSubview:closeBtn];
@@ -122,19 +112,13 @@
     tipLabel.text = kLJLocalString(@"Show only the top 100 users");
     [self.contentView addSubview:tipLabel];
 }
-
-#pragma mark - UITableViewDelegate
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 1;
+    LJLiveRoomMember *member = self.members[indexPath.row];
+    if (self.eventBlock) self.eventBlock(LJLiveEventPersonalData, member);
+    //
+    LJEvent(@"lj_LiveRankTouchAvatar", nil);
 }
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return self.members.count;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"cell";
@@ -163,35 +147,51 @@
     };
     return item;
 }
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)lj_reloadData
 {
-    LJLiveRoomMember *member = self.members[indexPath.row];
-    if (self.eventBlock) self.eventBlock(LJLiveEventPersonalData, member);
-    //
-    LJEvent(@"lj_LiveRankTouchAvatar", nil);
+    [self.members removeAllObjects];
+    [self.members addObjectsFromArray:kLJLiveHelper.data.current.videoChatRoomMembers];
+    [self.tableView reloadData];
 }
-
-#pragma mark - Getter
-
-- (UITableView *)tableView
-{
-    if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 71, kLJScreenWidth, self.contentHeight - 71 - kLJBottomSafeHeight - 26)];
-        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        _tableView.delegate = self;
-        _tableView.dataSource = self;
-        _tableView.backgroundColor = UIColor.whiteColor;
-    }
-    return _tableView;
+- (void)lj_dismiss{
+    [UIView animateWithDuration:0.1 animations:^{
+        self.contentView.y = kLJScreenHeight;
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self removeFromSuperview];
+    });
 }
-
-#pragma mark - Setter
-
 - (void)setMembers:(NSMutableArray<LJLiveRoomMember *> *)members
 {
     _members = members;
     [self.tableView reloadData];
 }
-
+- (void)lj_showInView:(UIView *)inView{
+    for (UIView *subview in inView.subviews) {
+        if ([subview isKindOfClass:[self class]]) {
+            return;
+        }
+    }
+    [inView addSubview:self];
+    self.y = 0;
+    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:0.95 initialSpringVelocity:20 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.contentView.y = kLJScreenHeight - (kLJBottomSafeHeight + self.contentHeight);
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.1];
+    } completion:^(BOOL finished) {}];
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.members.count;
+}
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.backgroundColor = [UIColor clearColor];
+        self.frame = CGRectMake(0, kLJScreenHeight, kLJScreenWidth, kLJScreenHeight);
+        [self lj_creatUI];
+    }
+    return self;
+}
 @end

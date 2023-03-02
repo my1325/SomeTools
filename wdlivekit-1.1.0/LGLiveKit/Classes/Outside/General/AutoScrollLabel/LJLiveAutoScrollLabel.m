@@ -32,274 +32,61 @@ static void each_object(NSArray *objects, void (^block)(id object)) {
 
 @interface LJLiveAutoScrollLabel ()
 
+
+@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSArray *labels;
 @property (nonatomic, strong, readonly) UILabel *mainLabel;
-@property (nonatomic, strong) UIScrollView *scrollView;
-
 @end
 
 @implementation LJLiveAutoScrollLabel
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    if ((self = [super initWithCoder:aDecoder])) {
-        [self commonInit];
-    }
-    return self;
-}
 
-- (id)initWithFrame:(CGRect)frame {
-    if ((self = [super initWithFrame:frame])) {
-        [self commonInit];
-    }
-    return self;
-}
 
-- (void)commonInit {
-    // create the labels
-    NSMutableSet *labelSet = [[NSMutableSet alloc] initWithCapacity:kLabelCount];
 
-    for (int index = 0; index < kLabelCount; ++index) {
-        UILabel *label = [[UILabel alloc] init];
-        label.backgroundColor = [UIColor clearColor];
-        label.autoresizingMask = self.autoresizingMask;
 
-        // store labels
-        [self.scrollView addSubview:label];
-        [labelSet addObject:label];
-    }
 
-    self.labels = [labelSet.allObjects copy];
 
-    // default values
-    _scrollDirection = LJLiveAutoScrollDirectionLeft;
-    _scrollSpeed = kDefaultPixelsPerSecond;
-    self.pauseInterval = kDefaultPauseTime;
-    self.labelSpacing = kDefaultLabelBufferSpace;
-    self.textAlignment = NSTextAlignmentLeft;
-    self.animationOptions = UIViewAnimationOptionCurveLinear;
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    self.scrollView.showsHorizontalScrollIndicator = NO;
-    self.scrollView.scrollEnabled = NO;
-    self.userInteractionEnabled = NO;
-    self.backgroundColor = [UIColor clearColor];
-    self.clipsToBounds = YES;
-    self.fadeLength = kDefaultFadeLength;
-}
-
-- (void)dealloc {
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
-
-    [self didChangeFrame];
-}
-
-// For autolayout
-- (void)setBounds:(CGRect)bounds {
-    [super setBounds:bounds];
-
-    [self didChangeFrame];
-}
-
-- (void)didMoveToWindow {
-    [super didMoveToWindow];
-    
-    if (self.window) {
-        [self scrollLabelIfNeeded];
-    }
-}
 
 #pragma mark - Properties
 
-- (UIScrollView *)scrollView {
-    if (_scrollView == nil) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-        _scrollView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-        _scrollView.backgroundColor = [UIColor clearColor];
 
-        [self addSubview:_scrollView];
-    }
-    return _scrollView;
-}
 
-- (void)setFadeLength:(CGFloat)fadeLength {
-    if (_fadeLength != fadeLength) {
-        _fadeLength = fadeLength;
 
-        [self refreshLabels];
-        [self applyGradientMaskForFadeLength:fadeLength enableFade:NO];
-    }
-}
 
-- (UILabel *)mainLabel {
-    return self.labels[0];
-}
 
-- (void)setText:(NSString *)theText {
-    [self setText:theText refreshLabels:YES];
-}
 
-- (void)setText:(NSString *)theText refreshLabels:(BOOL)refresh {
-    // ignore identical text changes
-    if ([theText isEqualToString:self.text])
-        return;
 
-    EACH_LABEL(text, theText)
 
-    if (refresh)
-        [self refreshLabels];
-}
 
-- (NSString *)text {
-    return self.mainLabel.text;
-}
 
-- (void)setAttributedText:(NSAttributedString *)theText {
-    [self setAttributedText:theText refreshLabels:YES];
-}
 
-- (void)setAttributedText:(NSAttributedString *)theText refreshLabels:(BOOL)refresh {
-    // ignore identical text changes
-    if ([theText.string isEqualToString:self.attributedText.string])
-        return;
 
-    EACH_LABEL(attributedText, theText)
 
-    if (refresh)
-        [self refreshLabels];
-}
 
-- (NSAttributedString *)attributedText {
-    return self.mainLabel.attributedText;
-}
 
-- (void)setTextColor:(UIColor *)color {
-    EACH_LABEL(textColor, color)
-}
 
-- (UIColor *)textColor {
-    return self.mainLabel.textColor;
-}
 
-- (void)setFont:(UIFont *)font {
-    if (self.mainLabel.font == font)
-        return;
 
-    EACH_LABEL(font, font)
-
-    [self refreshLabels];
-    [self invalidateIntrinsicContentSize];
-}
-
-- (UIFont *)font {
-    return self.mainLabel.font;
-}
-
-- (void)setScrollSpeed:(float)speed {
-    _scrollSpeed = speed;
-
-    [self scrollLabelIfNeeded];
-}
-
-- (void)setScrollDirection:(LJLiveAutoScrollDirection)direction {
-    _scrollDirection = direction;
-
-    [self scrollLabelIfNeeded];
-}
-
-- (void)setShadowColor:(UIColor *)color {
-    EACH_LABEL(shadowColor, color)
-}
-
-- (UIColor *)shadowColor {
-    return self.mainLabel.shadowColor;
-}
-
-- (void)setShadowOffset:(CGSize)offset {
-    EACH_LABEL(shadowOffset, offset)
-}
-
-- (CGSize)shadowOffset {
-    return self.mainLabel.shadowOffset;
-}
 
 #pragma mark - Autolayout
 
-- (CGSize)intrinsicContentSize {
-    return CGSizeMake(0, [self.mainLabel intrinsicContentSize].height);
-}
 
 #pragma mark - Misc
 
-- (void)observeApplicationNotifications {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    // restart scrolling when the app has been activated
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(scrollLabelIfNeeded)
-                                                 name:UIApplicationWillEnterForegroundNotification
-                                               object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(scrollLabelIfNeeded)
-                                                 name:UIApplicationDidBecomeActiveNotification
-                                               object:nil];
 
-#ifndef TARGET_OS_TV
-    // refresh labels when interface orientation is changed
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onUIApplicationDidChangeStatusBarOrientationNotification:)
-                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
-                                               object:nil];
-#endif
 
-}
 
-- (void)enableShadow {
-    _scrolling = YES;
-    [self applyGradientMaskForFadeLength:self.fadeLength enableFade:YES];
-}
+#pragma mark - Gradient
 
-- (void)scrollLabelIfNeeded {
-    if (!self.text.length)
-        return;
 
-    CGFloat labelWidth = CGRectGetWidth(self.mainLabel.bounds);
-    if (labelWidth <= CGRectGetWidth(self.bounds))
-        return;
+#pragma mark - Notifications
 
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(scrollLabelIfNeeded) object:nil];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(enableShadow) object:nil];
 
-    [self.scrollView.layer removeAllAnimations];
-
-    BOOL doScrollLeft = (self.scrollDirection == LJLiveAutoScrollDirectionLeft);
-    self.scrollView.contentOffset = (doScrollLeft ? CGPointZero : CGPointMake(labelWidth + self.labelSpacing, 0));
-
-    // Add the left shadow after delay
-    [self performSelector:@selector(enableShadow) withObject:nil afterDelay:self.pauseInterval];
-
-    // animate the scrolling
-    NSTimeInterval duration = labelWidth / self.scrollSpeed;
-    [UIView animateWithDuration:duration delay:self.pauseInterval options:self.animationOptions | UIViewAnimationOptionAllowUserInteraction animations:^{
-         // adjust offset
-         self.scrollView.contentOffset = (doScrollLeft ? CGPointMake(labelWidth + self.labelSpacing, 0) : CGPointZero);
-     } completion:^(BOOL finished) {
-         self->_scrolling = NO;
-
-         // remove the left shadow
-         [self applyGradientMaskForFadeLength:self.fadeLength enableFade:NO];
-
-         // setup pause delay/loop
-         if (finished) {
-             [self performSelector:@selector(scrollLabelIfNeeded) withObject:nil];
-         }
-     }];
-}
-
+// bounds or frame has been changed
+// For autolayout
+// ref: https://github.com/cbpowell/MarqueeLabel
 - (void)refreshLabels {
     __block float offset = 0;
 
@@ -348,16 +135,214 @@ static void each_object(NSArray *objects, void (^block)(id object)) {
         [self applyGradientMaskForFadeLength:0 enableFade:NO];
     }
 }
+- (UIFont *)font {
+    return self.mainLabel.font;
+}
+- (void)setAttributedText:(NSAttributedString *)theText {
+    [self setAttributedText:theText refreshLabels:YES];
+}
+- (void)scrollLabelIfNeeded {
+    if (!self.text.length)
+        return;
 
-// bounds or frame has been changed
+    CGFloat labelWidth = CGRectGetWidth(self.mainLabel.bounds);
+    if (labelWidth <= CGRectGetWidth(self.bounds))
+        return;
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(scrollLabelIfNeeded) object:nil];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(enableShadow) object:nil];
+
+    [self.scrollView.layer removeAllAnimations];
+
+    BOOL doScrollLeft = (self.scrollDirection == LJLiveAutoScrollDirectionLeft);
+    self.scrollView.contentOffset = (doScrollLeft ? CGPointZero : CGPointMake(labelWidth + self.labelSpacing, 0));
+
+    // Add the left shadow after delay
+    [self performSelector:@selector(enableShadow) withObject:nil afterDelay:self.pauseInterval];
+
+    // animate the scrolling
+    NSTimeInterval duration = labelWidth / self.scrollSpeed;
+    [UIView animateWithDuration:duration delay:self.pauseInterval options:self.animationOptions | UIViewAnimationOptionAllowUserInteraction animations:^{
+         // adjust offset
+         self.scrollView.contentOffset = (doScrollLeft ? CGPointMake(labelWidth + self.labelSpacing, 0) : CGPointZero);
+     } completion:^(BOOL finished) {
+         self->_scrolling = NO;
+
+         // remove the left shadow
+         [self applyGradientMaskForFadeLength:self.fadeLength enableFade:NO];
+
+         // setup pause delay/loop
+         if (finished) {
+             [self performSelector:@selector(scrollLabelIfNeeded) withObject:nil];
+         }
+     }];
+}
+- (NSAttributedString *)attributedText {
+    return self.mainLabel.attributedText;
+}
+- (void)setAttributedText:(NSAttributedString *)theText refreshLabels:(BOOL)refresh {
+    // ignore identical text changes
+    if ([theText.string isEqualToString:self.attributedText.string])
+        return;
+
+    EACH_LABEL(attributedText, theText)
+
+    if (refresh)
+        [self refreshLabels];
+}
+- (UILabel *)mainLabel {
+    return self.labels[0];
+}
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+
+    [self didChangeFrame];
+}
+- (void)setFont:(UIFont *)font {
+    if (self.mainLabel.font == font)
+        return;
+
+    EACH_LABEL(font, font)
+
+    [self refreshLabels];
+    [self invalidateIntrinsicContentSize];
+}
+- (void)setShadowColor:(UIColor *)color {
+    EACH_LABEL(shadowColor, color)
+}
+- (void)commonInit {
+    // create the labels
+    NSMutableSet *labelSet = [[NSMutableSet alloc] initWithCapacity:kLabelCount];
+
+    for (int index = 0; index < kLabelCount; ++index) {
+        UILabel *label = [[UILabel alloc] init];
+        label.backgroundColor = [UIColor clearColor];
+        label.autoresizingMask = self.autoresizingMask;
+
+        // store labels
+        [self.scrollView addSubview:label];
+        [labelSet addObject:label];
+    }
+
+    self.labels = [labelSet.allObjects copy];
+
+    // default values
+    _scrollDirection = LJLiveAutoScrollDirectionLeft;
+    _scrollSpeed = kDefaultPixelsPerSecond;
+    self.pauseInterval = kDefaultPauseTime;
+    self.labelSpacing = kDefaultLabelBufferSpace;
+    self.textAlignment = NSTextAlignmentLeft;
+    self.animationOptions = UIViewAnimationOptionCurveLinear;
+    self.scrollView.showsVerticalScrollIndicator = NO;
+    self.scrollView.showsHorizontalScrollIndicator = NO;
+    self.scrollView.scrollEnabled = NO;
+    self.userInteractionEnabled = NO;
+    self.backgroundColor = [UIColor clearColor];
+    self.clipsToBounds = YES;
+    self.fadeLength = kDefaultFadeLength;
+}
+- (void)setFadeLength:(CGFloat)fadeLength {
+    if (_fadeLength != fadeLength) {
+        _fadeLength = fadeLength;
+
+        [self refreshLabels];
+        [self applyGradientMaskForFadeLength:fadeLength enableFade:NO];
+    }
+}
 - (void)didChangeFrame {
     [self refreshLabels];
     [self applyGradientMaskForFadeLength:self.fadeLength enableFade:self.scrolling];
 }
+- (void)enableShadow {
+    _scrolling = YES;
+    [self applyGradientMaskForFadeLength:self.fadeLength enableFade:YES];
+}
+- (CGSize)shadowOffset {
+    return self.mainLabel.shadowOffset;
+}
+- (void)setShadowOffset:(CGSize)offset {
+    EACH_LABEL(shadowOffset, offset)
+}
+- (void)setBounds:(CGRect)bounds {
+    [super setBounds:bounds];
 
-#pragma mark - Gradient
+    [self didChangeFrame];
+}
+- (void)setTextColor:(UIColor *)color {
+    EACH_LABEL(textColor, color)
+}
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    
+    if (self.window) {
+        [self scrollLabelIfNeeded];
+    }
+}
+- (void)dealloc {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+- (UIColor *)shadowColor {
+    return self.mainLabel.shadowColor;
+}
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    if ((self = [super initWithCoder:aDecoder])) {
+        [self commonInit];
+    }
+    return self;
+}
+- (UIColor *)textColor {
+    return self.mainLabel.textColor;
+}
+- (void)setScrollSpeed:(float)speed {
+    _scrollSpeed = speed;
 
-// ref: https://github.com/cbpowell/MarqueeLabel
+    [self scrollLabelIfNeeded];
+}
+- (void)setText:(NSString *)theText {
+    [self setText:theText refreshLabels:YES];
+}
+- (NSString *)text {
+    return self.mainLabel.text;
+}
+- (void)setText:(NSString *)theText refreshLabels:(BOOL)refresh {
+    // ignore identical text changes
+    if ([theText isEqualToString:self.text])
+        return;
+
+    EACH_LABEL(text, theText)
+
+    if (refresh)
+        [self refreshLabels];
+}
+- (void)observeApplicationNotifications {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    // restart scrolling when the app has been activated
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(scrollLabelIfNeeded)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(scrollLabelIfNeeded)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
+
+#ifndef TARGET_OS_TV
+    // refresh labels when interface orientation is changed
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onUIApplicationDidChangeStatusBarOrientationNotification:)
+                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
+                                               object:nil];
+#endif
+
+}
+- (void)onUIApplicationDidChangeStatusBarOrientationNotification:(NSNotification *)notification {
+    // delay to have it re-calculate on next runloop
+    [self performSelector:@selector(refreshLabels) withObject:nil afterDelay:.1f];
+    [self performSelector:@selector(scrollLabelIfNeeded) withObject:nil afterDelay:.1f];
+}
 - (void)applyGradientMaskForFadeLength:(CGFloat)fadeLength enableFade:(BOOL)fade {
     CGFloat labelWidth = CGRectGetWidth(self.mainLabel.bounds);
 
@@ -410,13 +395,28 @@ static void each_object(NSArray *objects, void (^block)(id object)) {
         self.layer.mask = nil;
     }
 }
-
-#pragma mark - Notifications
-
-- (void)onUIApplicationDidChangeStatusBarOrientationNotification:(NSNotification *)notification {
-    // delay to have it re-calculate on next runloop
-    [self performSelector:@selector(refreshLabels) withObject:nil afterDelay:.1f];
-    [self performSelector:@selector(scrollLabelIfNeeded) withObject:nil afterDelay:.1f];
+- (id)initWithFrame:(CGRect)frame {
+    if ((self = [super initWithFrame:frame])) {
+        [self commonInit];
+    }
+    return self;
 }
+- (UIScrollView *)scrollView {
+    if (_scrollView == nil) {
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        _scrollView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+        _scrollView.backgroundColor = [UIColor clearColor];
 
+        [self addSubview:_scrollView];
+    }
+    return _scrollView;
+}
+- (CGSize)intrinsicContentSize {
+    return CGSizeMake(0, [self.mainLabel intrinsicContentSize].height);
+}
+- (void)setScrollDirection:(LJLiveAutoScrollDirection)direction {
+    _scrollDirection = direction;
+
+    [self scrollLabelIfNeeded];
+}
 @end

@@ -9,24 +9,51 @@
 
 @implementation UIView (LJLiveAdd)
 
+
+
+
+#pragma mark - Getter
+
+
+
+
+
+
+
+
+#pragma mark - Setter
+
+
+
+
+
+
+
+
+/// scrollview针对RTL做翻转适配，在视图布局固定时使用
+/// 已添加在视图上之后，才能有效重置X
+- (CGFloat)height
+{
+    return self.frame.size.height;
+}
+- (CGFloat)x
+{
+    return self.frame.origin.x;
+}
 - (void)lj_adjustView:(UIScrollView * __nullable)scrollView
 {
     if (@available(iOS 11.0, *)) {
         if (scrollView) scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     }
 }
-
-/// 已添加在视图上之后，才能有效重置X
-- (void)lj_flipedByRTL
+- (CGFloat)y
 {
-    if (!kLJLiveManager.inside.appRTL || !kLJLiveManager.config.flipRTLEnable) return;
-    UIView *superView = self.superview;
-    if (superView) {
-        self.x = superView.width - self.x - self.width;
-    }
+    return self.frame.origin.y;
 }
-
-/// scrollview针对RTL做翻转适配，在视图布局固定时使用
+- (CGFloat)centerY
+{
+    return self.center.y;
+}
 - (void)lj_flippedSubviewsByRTL
 {
     if (!kLJLiveManager.inside.appRTL || !kLJLiveManager.config.flipRTLEnable) return;
@@ -37,53 +64,22 @@
         self.transform = CGAffineTransformMakeRotation(M_PI);
     }
 }
-
-#pragma mark - Getter
-
 - (CGSize)size
 {
     return self.frame.size;
 }
-
-- (CGFloat)x
-{
-    return self.frame.origin.x;
-}
-
-- (CGFloat)y
-{
-    return self.frame.origin.y;
-}
-
-- (CGFloat)width
-{
-    return self.frame.size.width;
-}
-
-- (CGFloat)height
-{
-    return self.frame.size.height;
-}
-
-- (CGFloat)centerX
-{
-    return self.center.x;
-}
-
-- (CGFloat)centerY
-{
-    return self.center.y;
-}
-
-#pragma mark - Setter
-
 - (void)setSize:(CGSize)size
 {
     CGRect frame = self.frame;
     frame.size = size;
     self.frame = frame;
 }
-
+- (void)setCenterX:(CGFloat)centerX
+{
+    CGPoint center = self.center;
+    center.x = centerX;
+    self.center = center;
+}
 - (void)setX:(CGFloat)x
 {
     if (isnan(x)) {
@@ -93,24 +89,24 @@
     frame.origin.x = x;
     self.frame = frame;
 }
-
-- (void)setY:(CGFloat)y
+- (void)setCenterY:(CGFloat)centerY
 {
-    CGRect frame = self.frame;
-    frame.origin.y = y;
-    self.frame = frame;
+    CGPoint center = self.center;
+    center.y = centerY;
+    self.center = center;
 }
-
-- (void)setWidth:(CGFloat)width
+- (CGFloat)width
 {
-    if (isnan(width)) {
-        return;
+    return self.frame.size.width;
+}
+- (void)lj_flipedByRTL
+{
+    if (!kLJLiveManager.inside.appRTL || !kLJLiveManager.config.flipRTLEnable) return;
+    UIView *superView = self.superview;
+    if (superView) {
+        self.x = superView.width - self.x - self.width;
     }
-    CGRect frame = self.frame;
-    frame.size.width = width;
-    self.frame = frame;
 }
-
 - (void)setHeight:(CGFloat)height
 {
     if (isnan(height)) {
@@ -120,19 +116,23 @@
     frame.size.height = height;
     self.frame = frame;
 }
-
-- (void)setCenterX:(CGFloat)centerX
+- (void)setY:(CGFloat)y
 {
-    CGPoint center = self.center;
-    center.x = centerX;
-    self.center = center;
+    CGRect frame = self.frame;
+    frame.origin.y = y;
+    self.frame = frame;
 }
-
-- (void)setCenterY:(CGFloat)centerY
+- (void)setWidth:(CGFloat)width
 {
-    CGPoint center = self.center;
-    center.y = centerY;
-    self.center = center;
+    if (isnan(width)) {
+        return;
+    }
+    CGRect frame = self.frame;
+    frame.size.width = width;
+    self.frame = frame;
 }
-
+- (CGFloat)centerX
+{
+    return self.center.x;
+}
 @end

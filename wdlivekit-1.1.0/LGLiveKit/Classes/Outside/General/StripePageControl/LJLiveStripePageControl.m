@@ -9,43 +9,30 @@
 
 @interface LJLiveStripePageControl ()
 
+
+
 @property (nonatomic, strong) UIView *tagView;
-
 @property (nonatomic, strong) UIView *contentView;
-
 @end
 
 @implementation LJLiveStripePageControl
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
 
-- (void)lj_setupViews
-{
-    [self addSubview:self.contentView];
-    [self addSubview:self.tagView];
-}
 
 #pragma mark - Getter
 
-- (UIView *)contentView
-{
-    if (!_contentView) {
-        _contentView = [[UIView alloc] init];
-        _contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
-        _tagView.layer.masksToBounds = YES;
-        _tagView.layer.cornerRadius = 1;
-    }
-    return _contentView;
-}
+
+
+#pragma mark - Setter
+
+
+
+
+
+
+
 
 - (UIView *)tagView
 {
@@ -57,40 +44,55 @@
     }
     return _tagView;
 }
-
-#pragma mark - Setter
-
-- (void)setNormalColor:(UIColor *)normalColor
+- (void)lj_setupViews
 {
-    _normalColor = normalColor;
-    self.contentView.backgroundColor = normalColor;
+    [self addSubview:self.contentView];
+    [self addSubview:self.tagView];
 }
-
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupViews];
+    }
+    return self;
+}
 - (void)setCurrentTagColor:(UIColor *)currentTagColor
 {
     _currentTagColor = currentTagColor;
     self.tagView.backgroundColor = currentTagColor;
 }
-
+- (void)setCurrentTagSize:(CGSize)currentTagSize
+{
+    _currentTagSize = currentTagSize;
+    [self lj_updateConstraints];
+}
 - (void)setCurrentTagRadius:(CGFloat)currentTagRadius
 {
     _currentTagRadius = currentTagRadius;
     self.tagView.layer.cornerRadius = currentTagRadius;
 }
-
+- (void)setNormalColor:(UIColor *)normalColor
+{
+    _normalColor = normalColor;
+    self.contentView.backgroundColor = normalColor;
+}
 - (void)setNumbersOfPage:(NSInteger)numbersOfPage
 {
     _numbersOfPage = numbersOfPage;
 //    self.hidden = numbersOfPage <= 1;
     [self lj_updateConstraints];
 }
-
-- (void)setCurrentTagSize:(CGSize)currentTagSize
+- (UIView *)contentView
 {
-    _currentTagSize = currentTagSize;
-    [self lj_updateConstraints];
+    if (!_contentView) {
+        _contentView = [[UIView alloc] init];
+        _contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.2];
+        _tagView.layer.masksToBounds = YES;
+        _tagView.layer.cornerRadius = 1;
+    }
+    return _contentView;
 }
-
 - (void)setCurrentPage:(NSInteger)currentPage
 {
     _currentPage = currentPage;
@@ -100,7 +102,6 @@
         self.tagView.x = CGRectGetMinX(self.contentView.frame) + p;
     }];
 }
-
 - (void)lj_updateConstraints
 {
     if (CGSizeEqualToSize(CGSizeZero, self.currentTagSize) && self.numbersOfPage <= 0) {
@@ -110,5 +111,4 @@
     self.contentView.center = CGPointMake(self.size.width/2, self.size.height/2);
     self.tagView.frame = CGRectMake(CGRectGetMinX(self.contentView.frame), self.height/2 - self.currentTagSize.height/2, self.currentTagSize.width, self.currentTagSize.height);
 }
-
 @end

@@ -12,13 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGiftBarrageView : UIView
 
-@property (nonatomic, strong) LJLiveGiftBarrageViewModel *giftvm;
+
 
 /// 刷新内部
-/// @param event 事件
 /// @param obj 对象
+/// @param event 事件
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
+@property (nonatomic, strong) LJLiveGiftBarrageViewModel *giftvm;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -29,29 +29,68 @@
     return view;
 }
 
+
+
+
+
+
+
+
+#pragma mark - WKNavigationDelegate
+
+
+#pragma mark - KVO
+
+
+#pragma mark - getter
+
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context
+{
+    if ([keyPath isEqualToString:@"estimatedProgress"]) {
+        BOOL loadFinish = _webView.estimatedProgress == 1.0;
+        self.progressView.hidden = loadFinish;
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = !loadFinish;
+        [self.progressView setProgress:self.webView.estimatedProgress];
+    }
+}
+- (IBAction)bz_backAction:(id)sender
+{
+    [self dismiss];
+    
+    [LJLiveNetworkHelper lj_getUserInfoWithAccountId:kLJLiveManager.inside.account.accountId success:^(LJLiveAccount * _Nonnull a) {
+        kLJLiveManager.inside.account = a;
+    } failure:^{
+    }];
+}
+- (void)dealloc
+{
+    [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
+}
 - (void)awakeFromNib
 {
     [super awakeFromNib];
     [self lj_initViews];
 }
-
-- (void)lj_initViews
+- (void)setReloadURL:(NSString *)reloadURL
 {
-    [self.mainView insertSubview:self.webView belowSubview:self.backBtn];
-    [self bringSubviewToFront:self.backBtn];
-    [self addSubview:self.progressView];
-    [self.webView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.mainView);
+    _reloadURL = reloadURL;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:reloadURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [self.webView loadRequest:request];
+}
+- (void)dismiss
+{
+    [UIView animateWithDuration:0.2 animations:^{
+        self.mainView.transform = CGAffineTransformMakeTranslation(0, kScreenWidth);
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
     }];
-    [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
-    [self.backBtn setImage:[kLJImageNamed(@"lj_live_view_back") lj_flipedByRTL] forState:UIControlStateNormal];
 }
-
-- (void)dealloc
-{
-    [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
-}
-
 - (void)showInView:(UIView *)view
 {
     [view addSubview:self];
@@ -65,36 +104,36 @@
     [LJLiveComboViewManager.shared lj_removeCurrentViewFromSuperView];
     UIApplication.sharedApplication.delegate.window.userInteractionEnabled = YES;
 }
-
-- (void)dismiss
+- (UIProgressView *)progressView
 {
-    [UIView animateWithDuration:0.2 animations:^{
-        self.mainView.transform = CGAffineTransformMakeTranslation(0, kScreenWidth);
-    } completion:^(BOOL finished) {
-        [self removeFromSuperview];
+    if (!_progressView) {
+        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, kLJScreenHeight - 2, kLJScreenWidth, 1.5)];
+        _progressView.trackTintColor = kLJHexColor(0x252529);
+        _progressView.progressTintColor = kLJHexColor(0xFF6152);
+    }
+    return _progressView;
+}
+- (void)lj_initViews
+{
+    [self.mainView insertSubview:self.webView belowSubview:self.backBtn];
+    [self bringSubviewToFront:self.backBtn];
+    [self addSubview:self.progressView];
+    [self.webView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.mainView);
     }];
+    [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
+    [self.backBtn setImage:[kLJImageNamed(@"lj_live_view_back") lj_flipedByRTL] forState:UIControlStateNormal];
 }
-
-- (void)setReloadURL:(NSString *)reloadURL
+- (WKWebView *)webView
 {
-    _reloadURL = reloadURL;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:reloadURL] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [self.webView loadRequest:request];
+    if (!_webView) {
+        _webView = [[WKWebView alloc] init];
+        _webView.backgroundColor = [UIColor blackColor];
+        _webView.opaque = NO;
+        _webView.navigationDelegate = self;
+    }
+    return _webView;
 }
-
-- (IBAction)bz_backAction:(id)sender
-{
-    [self dismiss];
-    
-    [LJLiveNetworkHelper lj_getUserInfoWithAccountId:kLJLiveManager.inside.account.accountId success:^(LJLiveAccount * _Nonnull a) {
-        kLJLiveManager.inside.account = a;
-    } failure:^{
-    }];
-}
-
-#pragma mark - WKNavigationDelegate
-
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(nonnull WKNavigationAction *)navigationAction decisionHandler:(nonnull void (^)(WKNavigationActionPolicy))decisionHandler
 {
     // 在发送请求之前，决定是否跳转
@@ -133,43 +172,4 @@
     }
     decisionHandler(WKNavigationActionPolicyAllow);
 }
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:@"estimatedProgress"]) {
-        BOOL loadFinish = _webView.estimatedProgress == 1.0;
-        self.progressView.hidden = loadFinish;
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = !loadFinish;
-        [self.progressView setProgress:self.webView.estimatedProgress];
-    }
-}
-
-#pragma mark - getter
-
-- (WKWebView *)webView
-{
-    if (!_webView) {
-        _webView = [[WKWebView alloc] init];
-        _webView.backgroundColor = [UIColor blackColor];
-        _webView.opaque = NO;
-        _webView.navigationDelegate = self;
-    }
-    return _webView;
-}
-
-- (UIProgressView *)progressView
-{
-    if (!_progressView) {
-        _progressView = [[UIProgressView alloc] initWithFrame:CGRectMake(0, kLJScreenHeight - 2, kLJScreenWidth, 1.5)];
-        _progressView.trackTintColor = kLJHexColor(0x252529);
-        _progressView.progressTintColor = kLJHexColor(0xFF6152);
-    }
-    return _progressView;
-}
-
 @end

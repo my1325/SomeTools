@@ -19,73 +19,84 @@
 @end
 
 @interface LJPageMenuLine : UIImageView
-@property (nonatomic, copy) void(^hideBlock)(void);
 
+@property (nonatomic, copy) void(^hideBlock)(void);
 @end
 
 @implementation LJPageMenuLine
 
-// 当外界设置隐藏和alpha值时，让pageMenu重新布局
-- (void)setHidden:(BOOL)hidden {
-    [super setHidden:hidden];
-    if (self.hideBlock) {
-        self.hideBlock();
-    }
-}
 
+
+// 当外界设置隐藏和alpha值时，让pageMenu重新布局
 - (void)setAlpha:(CGFloat)alpha {
     [super setAlpha:alpha];
     if (self.hideBlock) {
         self.hideBlock();
     }
 }
-
+- (void)setHidden:(BOOL)hidden {
+    [super setHidden:hidden];
+    if (self.hideBlock) {
+        self.hideBlock();
+    }
+}
 @end
 
 @interface LJPageMenuButton : UIButton
 
+
+
 - (instancetype)initWithImagePosition:(LJLiveItemImagePosition)imagePosition;
-
-@property (nonatomic) LJLiveItemImagePosition imagePosition; // 图片位置
 @property (nonatomic, assign) CGFloat imageTitleSpace; // 图片和文字之间的间距
-
+@property (nonatomic) LJLiveItemImagePosition imagePosition; // 图片位置
 @end
 
 @implementation LJPageMenuButton
 
-- (instancetype)initWithImagePosition:(LJLiveItemImagePosition)imagePosition {
-    if (self = [super init]) {
-        self.imagePosition = imagePosition;
-    }
-    return self;
-}
 
 #pragma mark - system methods
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        [self initialize];
-    }
-    return self;
-}
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    if (self = [super initWithCoder:aDecoder]) {
-        [self initialize];
-    }
-    return self;
-}
 
-- (void)initialize {
-    _imagePosition = LJLiveItemImagePositionLeft;
-    _imageTitleSpace = 0.0;
-}
 
-// 下面这2个方法，我所知道的:
-// 在第一次调用titleLabel和imageView的getter方法(懒加载)时,alloc init之前会调用一次(无论有无图片文字都会直接调)，因此，在重写这2个方法时，在方法里面不要使用self.imageView和self.titleLabel，因为这2个控件是懒加载，如果在重写的这2个方法里是第一调用imageView和titleLabel的getter方法, 则会造成死循环
+
+
+#pragma - private
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - setter
+
+
+
+
+// ----------------------------------------------------- left -----------------------------------------------------
+// 自己计算titleLabel的大小
+// ...
+// 遍历获取按钮里面的titleLabel
 // 在layoutsSubviews中如果文字或图片不为空时会调用, 测试方式：在重写的这两个方法里调用setNeedsLayout(layutSubviews)，发现会造成死循环
 // 设置文字图片、改动文字和图片、设置对齐方式，设置内容区域等时会调用，其实设置这些属性，系统是调用了layoutSubviews从而间接的去调用imageRectForContentRect:和titleRectForContentRect:
-// ...
+// ----------------------------------------------------- bottom -----------------------------------------------------
+// 在第一次调用titleLabel和imageView的getter方法(懒加载)时,alloc init之前会调用一次(无论有无图片文字都会直接调)，因此，在重写这2个方法时，在方法里面不要使用self.imageView和self.titleLabel，因为这2个控件是懒加载，如果在重写的这2个方法里是第一调用imageView和titleLabel的getter方法, 则会造成死循环
+// ----------------------------------------------------- right -----------------------------------------------------
+// 下面这2个方法，我所知道的:
+// ----------------------------------------------------- top -----------------------------------------------------
+// 以下所有setter方法中都调用了layoutSubviews, 其实是为了间接的调用imageRectForContentRect:和titleRectForContentRect:，不能直接调用imageRectForContentRect:和titleRectForContentRect:,因为按钮的子控件布局最终都是通过调用layoutSubviews而确定，如果直接调用这两个方法，那么只能保证我们能够获取的CGRect是对的，但并不会作用在titleLabel和imageView上
+// 垂直方向的排列方式在设置之前如果调用了titleLabel或imageView的getter方法，则设置后不会生效，点击一下按钮之后就生效了，这应该属于按钮的一个小bug，我们只要重写它的setter方法重新布局一次就好
 - (CGRect)imageRectForContentRect:(CGRect)contentRect {
     // 先获取系统为我们计算好的rect，这样大小图片在左右时我们就不要自己去计算,我门要改变的，仅仅是origin
     CGRect imageRect = [super imageRectForContentRect:contentRect];
@@ -114,40 +125,16 @@
     }
     return imageRect;
 }
-
-- (CGRect)titleRectForContentRect:(CGRect)contentRect {
-    CGRect titleRect = [super titleRectForContentRect:contentRect];
-    CGRect imageRect = [super imageRectForContentRect:contentRect];
-    if (!self.currentImage) {  // 如果没有图片
-        return titleRect;
-    }
-    switch (self.imagePosition) {
-        case LJLiveItemImagePositionLeft:
-        case LJLiveItemImagePositionDefault: {
-            titleRect = [self titleRectImageAtLeftForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
-        }
-            break;
-        case LJLiveItemImagePositionRight: {
-            titleRect = [self titleRectImageAtRightForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
-        }
-            break;
-        case LJLiveItemImagePositionTop: {
-            titleRect = [self titleRectImageAtTopForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
-        }
-            break;
-        case LJLiveItemImagePositionBottom: {
-            titleRect = [self titleRectImageAtBottomForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
-        }
-            break;
-    }
-    return titleRect;
-    
+- (void)setContentHorizontalAlignment:(UIControlContentHorizontalAlignment)contentHorizontalAlignment {
+    [super setContentHorizontalAlignment:contentHorizontalAlignment];
+    [self setNeedsLayout];
 }
-
-#pragma - private
-
-// ----------------------------------------------------- left -----------------------------------------------------
-
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self initialize];
+    }
+    return self;
+}
 - (CGRect)imageRectImageAtLeftForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
     CGPoint imageOrigin = imageRect.origin;
     CGSize imageSize = imageRect.size;
@@ -157,150 +144,10 @@
     imageRect.origin = imageOrigin;
     return imageRect;
 }
-
-- (CGRect)titleRectImageAtLeftForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
-    CGPoint titleOrigin = titleRect.origin;
-    CGSize titleSize = titleRect.size;
-    
-    titleOrigin.x = titleOrigin.x + _imageTitleSpace * 0.5;
-    titleRect.size = titleSize;
-    titleRect.origin = titleOrigin;
-    return titleRect;
+- (void)setImageTitleSpace:(CGFloat)imageTitleSpace {
+    _imageTitleSpace = imageTitleSpace;
+    [self setNeedsLayout];
 }
-
-// ----------------------------------------------------- right -----------------------------------------------------
-
-- (CGRect)imageRectImageAtRightForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
-    
-    CGPoint imageOrigin = imageRect.origin;
-    CGSize imageSize = imageRect.size;
-    CGSize titleSize = titleRect.size;
-    
-    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
-    
-    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
-    if (imageSize.width >= imageSafeWidth) {
-        return imageRect;
-    }
-    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
-    if (imageSize.width + titleSize.width > imageSafeWidth) {
-        imageSize.width = imageSize.width - (imageSize.width + titleSize.width - imageSafeWidth);
-    }
-    // (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - (imageSize.width + titleSize.width))/2.0+titleSize.width指的是imageView在其有效区域内联合titleLabel整体居中时的x值，有效区域指的是contentRect内缩imageEdgeInsets后的区域
-    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - (imageSize.width + titleSize.width))/2.0 + titleSize.width + self.contentEdgeInsets.left + self.imageEdgeInsets.left + _imageTitleSpace * 0.5;
-    imageRect.size = imageSize;
-    imageRect.origin = imageOrigin;
-    return imageRect;
-}
-
-- (CGRect)titleRectImageAtRightForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
-    
-    CGPoint titleOrigin = titleRect.origin;
-    CGSize titleSize = titleRect.size;
-    CGSize imageSize = imageRect.size;
-    
-    // (contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right - (imageSize.width + titleSize.width))/2.0的意思是titleLabel在其有效区域内联合imageView整体居中时的x值，有效区域指的是contentRect内缩titleEdgeInsets后的区域
-    titleOrigin.x = (contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right - (imageSize.width + titleSize.width))/2.0 + self.contentEdgeInsets.left + self.titleEdgeInsets.left - _imageTitleSpace * 0.5;
-    titleRect.size = titleSize;
-    titleRect.origin = titleOrigin;
-    return titleRect;
-}
-
-// ----------------------------------------------------- top -----------------------------------------------------
-
-- (CGRect)imageRectImageAtTopForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
-    CGPoint imageOrigin = imageRect.origin;
-    CGSize imageSize = imageRect.size;
-    CGSize titleSize = titleRect.size;
-    
-    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
-    
-    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
-    if (imageSize.width > imageSafeWidth) {
-        imageSize.width = imageSafeWidth;
-    }
-    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - imageSize.width) / 2.0 + self.contentEdgeInsets.left + self.imageEdgeInsets.left;
-    
-    // 给图片高度作最大限制，超出限制对高度进行压缩，这样还可以保证titeLabel不会超出其有效区域
-    CGFloat imageTitleLimitMaxH = contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom;
-    if (imageSize.height < imageTitleLimitMaxH) {
-        if (titleSize.height + self.currentImage.size.height > imageTitleLimitMaxH) {
-            CGFloat beyondValue = titleSize.height + self.currentImage.size.height - imageTitleLimitMaxH;
-            imageSize.height = imageSize.height - beyondValue;
-        }
-        // 之所以采用自己计算的结果，是因为当sizeToFit且titleLabel的numberOfLines > 0时，系统内部会按照2行计算
-        titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
-    }
-    // (imageSize.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的insets，计算时都是以图片+文字这个整体作为考虑对象
-    imageOrigin.y =  (contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + self.contentEdgeInsets.top + self.imageEdgeInsets.top - _imageTitleSpace * 0.5;
-    imageRect.size = imageSize;
-    imageRect.origin = imageOrigin;
-    return imageRect;
-}
-
-- (CGRect)titleRectImageAtTopForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
-    CGPoint titleOrigin = titleRect.origin;
-    CGSize titleSize = titleRect.size;
-    
-    CGSize imageSize = imageRect.size;
-    // 这个if语句的含义是：计算图片由于设置了contentEdgeInsets而被压缩的高度，设置imageEdgeInsets被压缩的高度不计算在内。这样做的目的是，当设置了contentEdgeInsets时，图片可能会被压缩，此时titleLabel的y值依赖于图片压缩后的高度，当设置了imageEdgeInsets时，图片也可能被压缩，此时titleLabel的y值依赖于图片压缩前的高度，这样以来，设置imageEdgeInsets就不会对titleLabel的y值产生影响
-    if (self.currentImage.size.height + titleSize.height > contentRect.size.height) {
-        imageSize.height = self.currentImage.size.height - (self.currentImage.size.height + titleSize.height - contentRect.size.height);
-    }
-    
-    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
-    // titleLabel的安全宽度，这里一定要改变宽度值，因为当外界设置了titleEdgeInsets值时，系统计算出来的所有值都是在”左图右文“的基础上进行的，这个基础上可能会导致titleLabel的宽度被压缩，所以我们在此自己重新计算
-    CGFloat titleSafeWidth = contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right;
-    if (titleSize.width > titleSafeWidth) {
-        titleSize.width = titleSafeWidth;
-    }
-    titleOrigin.x = (titleSafeWidth - titleSize.width) / 2.0 + self.contentEdgeInsets.left + self.titleEdgeInsets.left;
-    
-    if (titleSize.height > contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom) {
-        titleSize.height = contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom;
-    }
-    
-    // (self.currentImage.size.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的Insets，计算时都是以图片+文字这个整体作为考虑对象
-    titleOrigin.y =  (contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + imageSize.height + self.contentEdgeInsets.top + self.titleEdgeInsets.top + _imageTitleSpace * 0.5;
-    titleRect.size = titleSize;
-    titleRect.origin = titleOrigin;
-    return titleRect;
-}
-
-// ----------------------------------------------------- bottom -----------------------------------------------------
-
-- (CGRect)imageRectImageAtBottomForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
-    CGPoint imageOrigin = imageRect.origin;
-    CGSize imageSize = imageRect.size;
-    CGSize titleSize = titleRect.size;
-    
-    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
-    
-    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
-    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
-    if (imageSize.width > imageSafeWidth) {
-        imageSize.width = imageSafeWidth;
-    }
-    
-    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - imageSize.width) / 2.0 + self.contentEdgeInsets.left + self.imageEdgeInsets.left;
-    
-    // 给图片高度作最大限制，超出限制对高度进行压缩，这样还可以保证titeLabel不会超出其有效区域
-    CGFloat imageTitleLimitMaxH = contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom;
-    if (imageSize.height < imageTitleLimitMaxH) {
-        if (titleSize.height + self.currentImage.size.height > imageTitleLimitMaxH) {
-            CGFloat beyondValue = titleSize.height + self.currentImage.size.height - imageTitleLimitMaxH;
-            imageSize.height = imageSize.height - beyondValue;
-        }
-        // 之所以采用自己计算的结果，是因为当sizeToFit且titleLabel的numberOfLines > 0时，系统内部会按照2行计算
-        titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
-    }
-    // (self.currentImage.size.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的insets，计算时都是以图片+文字这个整体作为考虑对象
-    imageOrigin.y =  (contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + titleSize.height + self.contentEdgeInsets.top + self.imageEdgeInsets.top + _imageTitleSpace * 0.5;
-    imageRect.size = imageSize;
-    imageRect.origin = imageOrigin;
-    return imageRect;
-}
-
 - (CGRect)titleRectImageAtBottomForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
     CGPoint titleOrigin = titleRect.origin;
     CGSize titleSize = titleRect.size;
@@ -333,8 +180,83 @@
     titleRect.origin = titleOrigin;
     return titleRect;
 }
-
-// 自己计算titleLabel的大小
+- (void)setImagePosition:(LJLiveItemImagePosition)imagePosition {
+    _imagePosition = imagePosition;
+    [self setNeedsLayout];
+}
+- (CGRect)imageRectImageAtTopForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
+    CGPoint imageOrigin = imageRect.origin;
+    CGSize imageSize = imageRect.size;
+    CGSize titleSize = titleRect.size;
+    
+    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
+    
+    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
+    if (imageSize.width > imageSafeWidth) {
+        imageSize.width = imageSafeWidth;
+    }
+    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - imageSize.width) / 2.0 + self.contentEdgeInsets.left + self.imageEdgeInsets.left;
+    
+    // 给图片高度作最大限制，超出限制对高度进行压缩，这样还可以保证titeLabel不会超出其有效区域
+    CGFloat imageTitleLimitMaxH = contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom;
+    if (imageSize.height < imageTitleLimitMaxH) {
+        if (titleSize.height + self.currentImage.size.height > imageTitleLimitMaxH) {
+            CGFloat beyondValue = titleSize.height + self.currentImage.size.height - imageTitleLimitMaxH;
+            imageSize.height = imageSize.height - beyondValue;
+        }
+        // 之所以采用自己计算的结果，是因为当sizeToFit且titleLabel的numberOfLines > 0时，系统内部会按照2行计算
+        titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
+    }
+    // (imageSize.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的insets，计算时都是以图片+文字这个整体作为考虑对象
+    imageOrigin.y =  (contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + self.contentEdgeInsets.top + self.imageEdgeInsets.top - _imageTitleSpace * 0.5;
+    imageRect.size = imageSize;
+    imageRect.origin = imageOrigin;
+    return imageRect;
+}
+- (CGRect)titleRectImageAtLeftForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
+    CGPoint titleOrigin = titleRect.origin;
+    CGSize titleSize = titleRect.size;
+    
+    titleOrigin.x = titleOrigin.x + _imageTitleSpace * 0.5;
+    titleRect.size = titleSize;
+    titleRect.origin = titleOrigin;
+    return titleRect;
+}
+- (CGRect)imageRectImageAtBottomForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
+    CGPoint imageOrigin = imageRect.origin;
+    CGSize imageSize = imageRect.size;
+    CGSize titleSize = titleRect.size;
+    
+    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
+    
+    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
+    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
+    if (imageSize.width > imageSafeWidth) {
+        imageSize.width = imageSafeWidth;
+    }
+    
+    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - imageSize.width) / 2.0 + self.contentEdgeInsets.left + self.imageEdgeInsets.left;
+    
+    // 给图片高度作最大限制，超出限制对高度进行压缩，这样还可以保证titeLabel不会超出其有效区域
+    CGFloat imageTitleLimitMaxH = contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom;
+    if (imageSize.height < imageTitleLimitMaxH) {
+        if (titleSize.height + self.currentImage.size.height > imageTitleLimitMaxH) {
+            CGFloat beyondValue = titleSize.height + self.currentImage.size.height - imageTitleLimitMaxH;
+            imageSize.height = imageSize.height - beyondValue;
+        }
+        // 之所以采用自己计算的结果，是因为当sizeToFit且titleLabel的numberOfLines > 0时，系统内部会按照2行计算
+        titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
+    }
+    // (self.currentImage.size.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的insets，计算时都是以图片+文字这个整体作为考虑对象
+    imageOrigin.y =  (contentRect.size.height - self.imageEdgeInsets.top - self.imageEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + titleSize.height + self.contentEdgeInsets.top + self.imageEdgeInsets.top + _imageTitleSpace * 0.5;
+    imageRect.size = imageSize;
+    imageRect.origin = imageOrigin;
+    return imageRect;
+}
+- (void)setContentVerticalAlignment:(UIControlContentVerticalAlignment)contentVerticalAlignment {
+    [super setContentVerticalAlignment:contentVerticalAlignment];
+    [self setNeedsLayout];
+}
 - (CGSize)calculateTitleSizeForSystemTitleSize:(CGSize)titleSize {
     CGSize myTitleSize = titleSize;
     // 获取按钮里的titleLabel,之所以遍历获取而不直接调用self.titleLabel，是因为假如这里是第一次调用self.titleLabel，则会跟titleRectForContentRect: 方法造成死循环,titleLabel的getter方法中，alloc init之前调用了titleRectForContentRect:
@@ -357,8 +279,34 @@
     }
     return myTitleSize;
 }
-
-// 遍历获取按钮里面的titleLabel
+- (CGRect)imageRectImageAtRightForContentRect:(CGRect)contentRect imageRect:(CGRect)imageRect titleRect:(CGRect)titleRect {
+    
+    CGPoint imageOrigin = imageRect.origin;
+    CGSize imageSize = imageRect.size;
+    CGSize titleSize = titleRect.size;
+    
+    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
+    
+    CGFloat imageSafeWidth = contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right;
+    if (imageSize.width >= imageSafeWidth) {
+        return imageRect;
+    }
+    // 这里水平中心对齐，跟图片在右边时的中心对齐时差别在于：图片在右边时中心对齐考虑了titleLabel+imageView这个整体，而这里只单独考虑imageView
+    if (imageSize.width + titleSize.width > imageSafeWidth) {
+        imageSize.width = imageSize.width - (imageSize.width + titleSize.width - imageSafeWidth);
+    }
+    // (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - (imageSize.width + titleSize.width))/2.0+titleSize.width指的是imageView在其有效区域内联合titleLabel整体居中时的x值，有效区域指的是contentRect内缩imageEdgeInsets后的区域
+    imageOrigin.x = (contentRect.size.width - self.imageEdgeInsets.left - self.imageEdgeInsets.right - (imageSize.width + titleSize.width))/2.0 + titleSize.width + self.contentEdgeInsets.left + self.imageEdgeInsets.left + _imageTitleSpace * 0.5;
+    imageRect.size = imageSize;
+    imageRect.origin = imageOrigin;
+    return imageRect;
+}
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        [self initialize];
+    }
+    return self;
+}
 - (UILabel *)findTitleLabel {
     for (UIView *subView in self.subviews) {
         if ([subView isKindOfClass:NSClassFromString(@"UIButtonLabel")]) {
@@ -368,65 +316,117 @@
     }
     return nil;
 }
-
-
-
-#pragma mark - setter
-// 以下所有setter方法中都调用了layoutSubviews, 其实是为了间接的调用imageRectForContentRect:和titleRectForContentRect:，不能直接调用imageRectForContentRect:和titleRectForContentRect:,因为按钮的子控件布局最终都是通过调用layoutSubviews而确定，如果直接调用这两个方法，那么只能保证我们能够获取的CGRect是对的，但并不会作用在titleLabel和imageView上
-- (void)setImagePosition:(LJLiveItemImagePosition)imagePosition {
-    _imagePosition = imagePosition;
-    [self setNeedsLayout];
+- (CGRect)titleRectImageAtTopForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
+    CGPoint titleOrigin = titleRect.origin;
+    CGSize titleSize = titleRect.size;
+    
+    CGSize imageSize = imageRect.size;
+    // 这个if语句的含义是：计算图片由于设置了contentEdgeInsets而被压缩的高度，设置imageEdgeInsets被压缩的高度不计算在内。这样做的目的是，当设置了contentEdgeInsets时，图片可能会被压缩，此时titleLabel的y值依赖于图片压缩后的高度，当设置了imageEdgeInsets时，图片也可能被压缩，此时titleLabel的y值依赖于图片压缩前的高度，这样以来，设置imageEdgeInsets就不会对titleLabel的y值产生影响
+    if (self.currentImage.size.height + titleSize.height > contentRect.size.height) {
+        imageSize.height = self.currentImage.size.height - (self.currentImage.size.height + titleSize.height - contentRect.size.height);
+    }
+    
+    titleSize = [self calculateTitleSizeForSystemTitleSize:titleSize];
+    // titleLabel的安全宽度，这里一定要改变宽度值，因为当外界设置了titleEdgeInsets值时，系统计算出来的所有值都是在”左图右文“的基础上进行的，这个基础上可能会导致titleLabel的宽度被压缩，所以我们在此自己重新计算
+    CGFloat titleSafeWidth = contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right;
+    if (titleSize.width > titleSafeWidth) {
+        titleSize.width = titleSafeWidth;
+    }
+    titleOrigin.x = (titleSafeWidth - titleSize.width) / 2.0 + self.contentEdgeInsets.left + self.titleEdgeInsets.left;
+    
+    if (titleSize.height > contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom) {
+        titleSize.height = contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom;
+    }
+    
+    // (self.currentImage.size.height + titleSize.height)这个整体高度很重要，这里相当于按照按钮原有规则进行对齐，即按钮的对齐方式不管是设置谁的Insets，计算时都是以图片+文字这个整体作为考虑对象
+    titleOrigin.y =  (contentRect.size.height - self.titleEdgeInsets.top - self.titleEdgeInsets.bottom - (imageSize.height + titleSize.height)) / 2.0 + imageSize.height + self.contentEdgeInsets.top + self.titleEdgeInsets.top + _imageTitleSpace * 0.5;
+    titleRect.size = titleSize;
+    titleRect.origin = titleOrigin;
+    return titleRect;
 }
-
-- (void)setImageTitleSpace:(CGFloat)imageTitleSpace {
-    _imageTitleSpace = imageTitleSpace;
-    [self setNeedsLayout];
+- (CGRect)titleRectImageAtRightForContentRect:(CGRect)contentRect titleRect:(CGRect)titleRect imageRect:(CGRect)imageRect {
+    
+    CGPoint titleOrigin = titleRect.origin;
+    CGSize titleSize = titleRect.size;
+    CGSize imageSize = imageRect.size;
+    
+    // (contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right - (imageSize.width + titleSize.width))/2.0的意思是titleLabel在其有效区域内联合imageView整体居中时的x值，有效区域指的是contentRect内缩titleEdgeInsets后的区域
+    titleOrigin.x = (contentRect.size.width - self.titleEdgeInsets.left - self.titleEdgeInsets.right - (imageSize.width + titleSize.width))/2.0 + self.contentEdgeInsets.left + self.titleEdgeInsets.left - _imageTitleSpace * 0.5;
+    titleRect.size = titleSize;
+    titleRect.origin = titleOrigin;
+    return titleRect;
 }
-
-- (void)setContentHorizontalAlignment:(UIControlContentHorizontalAlignment)contentHorizontalAlignment {
-    [super setContentHorizontalAlignment:contentHorizontalAlignment];
-    [self setNeedsLayout];
+- (void)initialize {
+    _imagePosition = LJLiveItemImagePositionLeft;
+    _imageTitleSpace = 0.0;
 }
-
-// 垂直方向的排列方式在设置之前如果调用了titleLabel或imageView的getter方法，则设置后不会生效，点击一下按钮之后就生效了，这应该属于按钮的一个小bug，我们只要重写它的setter方法重新布局一次就好
-- (void)setContentVerticalAlignment:(UIControlContentVerticalAlignment)contentVerticalAlignment {
-    [super setContentVerticalAlignment:contentVerticalAlignment];
-    [self setNeedsLayout];
+- (CGRect)titleRectForContentRect:(CGRect)contentRect {
+    CGRect titleRect = [super titleRectForContentRect:contentRect];
+    CGRect imageRect = [super imageRectForContentRect:contentRect];
+    if (!self.currentImage) {  // 如果没有图片
+        return titleRect;
+    }
+    switch (self.imagePosition) {
+        case LJLiveItemImagePositionLeft:
+        case LJLiveItemImagePositionDefault: {
+            titleRect = [self titleRectImageAtLeftForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
+        }
+            break;
+        case LJLiveItemImagePositionRight: {
+            titleRect = [self titleRectImageAtRightForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
+        }
+            break;
+        case LJLiveItemImagePositionTop: {
+            titleRect = [self titleRectImageAtTopForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
+        }
+            break;
+        case LJLiveItemImagePositionBottom: {
+            titleRect = [self titleRectImageAtBottomForContentRect:contentRect titleRect:titleRect imageRect:imageRect];
+        }
+            break;
+    }
+    return titleRect;
+    
 }
-
+- (instancetype)initWithImagePosition:(LJLiveItemImagePosition)imagePosition {
+    if (self = [super init]) {
+        self.imagePosition = imagePosition;
+    }
+    return self;
+}
 @end
 
 @interface LJLivePageMenu()
-@property (nonatomic, assign) LJLivePageMenuTrackerStyle trackerStyle;
-@property (nonatomic, strong) NSArray *items; // 里面装的是字符串或者图片
-@property (nonatomic, strong) UIImageView *tracker;
-@property (nonatomic, assign) CGFloat trackerHeight;
-@property (nonatomic, weak) UIView *backgroundView;
-@property (nonatomic, weak) UIImageView *backgroundImageView;
-@property (nonatomic, strong) UIImageView *dividingLine;
-@property (nonatomic, weak) LJPageMenuButton *functionButton;
-@property (nonatomic, strong) NSMutableArray *buttons;
-@property (nonatomic, strong) LJPageMenuButton *selectedButton;
-@property (nonatomic, strong) NSMutableDictionary *customWidths;
-@property (nonatomic, strong) NSMutableDictionary *customSpacings;
-@property (nonatomic, assign) BOOL insert;
-// 起始偏移量,为了判断滑动方向
-@property (nonatomic, assign) CGFloat beginOffsetX;
 
+
+// 起始偏移量,为了判断滑动方向
+// 这个高度，是存储itemScrollView的高度
 /// 开始颜色, 取值范围 0~1
-@property (nonatomic, assign) CGFloat startR;
-@property (nonatomic, assign) CGFloat startG;
-@property (nonatomic, assign) CGFloat startB;
-@property (nonatomic, assign) CGFloat startA;
 /// 完成颜色, 取值范围 0~1
+@property (nonatomic, assign) CGFloat beginOffsetX;
+@property (nonatomic, weak) UIImageView *backgroundImageView;
+@property (nonatomic, assign) BOOL forceUseSettingSpacing;
+@property (nonatomic, assign) LJLivePageMenuTrackerStyle trackerStyle;
+@property (nonatomic, weak) LJPageMenuButton *functionButton;
+@property (nonatomic, assign) BOOL insert;
+@property (nonatomic, assign) CGFloat endA;
 @property (nonatomic, assign) CGFloat endR;
+@property (nonatomic, strong) NSArray *items; // 里面装的是字符串或者图片
+@property (nonatomic, strong) UIImageView *dividingLine;
+@property (nonatomic, assign) CGFloat startB;
+@property (nonatomic, strong) NSMutableArray *buttons;
+@property (nonatomic, assign) CGFloat itemScrollViewH;
+@property (nonatomic, weak) UIView *backgroundView;
+@property (nonatomic, strong) NSMutableDictionary *customWidths;
 @property (nonatomic, assign) CGFloat endG;
 @property (nonatomic, assign) CGFloat endB;
-@property (nonatomic, assign) CGFloat endA;
-
-// 这个高度，是存储itemScrollView的高度
-@property (nonatomic, assign) CGFloat itemScrollViewH;
-@property (nonatomic, assign) BOOL forceUseSettingSpacing;
+@property (nonatomic, assign) CGFloat trackerHeight;
+@property (nonatomic, strong) UIImageView *tracker;
+@property (nonatomic, assign) CGFloat startA;
+@property (nonatomic, assign) CGFloat startG;
+@property (nonatomic, assign) CGFloat startR;
+@property (nonatomic, strong) LJPageMenuButton *selectedButton;
+@property (nonatomic, strong) NSMutableDictionary *customSpacings;
 @end
 
 #pragma clang diagnostic push
@@ -442,149 +442,129 @@
     return pageMenu;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame trackerStyle:(LJLivePageMenuTrackerStyle)trackerStyle {
-    if (self = [super init]) {
-        self.frame = frame;
-        self.backgroundColor = [UIColor whiteColor];
-        self.trackerStyle = trackerStyle;
-        [self setupStartColor:_selectedItemTitleColor];
-        [self setupEndColor:_unSelectedItemTitleColor];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - private
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - KVO
+
+
+#pragma mark - setter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - getter
+
+
+
+
+
+
+
+#pragma mark - 布局
+
+
+
+
+// 获取颜色的RGB值
+// 按钮点击方法
+/// 结束颜色设置
+// 执行代理方法
+// 是否已经或者即将有跟踪器
+// 功能按钮的点击方法
+// 点击button让itemScrollView发生偏移
+// 颜色渐变方法
+// 这个方法才开始真正滑动跟踪器，上面都是做铺垫
+// 以下方法在3.0版本上有升级，可以使用但不推荐
+// 移动跟踪器
+/// 开始颜色设置
+- (void)setSelectedItemTitleColor:(UIColor *)selectedItemTitleColor {
+    _selectedItemTitleColor = selectedItemTitleColor;
+    [self setupStartColor:selectedItemTitleColor];
+    [self.selectedButton setTitleColor:selectedItemTitleColor forState:UIControlStateNormal];
+}
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self initialize];
     }
     return self;
 }
-
-- (void)setItems:(NSArray *)items selectedItemIndex:(NSInteger)selectedItemIndex {
-    if (selectedItemIndex < 0) selectedItemIndex = 0;
-    NSAssert(selectedItemIndex <= items.count-1, @"selectedItemIndex 大于了 %ld",items.count-1);
-    _items = items.copy;
-    _selectedItemIndex = selectedItemIndex;
-    
-    self.insert = NO;
-
-    if (self.buttons.count) {
-        for (LJPageMenuButton *button in self.buttons) {
-            [button removeFromSuperview];
-        }
-    }
-    [self.buttons removeAllObjects];
-    
-    for (int i = 0; i < items.count; i++) {
-        id object = items[i];
-        NSAssert([object isKindOfClass:[NSString class]] || [object isKindOfClass:[UIImage class]] || [object isKindOfClass:[LJLivePageMenuButtonItem class]], @"items中的元素类型只能是NSString、UIImage或LJPageMenuButtonItem");
-        [self addButton:i object:object animated:NO];
-    }
-
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    
-    if (self.buttons.count) {
-        // 默认选中selectedItemIndex对应的按钮
-        LJPageMenuButton *selectedButton = [self.buttons objectAtIndex:selectedItemIndex];
-        [self buttonInPageMenuClicked:selectedButton];
-
-        // LJLivePageMenuTrackerStyleTextZoom和LJLivePageMenuTrackerStyleNothing样式跟tracker没有关联
-        if ([self haveOrNeedsTracker]) {
-            [self.itemScrollView insertSubview:self.tracker atIndex:0];
-            // 这里千万不能再去调用setNeedsLayout和layoutIfNeeded，因为如果外界在此之前对selectedButton进行了缩放，调用了layoutSubViews后会重新对selectedButton设置frame,先缩放再重设置frame会导致文字显示不全，所以我们直接跳过layoutSubViews调用resetSetupTrackerFrameWithSelectedButton：只设置tracker的frame
-            [self resetupTrackerFrameWithSelectedButton:selectedButton];
-        }
-    }
-}
-
-- (void)insertItemWithTitle:(NSString *)title atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
-    self.insert = YES;
-    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
-    NSMutableArray *titleArr = self.items.mutableCopy;
-    [titleArr insertObject:title atIndex:itemIndex];
-    self.items = titleArr;
-    [self addButton:itemIndex object:title animated:animated];
-    if (itemIndex <= self.selectedItemIndex) {
-        _selectedItemIndex += 1;
-    }
-}
-
-- (void)insertItemWithImage:(UIImage *)image atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
-    self.insert = YES;
-    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
-    NSMutableArray *objects = self.items.mutableCopy;
-    [objects insertObject:image atIndex:itemIndex];
-    self.items = objects.copy;
-    [self addButton:itemIndex object:image animated:animated];
-    if (itemIndex <= self.selectedItemIndex) {
-        _selectedItemIndex += 1;
-    }
-}
-
-- (void)insertItem:(LJLivePageMenuButtonItem *)item atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
-    self.insert = YES;
-    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
-    NSMutableArray *objects = self.items.mutableCopy;
-    [objects insertObject:item atIndex:itemIndex];
-    self.items = objects.copy;
-    [self addButton:itemIndex object:item animated:animated];
-    if (itemIndex <= self.selectedItemIndex) {
-        _selectedItemIndex += 1;
-    }
-}
-
-- (void)removeItemAtIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
-    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
-    // 被删除的按钮之后的按钮需要修改tag值
-    for (LJPageMenuButton *button in self.buttons) {
-        if (button.tag-tagBaseValue > itemIndex) {
-            button.tag = button.tag - 1;
-        }
-    }
-    if (self.items.count) {
-        NSMutableArray *objects = self.items.mutableCopy;
-        // 特别注意的是：不能先通过itemIndex取出对象，然后再将对象删除，因为这样会删除所有相同的对象
-        [objects removeObjectAtIndex:itemIndex];
-        self.items = objects.copy;
-    }
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        if (button == self.selectedButton) { // 如果删除的正是选中的item，删除之后，选中的按钮切换为上一个item
-            self.selectedItemIndex = itemIndex > 0 ? itemIndex-1 : itemIndex;
-        }
-        [self.buttons removeObjectAtIndex:itemIndex];
-        [button removeFromSuperview];
-        if (self.buttons.count == 0) { // 说明移除了所有
-            [self.tracker removeFromSuperview];
-            self.selectedButton = nil;
-            self.selectedItemIndex = 0;
-        }
-    }
-    if (animated) {
-        [UIView animateWithDuration:0.5 animations:^{
-            [self setNeedsLayout];
-            [self layoutIfNeeded];
-        }];
-    } else {
-        [self setNeedsLayout];
-    }
-}
-
-- (void)removeAllItems {
-    NSMutableArray *objects = self.items.mutableCopy;
-    [objects removeAllObjects];
-    self.items = objects.copy;
-    self.items = nil;
-    
-    for (int i = 0; i < self.buttons.count; i++) {
-        LJPageMenuButton *button = self.buttons[i];
-        [button removeFromSuperview];
-    }
-    
-    [self.buttons removeAllObjects];
-    
-    [self.tracker removeFromSuperview];
-    
-    self.selectedButton = nil;
-    self.selectedItemIndex = 0;
-    
-    [self setNeedsLayout];
-}
-
 - (void)setTitle:(NSString *)title forItemAtIndex:(NSUInteger)itemIndex {
     if (title == nil) return;
     if (itemIndex < self.buttons.count) {
@@ -598,499 +578,12 @@
     }
     [self setNeedsLayout];
 }
-
-- (NSString *)titleForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.items.count) {
-        id object = [self.items objectAtIndex:itemIndex];
-        NSAssert([object isKindOfClass:[NSString class]],@"itemIndex对应的item不是NSString类型，请仔细核对");
-        return object;
-    }
-    return nil;
-}
-
-- (void)setImage:(UIImage *)image forItemAtIndex:(NSUInteger)itemIndex {
-    if (image == nil) return;
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        [button setTitle:nil forState:UIControlStateNormal];
-        [button setImage:image forState:UIControlStateNormal];
-
-        NSMutableArray *items = self.items.mutableCopy;
-        [items replaceObjectAtIndex:itemIndex withObject:image];
-        self.items = items.copy;
-    }
-    [self setNeedsLayout];
-}
-
-- (UIImage *)imageForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.items.count) {
-        id object = [self.items objectAtIndex:itemIndex];
-        NSAssert([object isKindOfClass:[UIImage class]],@"itemIndex对应的item不是UIImage类型，请仔细核对");
-        return object;
-    }
-    return nil;
-}
-
-- (void)setItem:(LJLivePageMenuButtonItem *)item forItemIndex:(NSUInteger)itemIndex {
-    if (item == nil) return;
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        [button setTitle:item.title forState:UIControlStateNormal];
-        [button setImage:item.image forState:UIControlStateNormal];
-        button.imagePosition = item.imagePosition;
-        button.imageTitleSpace = item.imageTitleSpace;
-        
-        if (item != nil) {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:item];
-            self.items = items.copy;
-        }
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (void)setItem:(LJLivePageMenuButtonItem *)item forItemAtIndex:(NSUInteger)itemIndex {
-    [self setItem:item forItemIndex:itemIndex];
-}
-
-- (LJLivePageMenuButtonItem *)itemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.items.count) {
-        id object = [self.items objectAtIndex:itemIndex];
-        NSAssert([object isKindOfClass:[LJLivePageMenuButtonItem class]],@"itemIndex对应的item不是LJPageMenuButtonItem类型，请仔细核对");
-        return object;
-    }
-    return nil;
-}
-
-- (void)setContent:(id)content forItemIndex:(NSUInteger)itemIndex {
-    if (content == nil) return;
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        if ([content isKindOfClass:[NSString class]]) {
-            [button setTitle:content forState:UIControlStateNormal];
-        } else if ([content isKindOfClass:[UIImage class]]) {
-            [button setImage:content forState:UIControlStateNormal];
-        } else if ([content isKindOfClass:[LJLivePageMenuButtonItem class]]) {
-            LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)content;
-            [button setTitle:item.title forState:UIControlStateNormal];
-            [button setImage:item.image forState:UIControlStateNormal];
-            button.imagePosition = item.imagePosition;
-            button.imageTitleSpace = item.imageTitleSpace;
-        }
-        NSMutableArray *items = self.items.mutableCopy;
-        [items replaceObjectAtIndex:itemIndex withObject:content];
-        self.items = items.copy;
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (void)setContent:(id)content forItemAtIndex:(NSUInteger)itemIndex {
-    [self setContent:content forItemIndex:itemIndex];
-}
-
-- (id)contentForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.items.count) {
-        id content = [self.items objectAtIndex:itemIndex];
-        return content;
-    }
-    return nil;
-}
-
-- (id)objectForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.items.count) {
-        id object = [self.items objectAtIndex:itemIndex];
-        return object;
-    }
-    return nil;
-}
-
-- (void)setEnabled:(BOOL)enaled forItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        [button setEnabled:enaled];
-    }
-}
-
-- (BOOL)enabledForItemAtIndex:(NSUInteger)itemIndex {
-    if (self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        return button.enabled;
-    }
-    return YES;
-}
-
-- (void)setWidth:(CGFloat)width forItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        [self.customWidths setValue:@(width) forKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]];
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (CGFloat)widthForItemAtIndex:(NSUInteger)itemIndex {
-    CGFloat customWidth = [[self.customWidths valueForKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]] floatValue];
-    if (customWidth) {
-        return customWidth;
-    } else {
-        if (itemIndex < self.buttons.count) {
-            LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-            return button.bounds.size.width;
-        }
-    }
-    return 0;
-}
-
-- (void)setCustomSpacing:(CGFloat)spacing afterItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        [self.customSpacings setValue:@(spacing) forKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]];
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (CGFloat)customSpacingAfterItemAtIndex:(NSUInteger)itemIndex {
-    if ([self.customSpacings.allKeys containsObject:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]]) {
-        CGFloat customSpacing = [[self.customSpacings valueForKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]] floatValue];
-        return customSpacing;
-    } else {
-        return CGFLOAT_MAX;
-    }
-}
-
-- (void)setContentEdgeInsets:(UIEdgeInsets)contentInset forForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        button.contentEdgeInsets = contentInset;
-    }
-}
-
-- (void)setContentEdgeInsets:(UIEdgeInsets)contentInset forItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        button.contentEdgeInsets = contentInset;
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (UIEdgeInsets)contentEdgeInsetsForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        return button.contentEdgeInsets;
-    }
-    return UIEdgeInsetsZero;
-}
-
-- (void)setBackgroundImage:(UIImage *)backgroundImage barMetrics:(UIBarMetrics)barMetrics {
-    if (barMetrics == UIBarMetricsDefault) {
-        if (UIEdgeInsetsEqualToEdgeInsets(backgroundImage.capInsets, UIEdgeInsetsZero)) {
-            CGFloat imageWidth = CGImageGetWidth(backgroundImage.CGImage);
-            CGFloat imageHeight = CGImageGetHeight(backgroundImage.CGImage);
-            [self.backgroundImageView setImage:[backgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(imageHeight*0.5, imageWidth*0.5, imageHeight*0.5, imageWidth*0.5) resizingMode:backgroundImage.resizingMode]];
-        } else {
-            [self.backgroundImageView setImage:backgroundImage];
-        }
-    }
-}
-
-- (UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics {
-    return self.backgroundImageView.image;
-}
-
-- (CGRect)titleRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        CGRect titleRectAtPageMenu = [button.titleLabel convertRect:button.titleLabel.bounds toView:self];
-        return titleRectAtPageMenu;
-    }
-    return CGRectZero;
-}
-
-- (CGRect)imageRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        CGRect imageRectAtPageMenu = [button.imageView convertRect:button.imageView.bounds toView:self];
-        return imageRectAtPageMenu;
-    }
-    return CGRectZero;
-}
-
-- (CGRect)buttonRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        CGRect buttonRectAtPageMenu = [button convertRect:button.bounds toView:self];
-        return buttonRectAtPageMenu;
-    }
-    return CGRectZero;
-}
-
-- (void)addComponentViewInScrollView:(UIView *)componentView {
-    [self.itemScrollView addSubview:componentView];
-}
-
-- (void)setTrackerHeight:(CGFloat)trackerHeight cornerRadius:(CGFloat)cornerRadius {
-    _trackerHeight = trackerHeight;
-    self.tracker.layer.cornerRadius = cornerRadius;
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-}
-
 - (void)setFunctionButtonWithItem:(LJLivePageMenuButtonItem *)item forState:(UIControlState)state {
     [self.functionButton setTitle:item.title forState:state];
     [self.functionButton setImage:item.image forState:state];
     self.functionButton.imagePosition = item.imagePosition;
     self.functionButton.imageTitleSpace = item.imageTitleSpace;
 }
-
-- (void)setFunctionButtonContent:(id)content forState:(UIControlState)state {
-    if ([content isKindOfClass:[NSString class]]) {
-        [self.functionButton setTitle:content forState:state];
-    } else if ([content isKindOfClass:[UIImage class]]) {
-        [self.functionButton setImage:content forState:state];
-    } else if ([content isKindOfClass:[LJLivePageMenuButtonItem class]]) {
-        LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)content;
-        [self.functionButton setTitle:item.title forState:state];
-        [self.functionButton setImage:item.image forState:state];
-        self.functionButton.imagePosition = item.imagePosition;
-        self.functionButton.imageTitleSpace = item.imageTitleSpace;
-    }
-}
-
-- (void)setFunctionButtonTitleTextAttributes:(nullable NSDictionary *)attributes forState:(UIControlState)state {
-    if (attributes[NSFontAttributeName]) {
-        self.functionButton.titleLabel.font = attributes[NSFontAttributeName];
-    }
-    if (attributes[NSForegroundColorAttributeName]) {
-        [self.functionButton setTitleColor:attributes[NSForegroundColorAttributeName] forState:state];
-    }
-    if (attributes[NSBackgroundColorAttributeName]) {
-        self.functionButton.backgroundColor = attributes[NSBackgroundColorAttributeName];
-    }
-}
-
-- (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView {
-    // 说明外界传进来了一个scrollView,如果外界传进来了，pageMenu会观察该scrollView的contentOffset自动处理跟踪器的跟踪
-    if (self.bridgeScrollView == scrollView) { return; }
-    [self prepareMoveTrackerFollowScrollView:scrollView];
-}
-
-// 以下方法在3.0版本上有升级，可以使用但不推荐
-- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        [button setTitle:title forState:UIControlStateNormal];
-        [button setImage:image forState:UIControlStateNormal];
-        button.imagePosition = imagePosition;
-        
-        // 文字和图片只能替换其一，因为items数组里不能同时装文字和图片。当文字和图片同时设置时，items里只更新文字
-        if (title == nil || title.length == 0 || [title isKindOfClass:[NSNull class]]) {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:image];
-            self.items = items.copy;
-        } else if (image == nil) {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:title];
-            self.items = items.copy;
-        } else {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:image];
-            self.items = items.copy;
-        }
-        
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forItemIndex:(NSUInteger)itemIndex {
-    if (itemIndex < self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
-        [button setTitle:title forState:UIControlStateNormal];
-        [button setImage:image forState:UIControlStateNormal];
-        button.imagePosition = imagePosition;
-        button.imageTitleSpace = imageTitleSpace;
-        
-        // 文字和图片只能替换其一，因为items数组里不能同时装文字和图片。当文字和图片同时设置时，items里只更新文字
-        if (title == nil || title.length == 0 || [title isKindOfClass:[NSNull class]]) {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:image];
-            self.items = items.copy;
-        } else if (image == nil) {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:title];
-            self.items = items.copy;
-        } else {
-            NSMutableArray *items = self.items.mutableCopy;
-            [items replaceObjectAtIndex:itemIndex withObject:image];
-            self.items = items.copy;
-        }
-        [self setNeedsLayout];
-        [self layoutIfNeeded];
-    }
-}
-
-- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state {
-    [self.functionButton setTitle:title forState:state];
-    [self.functionButton setImage:image forState:state];
-    self.functionButton.imagePosition = imagePosition;
-}
-
-- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forState:(UIControlState)state {
-    [self.functionButton setTitle:title forState:state];
-    [self.functionButton setImage:image forState:state];
-    self.functionButton.imagePosition = imagePosition;
-    self.functionButton.imageTitleSpace = imageTitleSpace;
-}
-
-#pragma mark - private
-
-- (void)addButton:(NSInteger)index object:(id)object animated:(BOOL)animated {
-    // 如果是插入，需要改变已有button的tag值
-    for (LJPageMenuButton *button in self.buttons) {
-        if (button.tag-tagBaseValue >= index) {
-            button.tag = button.tag + 1; // 由于有新button的加入，新button后面的button的tag值得+1
-        }
-    }
-    LJPageMenuButton *button = [LJPageMenuButton buttonWithType:UIButtonTypeCustom];
-    [button setTitleColor:_unSelectedItemTitleColor forState:UIControlStateNormal];
-    button.titleLabel.font = _unSelectedItemTitleFont; // 此时必然还没有选中任何按钮，设置_unSelectedItemTitleFont就相是设置所有按钮的文字颜色，这里不能用_itemTitleFont，如果外界先设置_unSelectedItemTitleFont，再创建按钮，假如这里使用_itemTitleFont，那外界设置的_unSelectedItemTitleFont就不生效
-    [button addTarget:self action:@selector(buttonInPageMenuClicked:) forControlEvents:UIControlEventTouchUpInside];
-    button.tag = tagBaseValue + index;
-    if ([object isKindOfClass:[NSString class]]) {
-        [button setTitle:object forState:UIControlStateNormal];
-    } else if ([object isKindOfClass:[UIImage class]]) {
-        [button setImage:object forState:UIControlStateNormal];
-    } else {
-        LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)object;
-        [button setTitle:item.title forState:UIControlStateNormal];
-        [button setImage:item.image forState:UIControlStateNormal];
-        button.imagePosition = item.imagePosition;
-        button.imageTitleSpace = item.imageTitleSpace;
-    }
-    if (self.insert) {
-        if ([self haveOrNeedsTracker]) {
-            if (self.buttons.count == 0) { // 如果是第一个插入，需要将跟踪器加上,第一个插入说明itemScrollView上没有任何子控件
-                [self.itemScrollView insertSubview:self.tracker atIndex:0];
-                [self.itemScrollView insertSubview:button atIndex:index+1];
-            } else { // 已经有跟踪器
-                [self.itemScrollView insertSubview:button atIndex:index+1]; // +1是因为跟踪器
-            }
-        } else {
-            [self.itemScrollView insertSubview:button atIndex:index];
-        }
-        if (!self.buttons.count) {
-            [self buttonInPageMenuClicked:button];
-        }
-    } else {
-        [self.itemScrollView insertSubview:button atIndex:index];
-    }
-    [self.buttons insertObject:button atIndex:index];
-
-    if (self.insert && animated) { // 是插入的新按钮,且需要动画
-        // 取出上一个按钮
-        LJPageMenuButton *lastButton;
-        if (index > 0) {
-            lastButton = self.buttons[index-1];
-        }
-        // 先给初始的origin，按钮将会从这个origin开始动画
-        button.frame = CGRectMake(CGRectGetMaxX(lastButton.frame)+_itemPadding*0.5, 0, 0, 0);
-        button.titleLabel.frame = button.bounds;
-        [UIView animateWithDuration:.5 animations:^{
-            [self setNeedsLayout];
-            [self layoutIfNeeded];
-        }];
-    }
-}
-
-// 是否已经或者即将有跟踪器
-- (BOOL)haveOrNeedsTracker {
-    if (self.trackerStyle != LJLivePageMenuTrackerStyleTextZoom && self.trackerStyle != LJLivePageMenuTrackerStyleNothing) {
-        return YES;
-    }
-    return NO;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        [self initialize];
-    }
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    if (self = [super initWithCoder:aDecoder]) {
-        [self initialize];
-    }
-    return self;
-}
-
-- (void)initialize {
-    _itemPadding = 30.0;
-    _selectedItemTitleColor = [UIColor redColor];
-    _unSelectedItemTitleColor = [UIColor blackColor];
-    _selectedItemTitleFont = [UIFont systemFontOfSize:16];
-    _unSelectedItemTitleFont = [UIFont systemFontOfSize:16];
-    _itemTitleFont = [UIFont systemFontOfSize:16];
-    _trackerHeight = 3.0;
-    _dividingLineHeight = 1.0 / [UIScreen mainScreen].scale;
-    _contentInset = UIEdgeInsetsZero;
-    _selectedItemIndex = 0;
-    _showFuntionButton = NO;
-    _funtionButtonshadowOpacity = 0.5;
-    _selectedItemZoomScale = 1;
-    _needTextColorGradients = YES;
-    [self setupSubViews];
-}
-
-- (void)setupSubViews {
-    // 必须先添加分割线
-    LJPageMenuLine *dividingLine = [[LJPageMenuLine alloc] init];
-    dividingLine.backgroundColor = [UIColor lightGrayColor];
-    __weak typeof(self) weakSelf = self;
-    dividingLine.hideBlock = ^() {
-        [weakSelf setNeedsLayout];
-    };
-    [self addSubview:dividingLine];
-    _dividingLine = dividingLine;
-    
-    UIView *backgroundView = [[UIView alloc] init];
-    backgroundView.layer.masksToBounds = YES;
-    [self addSubview:backgroundView];
-    _backgroundView = backgroundView;
-    
-    UIImageView *backgroundImageView = [[UIImageView alloc] init];
-    [backgroundView addSubview:backgroundImageView];
-    _backgroundImageView = backgroundImageView;
-    
-    LJLivePageMenuScrollView *itemScrollView = [[LJLivePageMenuScrollView alloc] init];
-    itemScrollView.showsVerticalScrollIndicator = NO;
-    itemScrollView.showsHorizontalScrollIndicator = NO;
-    itemScrollView.scrollsToTop = NO; // 目的是不要影响到外界的scrollView置顶功能
-    itemScrollView.bouncesZoom = NO;
-    itemScrollView.bounces = YES;
-    if (@available(iOS 11.0, *)) {
-        itemScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    }
-    [backgroundView addSubview:itemScrollView];
-    _itemScrollView = itemScrollView;
-    
-    LJPageMenuButton *functionButton = [LJPageMenuButton buttonWithType:UIButtonTypeCustom];
-    functionButton.backgroundColor = [UIColor whiteColor];
-    [functionButton setTitle:@"＋" forState:UIControlStateNormal];
-    [functionButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [functionButton addTarget:self action:@selector(functionButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    functionButton.layer.shadowColor = [UIColor blackColor].CGColor;
-    functionButton.layer.shadowOffset = CGSizeMake(0, 0);
-    functionButton.layer.shadowRadius = 2;
-    functionButton.layer.shadowOpacity = _funtionButtonshadowOpacity; // 默认是0,为0的话不会显示阴影
-    functionButton.hidden = !_showFuntionButton;
-    [backgroundView addSubview:functionButton];
-    _functionButton = functionButton;
-}
-
-// 按钮点击方法
 - (void)buttonInPageMenuClicked:(LJPageMenuButton *)sender {
     NSInteger fromIndex = self.selectedButton ? self.selectedButton.tag-tagBaseValue : sender.tag - tagBaseValue;
     NSInteger toIndex = sender.tag - tagBaseValue;
@@ -1129,292 +622,6 @@
     }
     [self delegatePerformMethodWithFromIndex:fromIndex toIndex:toIndex];
 }
-
-// 点击button让itemScrollView发生偏移
-- (void)moveItemScrollViewWithSelectedButton:(LJPageMenuButton *)selectedButton {
-    if (CGRectEqualToRect(self.backgroundView.frame, CGRectZero)) {
-        return;
-    }
-    // 转换点的坐标位置
-    CGPoint centerInPageMenu = [self.backgroundView convertPoint:selectedButton.center toView:self];
-    // CGRectGetMidX(self.backgroundView.frame)指的是屏幕水平中心位置，它的值是固定不变的
-    CGFloat offSetX = centerInPageMenu.x - CGRectGetMidX(self.backgroundView.frame);
-    
-    // itemScrollView的容量宽与自身宽之差
-    CGFloat maxOffsetX = self.itemScrollView.contentSize.width - self.itemScrollView.frame.size.width;
-    // 如果选中的button中心x值小于或者等于itemScrollView的中心x值，或者itemScrollView的容量宽度小于itemScrollView本身，此时点击button时不发生任何偏移，置offSetX为0
-    if (offSetX <= 0 || maxOffsetX <= 0) {
-        offSetX = 0;
-    }
-    // 如果offSetX大于maxOffsetX,说明itemScrollView已经滑到尽头，此时button也发生任何偏移了
-    else if (offSetX > maxOffsetX){
-        offSetX = maxOffsetX;
-    }
-    [self.itemScrollView setContentOffset:CGPointMake(offSetX, 0) animated:YES];
-}
-
-// 移动跟踪器
-- (void)moveTrackerWithSelectedButton:(LJPageMenuButton *)selectedButton {
-    [UIView animateWithDuration:0.25 animations:^{
-        [self resetupTrackerFrameWithSelectedButton:selectedButton];
-    }];
-}
-
-// 执行代理方法
-- (void)delegatePerformMethodWithFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:itemSelectedFromIndex:toIndex:)]) {
-        [self.delegate pageMenu:self itemSelectedFromIndex:fromIndex toIndex:toIndex];
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:itemSelectedAtIndex:)]) {
-        [self.delegate pageMenu:self itemSelectedAtIndex:toIndex];
-    }
-}
-
-// 功能按钮的点击方法
-- (void)functionButtonClicked:(LJPageMenuButton *)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:functionButtonClicked:)]) {
-        [self.delegate pageMenu:self functionButtonClicked:sender];
-    }
-}
-
-- (void)prepareMoveTrackerFollowScrollView:(UIScrollView *)scrollView {
-
-    // 这个if条件的意思是scrollView的滑动不是由手指拖拽产生
-    if (!scrollView.isDragging && !scrollView.isDecelerating) {return;}
-    // 当滑到边界时，继续通过scrollView的bouces效果滑动时，直接return
-    if (scrollView.contentOffset.x < 0 || scrollView.contentOffset.x > scrollView.contentSize.width-scrollView.bounds.size.width) {return;}
-
-    // 当前偏移量
-    CGFloat currentOffSetX = scrollView.contentOffset.x;
-    // 偏移进度
-    CGFloat offsetProgress = currentOffSetX / scrollView.bounds.size.width;
-    CGFloat progress = offsetProgress - floor(offsetProgress);
-
-    NSInteger fromIndex = 0;
-    NSInteger toIndex = 0;
-    // 初始值不要等于scrollView.contentOffset.x,因为第一次进入此方法时，scrollView.contentOffset.x的值已经有一点点偏移了，不是很准确
-    _beginOffsetX = scrollView.bounds.size.width * self.selectedItemIndex;
-
-    // 以下注释的“拖拽”一词很准确，不可说成滑动，例如:当手指向右拖拽，还未拖到一半时就松开手，接下来scrollView则会往回滑动，这个往回，就是向左滑动，这也是_beginOffsetX不可时刻纪录的原因，如果时刻纪录，那么往回(向左)滑动时会被视为“向左拖拽”,然而，这个往回却是由“向右拖拽”而导致的
-    if (currentOffSetX - _beginOffsetX > 0) { // 向左拖拽了
-        // 求商,获取上一个item的下标
-        fromIndex = currentOffSetX / scrollView.bounds.size.width;
-        // 当前item的下标等于上一个item的下标加1
-        toIndex = fromIndex + 1;
-        if (toIndex >= self.buttons.count) {
-            toIndex = fromIndex;
-        }
-    } else if (currentOffSetX - _beginOffsetX < 0) {  // 向右拖拽了
-        toIndex = currentOffSetX / scrollView.bounds.size.width;
-        fromIndex = toIndex + 1;
-        progress = 1.0 - progress;
-
-    } else {
-        progress = 1.0;
-        fromIndex = self.selectedItemIndex;
-        toIndex = fromIndex;
-    }
-    if (currentOffSetX == scrollView.bounds.size.width * fromIndex) {// 滚动停止了
-        progress = 1.0;
-        toIndex = fromIndex;
-    }
-    // 如果滚动停止，直接通过点击按钮选中toIndex对应的item
-    if (currentOffSetX == scrollView.bounds.size.width*toIndex) { // 这里toIndex==fromIndex
-        // 这一次赋值起到2个作用，一是点击toIndex对应的按钮，走一遍代理方法,二是弥补跟踪器的结束跟踪，因为本方法是在scrollViewDidScroll中调用，可能离滚动结束还有一丁点的距离，本方法就不调了,最终导致外界还要在scrollView滚动结束的方法里self.selectedItemIndex进行赋值,直接在这里赋值可以让外界不用做此操作
-        if (_selectedItemIndex != toIndex) {
-            self.selectedItemIndex = toIndex;
-        }
-        // 要return，点击了按钮，跟踪器自然会跟着被点击的按钮走
-        return;
-    }
-    switch (self.trackerFollowingMode) {
-        case LJLivePageMenuTrackerFollowingModeAlways:
-            // 这个方法才开始移动跟踪器
-            [self moveTrackerWithProgress:progress fromIndex:fromIndex toIndex:toIndex currentOffsetX:currentOffSetX beginOffsetX:_beginOffsetX];
-            break;
-        case LJLivePageMenuTrackerFollowingModeHalf:{
-            LJPageMenuButton *fromButton;
-            LJPageMenuButton *toButton;
-            if (progress > 0.5) {
-                if (toIndex >= 0 && toIndex < self.buttons.count) {
-                    toButton = self.buttons[toIndex];
-                    fromButton = self.buttons[fromIndex];
-                    if (_selectedItemIndex != toIndex) {
-                        self.selectedItemIndex = toIndex;
-                    }
-                }
-            } else {
-                if (fromIndex >= 0 && fromIndex < self.buttons.count) {
-                    toButton = self.buttons[fromIndex];
-                    fromButton = self.buttons[toIndex];
-                    if (_selectedItemIndex != fromIndex) {
-                        self.selectedItemIndex = fromIndex;
-                    }
-                }
-            }
-        }
-            break;
-        default:
-            break;
-    }
-}
-
-// 这个方法才开始真正滑动跟踪器，上面都是做铺垫
-- (void)moveTrackerWithProgress:(CGFloat)progress fromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex currentOffsetX:(CGFloat)currentOffsetX beginOffsetX:(CGFloat)beginOffsetX {
-
-    UIButton *fromButton = self.buttons[fromIndex];
-    UIButton *toButton = self.buttons[toIndex];
-    
-    // 2个按钮之间的距离
-    CGFloat xDistance = toButton.center.x - fromButton.center.x;
-    // 2个按钮宽度的差值
-    CGFloat wDistance = toButton.frame.size.width - fromButton.frame.size.width;
-    
-    CGRect newFrame = self.tracker.frame;
-    CGPoint newCenter = self.tracker.center;
-    if (self.trackerStyle == LJLivePageMenuTrackerStyleLine) {
-        newCenter.x = fromButton.center.x + xDistance * progress;
-        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress);
-        self.tracker.frame = newFrame;
-        self.tracker.center = newCenter;
-        if (_selectedItemZoomScale != 1) {
-            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-        }
-    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleLineAttachment) {
-        // 这种样式的计算比较复杂,有个很关键的技巧，就是参考progress分别为0、0.5、1时的临界值
-        // 原先的x值
-        CGFloat originX = fromButton.frame.origin.x+(fromButton.frame.size.width-(_trackerWidth ? _trackerWidth : fromButton.titleLabel.font.pointSize))*0.5;
-        // 原先的宽度
-        CGFloat originW = _trackerWidth ? _trackerWidth : fromButton.titleLabel.font.pointSize;
-        if (currentOffsetX - _beginOffsetX >= 0) { // 向左拖拽了
-            if (progress < 0.5) {
-                newFrame.origin.x = originX; // x值保持不变
-                newFrame.size.width = originW + xDistance * progress * 2;
-            } else {
-                newFrame.origin.x = originX + xDistance * (progress-0.5) * 2;
-                newFrame.size.width = originW + xDistance - xDistance * (progress-0.5) * 2;
-            }
-        } else { // 向右拖拽了
-            // 此时xDistance为负
-            if (progress < 0.5) {
-                newFrame.origin.x = originX + xDistance * progress * 2;
-                newFrame.size.width = originW - xDistance * progress * 2;
-            } else {
-                newFrame.origin.x = originX + xDistance;
-                newFrame.size.width = originW - xDistance + xDistance * (progress-0.5) * 2;
-            }
-        }
-        self.tracker.frame = newFrame;
-        if (_selectedItemZoomScale != 1) {
-            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-        }
-        
-    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleTextZoom || self.trackerStyle == LJLivePageMenuTrackerStyleNothing) {
-        // 缩放文字
-        if (_selectedItemZoomScale != 1) {
-            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-        }
-    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleRoundedRect) {
-        newCenter.x = fromButton.center.x + xDistance * progress;
-        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress + _itemPadding);
-        self.tracker.frame = newFrame;
-        self.tracker.center = newCenter;
-        if (_selectedItemZoomScale != 1) {
-            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-        }
-    } else {
-        newCenter.x = fromButton.center.x + xDistance * progress;
-        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress + _itemPadding);
-        self.tracker.frame = newFrame;
-        self.tracker.center = newCenter;
-        if (_selectedItemZoomScale != 1) {
-            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-        }
-    }
-    // 文字颜色渐变
-    if (self.needTextColorGradients) {
-        [self colorGradientForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
-    }
-}
-
-// 颜色渐变方法
-- (void)colorGradientForTitleWithProgress:(CGFloat)progress fromButton:(UIButton *)fromButton toButton:(UIButton *)toButton {
-    // 获取 targetProgress
-    CGFloat fromProgress = progress;
-    // 获取 originalProgress
-    CGFloat toProgress = 1 - fromProgress;
-    
-    CGFloat r = self.endR - self.startR;
-    CGFloat g = self.endG - self.startG;
-    CGFloat b = self.endB - self.startB;
-    CGFloat a = self.endA - self.startA;
-    UIColor *fromColor = [UIColor colorWithRed:self.startR +  r * fromProgress  green:self.startG +  g * fromProgress  blue:self.startB +  b * fromProgress alpha:self.startA + a * fromProgress];
-    UIColor *toColor = [UIColor colorWithRed:self.startR + r * toProgress green:self.startG + g * toProgress blue:self.startB + b * toProgress alpha:self.startA + a * toProgress];
-    
-    // 设置文字颜色渐变
-    [fromButton setTitleColor:fromColor forState:UIControlStateNormal];
-    [toButton setTitleColor:toColor forState:UIControlStateNormal];
-}
-
-// 获取颜色的RGB值
-- (NSArray *)getRGBForColor:(UIColor *)color {
-    CGFloat red = 0.0;
-    CGFloat green = 0.0;
-    CGFloat blue = 0.0;
-    CGFloat alpha = 0.0;
-    [color getRed:&red green:&green blue:&blue alpha:&alpha];
-    return @[@(red), @(green), @(blue), @(alpha)];
-}
-
-/// 开始颜色设置
-- (void)setupStartColor:(UIColor *)color {
-    NSArray *components = [self getRGBForColor:color];
-    self.startR = [components[0] floatValue];
-    self.startG = [components[1] floatValue];
-    self.startB = [components[2] floatValue];
-    self.startA = [components[3] floatValue];
-}
-
-/// 结束颜色设置
-- (void)setupEndColor:(UIColor *)color {
-    NSArray *components = [self getRGBForColor:color];
-    self.endR = [components[0] floatValue];
-    self.endG = [components[1] floatValue];
-    self.endB = [components[2] floatValue];
-    self.endA = [components[3] floatValue];
-}
-
-- (void)zoomForTitleWithProgress:(CGFloat)progress fromButton:(UIButton *)fromButton toButton:(UIButton *)toButton {
-    CGFloat diff = _selectedItemZoomScale - 1;
-    fromButton.transform = CGAffineTransformMakeScale((1 - progress) * diff + 1, (1 - progress) * diff + 1);
-    toButton.transform = CGAffineTransformMakeScale(progress * diff + 1, progress * diff + 1);
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.bridgeScrollView) {
-        if ([keyPath isEqualToString:scrollViewContentOffset]) {
-            // 当scrolllView滚动时,让跟踪器跟随scrollView滑动
-            [self prepareMoveTrackerFollowScrollView:self.bridgeScrollView];
-        }
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
-#pragma mark - setter
-
-- (void)setBridgeScrollView:(UIScrollView *)bridgeScrollView {
-    if (bridgeScrollView == _bridgeScrollView) return;
-    if (_bridgeScrollView && bridgeScrollView != _bridgeScrollView) {
-        [_bridgeScrollView removeObserver:self forKeyPath:scrollViewContentOffset];
-    };
-    _bridgeScrollView = bridgeScrollView;
-    if (bridgeScrollView) {
-        [bridgeScrollView addObserver:self forKeyPath:scrollViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
-    }
-}
-
 - (void)setTrackerStyle:(LJLivePageMenuTrackerStyle)trackerStyle {
     _trackerStyle = trackerStyle;
     switch (trackerStyle) {
@@ -1438,72 +645,6 @@
             break;
     }
 }
-
-- (void)setBounces:(BOOL)bounces {
-    _bounces = bounces;
-    self.itemScrollView.bounces = bounces;
-}
-
-- (void)setAlwaysBounceHorizontal:(BOOL)alwaysBounceHorizontal {
-    _alwaysBounceHorizontal = alwaysBounceHorizontal;
-    self.itemScrollView.alwaysBounceHorizontal = alwaysBounceHorizontal;
-}
-
-- (void)setTrackerWidth:(CGFloat)trackerWidth {
-    _trackerWidth = trackerWidth;
-    CGRect trackerRect = self.tracker.frame;
-    trackerRect.size.width = trackerWidth;
-    self.tracker.frame = trackerRect;
-    CGPoint trackerCenter = self.tracker.center;
-    trackerCenter.x = _selectedButton.center.x;
-    self.tracker.center = trackerCenter;
-}
-
-- (void)setDividingLineHeight:(CGFloat)dividingLineHeight {
-    _dividingLineHeight = dividingLineHeight;
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-}
-
-- (void)setSelectedItemZoomScale:(CGFloat)selectedItemZoomScale {
-    _selectedItemZoomScale = selectedItemZoomScale;
-    if (selectedItemZoomScale != 1) {
-        _selectedButton.transform = CGAffineTransformMakeScale(_selectedItemZoomScale, _selectedItemZoomScale);
-        self.tracker.transform = CGAffineTransformMakeScale(_selectedItemZoomScale, 1);
-    } else {
-        _selectedButton.transform = CGAffineTransformIdentity;
-        self.tracker.transform = CGAffineTransformIdentity;
-    }
-}
-
-- (void)setShowFuntionButton:(BOOL)showFuntionButton {
-    _showFuntionButton = showFuntionButton;
-    self.functionButton.hidden = !showFuntionButton;
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    // 修正scrollView偏移
-    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
-}
-
-- (void)setFuntionButtonshadowOpacity:(CGFloat)funtionButtonshadowOpacity {
-    _funtionButtonshadowOpacity = funtionButtonshadowOpacity;
-    self.functionButton.layer.shadowOpacity = funtionButtonshadowOpacity;
-}
-
-- (void)setItemPadding:(CGFloat)itemPadding {
-    _itemPadding = itemPadding;
-    _forceUseSettingSpacing = YES;
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    // 修正scrollView偏移
-    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
-}
-
-- (void)setSpacing:(CGFloat)spacing {
-    _spacing = spacing;
-    self.itemPadding = spacing;
-}
-
 - (void)setItemTitleFont:(UIFont *)itemTitleFont {
     _itemTitleFont = itemTitleFont;
     _selectedItemTitleFont = itemTitleFont;
@@ -1516,7 +657,73 @@
     // 修正scrollView偏移
     [self moveItemScrollViewWithSelectedButton:self.selectedButton];
 }
-
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super initWithCoder:aDecoder]) {
+        [self initialize];
+    }
+    return self;
+}
+- (void)setSelectedItemZoomScale:(CGFloat)selectedItemZoomScale {
+    _selectedItemZoomScale = selectedItemZoomScale;
+    if (selectedItemZoomScale != 1) {
+        _selectedButton.transform = CGAffineTransformMakeScale(_selectedItemZoomScale, _selectedItemZoomScale);
+        self.tracker.transform = CGAffineTransformMakeScale(_selectedItemZoomScale, 1);
+    } else {
+        _selectedButton.transform = CGAffineTransformIdentity;
+        self.tracker.transform = CGAffineTransformIdentity;
+    }
+}
+- (void)setTrackerWidth:(CGFloat)trackerWidth {
+    _trackerWidth = trackerWidth;
+    CGRect trackerRect = self.tracker.frame;
+    trackerRect.size.width = trackerWidth;
+    self.tracker.frame = trackerRect;
+    CGPoint trackerCenter = self.tracker.center;
+    trackerCenter.x = _selectedButton.center.x;
+    self.tracker.center = trackerCenter;
+}
+- (void)setContent:(id)content forItemAtIndex:(NSUInteger)itemIndex {
+    [self setContent:content forItemIndex:itemIndex];
+}
+- (void)setContentInset:(UIEdgeInsets)contentInset {
+    _contentInset = contentInset;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    // 修正scrollView偏移
+    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
+}
+- (void)removeAllItems {
+    NSMutableArray *objects = self.items.mutableCopy;
+    [objects removeAllObjects];
+    self.items = objects.copy;
+    self.items = nil;
+    
+    for (int i = 0; i < self.buttons.count; i++) {
+        LJPageMenuButton *button = self.buttons[i];
+        [button removeFromSuperview];
+    }
+    
+    [self.buttons removeAllObjects];
+    
+    [self.tracker removeFromSuperview];
+    
+    self.selectedButton = nil;
+    self.selectedItemIndex = 0;
+    
+    [self setNeedsLayout];
+}
+- (CGFloat)widthForItemAtIndex:(NSUInteger)itemIndex {
+    CGFloat customWidth = [[self.customWidths valueForKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]] floatValue];
+    if (customWidth) {
+        return customWidth;
+    } else {
+        if (itemIndex < self.buttons.count) {
+            LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+            return button.bounds.size.width;
+        }
+    }
+    return 0;
+}
 - (void)setUnSelectedItemTitleFont:(UIFont *)unSelectedItemTitleFont {
     _unSelectedItemTitleFont = unSelectedItemTitleFont;
     for (LJPageMenuButton *button in self.buttons) {
@@ -1530,116 +737,191 @@
     // 修正scrollView偏移
     [self moveItemScrollViewWithSelectedButton:self.selectedButton];
 }
-
-- (void)setSelectedItemTitleFont:(UIFont *)selectedItemTitleFont {
-    _selectedItemTitleFont = selectedItemTitleFont;
-    self.selectedButton.titleLabel.font = selectedItemTitleFont;
-
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    // 修正scrollView偏移
-    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
-}
-
-- (void)setSelectedItemTitleColor:(UIColor *)selectedItemTitleColor {
-    _selectedItemTitleColor = selectedItemTitleColor;
-    [self setupStartColor:selectedItemTitleColor];
-    [self.selectedButton setTitleColor:selectedItemTitleColor forState:UIControlStateNormal];
-}
-
-- (void)setUnSelectedItemTitleColor:(UIColor *)unSelectedItemTitleColor {
-    _unSelectedItemTitleColor = unSelectedItemTitleColor;
-    [self setupEndColor:unSelectedItemTitleColor];
-    for (LJPageMenuButton *button in self.buttons) {
-        if (button == _selectedButton) {
-            continue;  // 跳过选中的那个button
-        }
-        [button setTitleColor:unSelectedItemTitleColor forState:UIControlStateNormal];
-    }
-}
-
-- (void)setSelectedItemIndex:(NSInteger)selectedItemIndex {
-    _selectedItemIndex = selectedItemIndex;
-    if (self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:selectedItemIndex];
-        [self buttonInPageMenuClicked:button];
-    }
-}
-
-- (void)setDelegate:(id<LJLivePageMenuDelegate>)delegate {
-    if (delegate == _delegate) {return;}
-    _delegate = delegate;
-    if (self.buttons.count) {
-        LJPageMenuButton *button = [self.buttons objectAtIndex:_selectedItemIndex];
-        [self delegatePerformMethodWithFromIndex:button.tag-tagBaseValue toIndex:button.tag-tagBaseValue];
-        [self moveItemScrollViewWithSelectedButton:button];
-    }
-}
-
-- (void)setContentInset:(UIEdgeInsets)contentInset {
-    _contentInset = contentInset;
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    // 修正scrollView偏移
-    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
-}
-
-- (void)setPermutationWay:(LJLivePageMenuPermutationWay)permutationWay {
-    _permutationWay = permutationWay;
-    if (!_forceUseSettingSpacing) {
-        if (_permutationWay == LJLivePageMenuPermutationWayNotScrollEqualWidths) {
-            _spacing = _itemPadding = 0;
-        } else {
-            _spacing = _itemPadding = 30;
-        }
-    }
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    // 修正scrollView偏移
-    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
-}
-
-- (void)setCloseTrackerFollowingMode:(BOOL)closeTrackerFollowingMode {
-    _closeTrackerFollowingMode = closeTrackerFollowingMode;
-    if (closeTrackerFollowingMode) {
-        self.trackerFollowingMode = LJLivePageMenuTrackerFollowingModeEnd;
-    } else {
-        self.trackerFollowingMode = LJLivePageMenuTrackerFollowingModeAlways;
-    }
-}
-#pragma mark - getter
-
-- (NSArray *)items {
-    if (!_items) {
-        _items = [NSMutableArray array];
-    }
-    return _items;
-}
-
-- (NSMutableArray *)buttons {
-    
-    if (!_buttons) {
-        _buttons = [NSMutableArray array];
+- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        [button setTitle:title forState:UIControlStateNormal];
+        [button setImage:image forState:UIControlStateNormal];
+        button.imagePosition = imagePosition;
         
+        // 文字和图片只能替换其一，因为items数组里不能同时装文字和图片。当文字和图片同时设置时，items里只更新文字
+        if (title == nil || title.length == 0 || [title isKindOfClass:[NSNull class]]) {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:image];
+            self.items = items.copy;
+        } else if (image == nil) {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:title];
+            self.items = items.copy;
+        } else {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:image];
+            self.items = items.copy;
+        }
+        
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
     }
-    return _buttons;
 }
-
-- (NSMutableDictionary *)customWidths {
+- (void)setShowFuntionButton:(BOOL)showFuntionButton {
+    _showFuntionButton = showFuntionButton;
+    self.functionButton.hidden = !showFuntionButton;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    // 修正scrollView偏移
+    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
+}
+- (UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics {
+    return self.backgroundImageView.image;
+}
+- (void)removeItemAtIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
+    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
+    // 被删除的按钮之后的按钮需要修改tag值
+    for (LJPageMenuButton *button in self.buttons) {
+        if (button.tag-tagBaseValue > itemIndex) {
+            button.tag = button.tag - 1;
+        }
+    }
+    if (self.items.count) {
+        NSMutableArray *objects = self.items.mutableCopy;
+        // 特别注意的是：不能先通过itemIndex取出对象，然后再将对象删除，因为这样会删除所有相同的对象
+        [objects removeObjectAtIndex:itemIndex];
+        self.items = objects.copy;
+    }
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        if (button == self.selectedButton) { // 如果删除的正是选中的item，删除之后，选中的按钮切换为上一个item
+            self.selectedItemIndex = itemIndex > 0 ? itemIndex-1 : itemIndex;
+        }
+        [self.buttons removeObjectAtIndex:itemIndex];
+        [button removeFromSuperview];
+        if (self.buttons.count == 0) { // 说明移除了所有
+            [self.tracker removeFromSuperview];
+            self.selectedButton = nil;
+            self.selectedItemIndex = 0;
+        }
+    }
+    if (animated) {
+        [UIView animateWithDuration:0.5 animations:^{
+            [self setNeedsLayout];
+            [self layoutIfNeeded];
+        }];
+    } else {
+        [self setNeedsLayout];
+    }
+}
+- (void)setItems:(NSArray *)items selectedItemIndex:(NSInteger)selectedItemIndex {
+    if (selectedItemIndex < 0) selectedItemIndex = 0;
+    NSAssert(selectedItemIndex <= items.count-1, @"selectedItemIndex 大于了 %ld",items.count-1);
+    _items = items.copy;
+    _selectedItemIndex = selectedItemIndex;
     
-    if (!_customWidths) {
-        _customWidths = [NSMutableDictionary dictionary];
-    }
-    return _customWidths;
-}
+    self.insert = NO;
 
-- (NSMutableDictionary *)customSpacings {
-    if (!_customSpacings) {
-        _customSpacings = [[NSMutableDictionary alloc] init];
+    if (self.buttons.count) {
+        for (LJPageMenuButton *button in self.buttons) {
+            [button removeFromSuperview];
+        }
     }
-    return _customSpacings;
-}
+    [self.buttons removeAllObjects];
+    
+    for (int i = 0; i < items.count; i++) {
+        id object = items[i];
+        NSAssert([object isKindOfClass:[NSString class]] || [object isKindOfClass:[UIImage class]] || [object isKindOfClass:[LJLivePageMenuButtonItem class]], @"items中的元素类型只能是NSString、UIImage或LJPageMenuButtonItem");
+        [self addButton:i object:object animated:NO];
+    }
 
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    
+    if (self.buttons.count) {
+        // 默认选中selectedItemIndex对应的按钮
+        LJPageMenuButton *selectedButton = [self.buttons objectAtIndex:selectedItemIndex];
+        [self buttonInPageMenuClicked:selectedButton];
+
+        // LJLivePageMenuTrackerStyleTextZoom和LJLivePageMenuTrackerStyleNothing样式跟tracker没有关联
+        if ([self haveOrNeedsTracker]) {
+            [self.itemScrollView insertSubview:self.tracker atIndex:0];
+            // 这里千万不能再去调用setNeedsLayout和layoutIfNeeded，因为如果外界在此之前对selectedButton进行了缩放，调用了layoutSubViews后会重新对selectedButton设置frame,先缩放再重设置frame会导致文字显示不全，所以我们直接跳过layoutSubViews调用resetSetupTrackerFrameWithSelectedButton：只设置tracker的frame
+            [self resetupTrackerFrameWithSelectedButton:selectedButton];
+        }
+    }
+}
+- (LJLivePageMenuButtonItem *)itemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.items.count) {
+        id object = [self.items objectAtIndex:itemIndex];
+        NSAssert([object isKindOfClass:[LJLivePageMenuButtonItem class]],@"itemIndex对应的item不是LJPageMenuButtonItem类型，请仔细核对");
+        return object;
+    }
+    return nil;
+}
+- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forState:(UIControlState)state {
+    [self.functionButton setTitle:title forState:state];
+    [self.functionButton setImage:image forState:state];
+    self.functionButton.imagePosition = imagePosition;
+    self.functionButton.imageTitleSpace = imageTitleSpace;
+}
+- (BOOL)enabledForItemAtIndex:(NSUInteger)itemIndex {
+    if (self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        return button.enabled;
+    }
+    return YES;
+}
+- (void)setWidth:(CGFloat)width forItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        [self.customWidths setValue:@(width) forKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]];
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
+- (void)setBridgeScrollView:(UIScrollView *)bridgeScrollView {
+    if (bridgeScrollView == _bridgeScrollView) return;
+    if (_bridgeScrollView && bridgeScrollView != _bridgeScrollView) {
+        [_bridgeScrollView removeObserver:self forKeyPath:scrollViewContentOffset];
+    };
+    _bridgeScrollView = bridgeScrollView;
+    if (bridgeScrollView) {
+        [bridgeScrollView addObserver:self forKeyPath:scrollViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
+    }
+}
+- (void)setupEndColor:(UIColor *)color {
+    NSArray *components = [self getRGBForColor:color];
+    self.endR = [components[0] floatValue];
+    self.endG = [components[1] floatValue];
+    self.endB = [components[2] floatValue];
+    self.endA = [components[3] floatValue];
+}
+- (void)initialize {
+    _itemPadding = 30.0;
+    _selectedItemTitleColor = [UIColor redColor];
+    _unSelectedItemTitleColor = [UIColor blackColor];
+    _selectedItemTitleFont = [UIFont systemFontOfSize:16];
+    _unSelectedItemTitleFont = [UIFont systemFontOfSize:16];
+    _itemTitleFont = [UIFont systemFontOfSize:16];
+    _trackerHeight = 3.0;
+    _dividingLineHeight = 1.0 / [UIScreen mainScreen].scale;
+    _contentInset = UIEdgeInsetsZero;
+    _selectedItemIndex = 0;
+    _showFuntionButton = NO;
+    _funtionButtonshadowOpacity = 0.5;
+    _selectedItemZoomScale = 1;
+    _needTextColorGradients = YES;
+    [self setupSubViews];
+}
+- (void)setTrackerHeight:(CGFloat)trackerHeight cornerRadius:(CGFloat)cornerRadius {
+    _trackerHeight = trackerHeight;
+    self.tracker.layer.cornerRadius = cornerRadius;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+}
+- (void)setCustomSpacing:(CGFloat)spacing afterItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        [self.customSpacings setValue:@(spacing) forKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]];
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
 - (UIImageView *)tracker {
     
     if (!_tracker) {
@@ -1649,13 +931,6 @@
     }
     return _tracker;
 }
-
-- (NSUInteger)numberOfItems {
-    return self.items.count;
-}
-
-#pragma mark - 布局
-
 - (void)layoutSubviews {
     [super layoutSubviews];
 
@@ -1823,7 +1098,589 @@
         [self moveItemScrollViewWithSelectedButton:self.selectedButton];
     }
 }
+- (void)setPermutationWay:(LJLivePageMenuPermutationWay)permutationWay {
+    _permutationWay = permutationWay;
+    if (!_forceUseSettingSpacing) {
+        if (_permutationWay == LJLivePageMenuPermutationWayNotScrollEqualWidths) {
+            _spacing = _itemPadding = 0;
+        } else {
+            _spacing = _itemPadding = 30;
+        }
+    }
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    // 修正scrollView偏移
+    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
+}
+- (void)setImage:(UIImage *)image forItemAtIndex:(NSUInteger)itemIndex {
+    if (image == nil) return;
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        [button setTitle:nil forState:UIControlStateNormal];
+        [button setImage:image forState:UIControlStateNormal];
 
+        NSMutableArray *items = self.items.mutableCopy;
+        [items replaceObjectAtIndex:itemIndex withObject:image];
+        self.items = items.copy;
+    }
+    [self setNeedsLayout];
+}
+- (void)setCloseTrackerFollowingMode:(BOOL)closeTrackerFollowingMode {
+    _closeTrackerFollowingMode = closeTrackerFollowingMode;
+    if (closeTrackerFollowingMode) {
+        self.trackerFollowingMode = LJLivePageMenuTrackerFollowingModeEnd;
+    } else {
+        self.trackerFollowingMode = LJLivePageMenuTrackerFollowingModeAlways;
+    }
+}
+- (void)setupStartColor:(UIColor *)color {
+    NSArray *components = [self getRGBForColor:color];
+    self.startR = [components[0] floatValue];
+    self.startG = [components[1] floatValue];
+    self.startB = [components[2] floatValue];
+    self.startA = [components[3] floatValue];
+}
+- (void)setSpacing:(CGFloat)spacing {
+    _spacing = spacing;
+    self.itemPadding = spacing;
+}
+- (NSMutableDictionary *)customSpacings {
+    if (!_customSpacings) {
+        _customSpacings = [[NSMutableDictionary alloc] init];
+    }
+    return _customSpacings;
+}
+- (instancetype)initWithFrame:(CGRect)frame trackerStyle:(LJLivePageMenuTrackerStyle)trackerStyle {
+    if (self = [super init]) {
+        self.frame = frame;
+        self.backgroundColor = [UIColor whiteColor];
+        self.trackerStyle = trackerStyle;
+        [self setupStartColor:_selectedItemTitleColor];
+        [self setupEndColor:_unSelectedItemTitleColor];
+    }
+    return self;
+}
+- (void)moveTrackerWithSelectedButton:(LJPageMenuButton *)selectedButton {
+    [UIView animateWithDuration:0.25 animations:^{
+        [self resetupTrackerFrameWithSelectedButton:selectedButton];
+    }];
+}
+- (NSArray *)items {
+    if (!_items) {
+        _items = [NSMutableArray array];
+    }
+    return _items;
+}
+- (void)insertItem:(LJLivePageMenuButtonItem *)item atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
+    self.insert = YES;
+    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
+    NSMutableArray *objects = self.items.mutableCopy;
+    [objects insertObject:item atIndex:itemIndex];
+    self.items = objects.copy;
+    [self addButton:itemIndex object:item animated:animated];
+    if (itemIndex <= self.selectedItemIndex) {
+        _selectedItemIndex += 1;
+    }
+}
+- (NSString *)titleForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.items.count) {
+        id object = [self.items objectAtIndex:itemIndex];
+        NSAssert([object isKindOfClass:[NSString class]],@"itemIndex对应的item不是NSString类型，请仔细核对");
+        return object;
+    }
+    return nil;
+}
+- (void)setBounces:(BOOL)bounces {
+    _bounces = bounces;
+    self.itemScrollView.bounces = bounces;
+}
+- (void)insertItemWithTitle:(NSString *)title atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
+    self.insert = YES;
+    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
+    NSMutableArray *titleArr = self.items.mutableCopy;
+    [titleArr insertObject:title atIndex:itemIndex];
+    self.items = titleArr;
+    [self addButton:itemIndex object:title animated:animated];
+    if (itemIndex <= self.selectedItemIndex) {
+        _selectedItemIndex += 1;
+    }
+}
+- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state {
+    [self.functionButton setTitle:title forState:state];
+    [self.functionButton setImage:image forState:state];
+    self.functionButton.imagePosition = imagePosition;
+}
+- (void)setFunctionButtonContent:(id)content forState:(UIControlState)state {
+    if ([content isKindOfClass:[NSString class]]) {
+        [self.functionButton setTitle:content forState:state];
+    } else if ([content isKindOfClass:[UIImage class]]) {
+        [self.functionButton setImage:content forState:state];
+    } else if ([content isKindOfClass:[LJLivePageMenuButtonItem class]]) {
+        LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)content;
+        [self.functionButton setTitle:item.title forState:state];
+        [self.functionButton setImage:item.image forState:state];
+        self.functionButton.imagePosition = item.imagePosition;
+        self.functionButton.imageTitleSpace = item.imageTitleSpace;
+    }
+}
+- (NSArray *)getRGBForColor:(UIColor *)color {
+    CGFloat red = 0.0;
+    CGFloat green = 0.0;
+    CGFloat blue = 0.0;
+    CGFloat alpha = 0.0;
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
+    return @[@(red), @(green), @(blue), @(alpha)];
+}
+- (void)setItem:(LJLivePageMenuButtonItem *)item forItemIndex:(NSUInteger)itemIndex {
+    if (item == nil) return;
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        [button setTitle:item.title forState:UIControlStateNormal];
+        [button setImage:item.image forState:UIControlStateNormal];
+        button.imagePosition = item.imagePosition;
+        button.imageTitleSpace = item.imageTitleSpace;
+        
+        if (item != nil) {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:item];
+            self.items = items.copy;
+        }
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
+- (void)colorGradientForTitleWithProgress:(CGFloat)progress fromButton:(UIButton *)fromButton toButton:(UIButton *)toButton {
+    // 获取 targetProgress
+    CGFloat fromProgress = progress;
+    // 获取 originalProgress
+    CGFloat toProgress = 1 - fromProgress;
+    
+    CGFloat r = self.endR - self.startR;
+    CGFloat g = self.endG - self.startG;
+    CGFloat b = self.endB - self.startB;
+    CGFloat a = self.endA - self.startA;
+    UIColor *fromColor = [UIColor colorWithRed:self.startR +  r * fromProgress  green:self.startG +  g * fromProgress  blue:self.startB +  b * fromProgress alpha:self.startA + a * fromProgress];
+    UIColor *toColor = [UIColor colorWithRed:self.startR + r * toProgress green:self.startG + g * toProgress blue:self.startB + b * toProgress alpha:self.startA + a * toProgress];
+    
+    // 设置文字颜色渐变
+    [fromButton setTitleColor:fromColor forState:UIControlStateNormal];
+    [toButton setTitleColor:toColor forState:UIControlStateNormal];
+}
+- (void)addComponentViewInScrollView:(UIView *)componentView {
+    [self.itemScrollView addSubview:componentView];
+}
+- (void)setAlwaysBounceHorizontal:(BOOL)alwaysBounceHorizontal {
+    _alwaysBounceHorizontal = alwaysBounceHorizontal;
+    self.itemScrollView.alwaysBounceHorizontal = alwaysBounceHorizontal;
+}
+- (void)moveTrackerWithProgress:(CGFloat)progress fromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex currentOffsetX:(CGFloat)currentOffsetX beginOffsetX:(CGFloat)beginOffsetX {
+
+    UIButton *fromButton = self.buttons[fromIndex];
+    UIButton *toButton = self.buttons[toIndex];
+    
+    // 2个按钮之间的距离
+    CGFloat xDistance = toButton.center.x - fromButton.center.x;
+    // 2个按钮宽度的差值
+    CGFloat wDistance = toButton.frame.size.width - fromButton.frame.size.width;
+    
+    CGRect newFrame = self.tracker.frame;
+    CGPoint newCenter = self.tracker.center;
+    if (self.trackerStyle == LJLivePageMenuTrackerStyleLine) {
+        newCenter.x = fromButton.center.x + xDistance * progress;
+        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress);
+        self.tracker.frame = newFrame;
+        self.tracker.center = newCenter;
+        if (_selectedItemZoomScale != 1) {
+            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+        }
+    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleLineAttachment) {
+        // 这种样式的计算比较复杂,有个很关键的技巧，就是参考progress分别为0、0.5、1时的临界值
+        // 原先的x值
+        CGFloat originX = fromButton.frame.origin.x+(fromButton.frame.size.width-(_trackerWidth ? _trackerWidth : fromButton.titleLabel.font.pointSize))*0.5;
+        // 原先的宽度
+        CGFloat originW = _trackerWidth ? _trackerWidth : fromButton.titleLabel.font.pointSize;
+        if (currentOffsetX - _beginOffsetX >= 0) { // 向左拖拽了
+            if (progress < 0.5) {
+                newFrame.origin.x = originX; // x值保持不变
+                newFrame.size.width = originW + xDistance * progress * 2;
+            } else {
+                newFrame.origin.x = originX + xDistance * (progress-0.5) * 2;
+                newFrame.size.width = originW + xDistance - xDistance * (progress-0.5) * 2;
+            }
+        } else { // 向右拖拽了
+            // 此时xDistance为负
+            if (progress < 0.5) {
+                newFrame.origin.x = originX + xDistance * progress * 2;
+                newFrame.size.width = originW - xDistance * progress * 2;
+            } else {
+                newFrame.origin.x = originX + xDistance;
+                newFrame.size.width = originW - xDistance + xDistance * (progress-0.5) * 2;
+            }
+        }
+        self.tracker.frame = newFrame;
+        if (_selectedItemZoomScale != 1) {
+            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+        }
+        
+    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleTextZoom || self.trackerStyle == LJLivePageMenuTrackerStyleNothing) {
+        // 缩放文字
+        if (_selectedItemZoomScale != 1) {
+            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+        }
+    } else if (self.trackerStyle == LJLivePageMenuTrackerStyleRoundedRect) {
+        newCenter.x = fromButton.center.x + xDistance * progress;
+        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress + _itemPadding);
+        self.tracker.frame = newFrame;
+        self.tracker.center = newCenter;
+        if (_selectedItemZoomScale != 1) {
+            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+        }
+    } else {
+        newCenter.x = fromButton.center.x + xDistance * progress;
+        newFrame.size.width = _trackerWidth ? _trackerWidth : (fromButton.frame.size.width + wDistance * progress + _itemPadding);
+        self.tracker.frame = newFrame;
+        self.tracker.center = newCenter;
+        if (_selectedItemZoomScale != 1) {
+            [self zoomForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+        }
+    }
+    // 文字颜色渐变
+    if (self.needTextColorGradients) {
+        [self colorGradientForTitleWithProgress:progress fromButton:fromButton toButton:toButton];
+    }
+}
+- (CGRect)buttonRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        CGRect buttonRectAtPageMenu = [button convertRect:button.bounds toView:self];
+        return buttonRectAtPageMenu;
+    }
+    return CGRectZero;
+}
+- (void)setContentEdgeInsets:(UIEdgeInsets)contentInset forForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        button.contentEdgeInsets = contentInset;
+    }
+}
+- (void)setContent:(id)content forItemIndex:(NSUInteger)itemIndex {
+    if (content == nil) return;
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        if ([content isKindOfClass:[NSString class]]) {
+            [button setTitle:content forState:UIControlStateNormal];
+        } else if ([content isKindOfClass:[UIImage class]]) {
+            [button setImage:content forState:UIControlStateNormal];
+        } else if ([content isKindOfClass:[LJLivePageMenuButtonItem class]]) {
+            LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)content;
+            [button setTitle:item.title forState:UIControlStateNormal];
+            [button setImage:item.image forState:UIControlStateNormal];
+            button.imagePosition = item.imagePosition;
+            button.imageTitleSpace = item.imageTitleSpace;
+        }
+        NSMutableArray *items = self.items.mutableCopy;
+        [items replaceObjectAtIndex:itemIndex withObject:content];
+        self.items = items.copy;
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
+- (void)prepareMoveTrackerFollowScrollView:(UIScrollView *)scrollView {
+
+    // 这个if条件的意思是scrollView的滑动不是由手指拖拽产生
+    if (!scrollView.isDragging && !scrollView.isDecelerating) {return;}
+    // 当滑到边界时，继续通过scrollView的bouces效果滑动时，直接return
+    if (scrollView.contentOffset.x < 0 || scrollView.contentOffset.x > scrollView.contentSize.width-scrollView.bounds.size.width) {return;}
+
+    // 当前偏移量
+    CGFloat currentOffSetX = scrollView.contentOffset.x;
+    // 偏移进度
+    CGFloat offsetProgress = currentOffSetX / scrollView.bounds.size.width;
+    CGFloat progress = offsetProgress - floor(offsetProgress);
+
+    NSInteger fromIndex = 0;
+    NSInteger toIndex = 0;
+    // 初始值不要等于scrollView.contentOffset.x,因为第一次进入此方法时，scrollView.contentOffset.x的值已经有一点点偏移了，不是很准确
+    _beginOffsetX = scrollView.bounds.size.width * self.selectedItemIndex;
+
+    // 以下注释的“拖拽”一词很准确，不可说成滑动，例如:当手指向右拖拽，还未拖到一半时就松开手，接下来scrollView则会往回滑动，这个往回，就是向左滑动，这也是_beginOffsetX不可时刻纪录的原因，如果时刻纪录，那么往回(向左)滑动时会被视为“向左拖拽”,然而，这个往回却是由“向右拖拽”而导致的
+    if (currentOffSetX - _beginOffsetX > 0) { // 向左拖拽了
+        // 求商,获取上一个item的下标
+        fromIndex = currentOffSetX / scrollView.bounds.size.width;
+        // 当前item的下标等于上一个item的下标加1
+        toIndex = fromIndex + 1;
+        if (toIndex >= self.buttons.count) {
+            toIndex = fromIndex;
+        }
+    } else if (currentOffSetX - _beginOffsetX < 0) {  // 向右拖拽了
+        toIndex = currentOffSetX / scrollView.bounds.size.width;
+        fromIndex = toIndex + 1;
+        progress = 1.0 - progress;
+
+    } else {
+        progress = 1.0;
+        fromIndex = self.selectedItemIndex;
+        toIndex = fromIndex;
+    }
+    if (currentOffSetX == scrollView.bounds.size.width * fromIndex) {// 滚动停止了
+        progress = 1.0;
+        toIndex = fromIndex;
+    }
+    // 如果滚动停止，直接通过点击按钮选中toIndex对应的item
+    if (currentOffSetX == scrollView.bounds.size.width*toIndex) { // 这里toIndex==fromIndex
+        // 这一次赋值起到2个作用，一是点击toIndex对应的按钮，走一遍代理方法,二是弥补跟踪器的结束跟踪，因为本方法是在scrollViewDidScroll中调用，可能离滚动结束还有一丁点的距离，本方法就不调了,最终导致外界还要在scrollView滚动结束的方法里self.selectedItemIndex进行赋值,直接在这里赋值可以让外界不用做此操作
+        if (_selectedItemIndex != toIndex) {
+            self.selectedItemIndex = toIndex;
+        }
+        // 要return，点击了按钮，跟踪器自然会跟着被点击的按钮走
+        return;
+    }
+    switch (self.trackerFollowingMode) {
+        case LJLivePageMenuTrackerFollowingModeAlways:
+            // 这个方法才开始移动跟踪器
+            [self moveTrackerWithProgress:progress fromIndex:fromIndex toIndex:toIndex currentOffsetX:currentOffSetX beginOffsetX:_beginOffsetX];
+            break;
+        case LJLivePageMenuTrackerFollowingModeHalf:{
+            LJPageMenuButton *fromButton;
+            LJPageMenuButton *toButton;
+            if (progress > 0.5) {
+                if (toIndex >= 0 && toIndex < self.buttons.count) {
+                    toButton = self.buttons[toIndex];
+                    fromButton = self.buttons[fromIndex];
+                    if (_selectedItemIndex != toIndex) {
+                        self.selectedItemIndex = toIndex;
+                    }
+                }
+            } else {
+                if (fromIndex >= 0 && fromIndex < self.buttons.count) {
+                    toButton = self.buttons[fromIndex];
+                    fromButton = self.buttons[toIndex];
+                    if (_selectedItemIndex != fromIndex) {
+                        self.selectedItemIndex = fromIndex;
+                    }
+                }
+            }
+        }
+            break;
+        default:
+            break;
+    }
+}
+- (void)addButton:(NSInteger)index object:(id)object animated:(BOOL)animated {
+    // 如果是插入，需要改变已有button的tag值
+    for (LJPageMenuButton *button in self.buttons) {
+        if (button.tag-tagBaseValue >= index) {
+            button.tag = button.tag + 1; // 由于有新button的加入，新button后面的button的tag值得+1
+        }
+    }
+    LJPageMenuButton *button = [LJPageMenuButton buttonWithType:UIButtonTypeCustom];
+    [button setTitleColor:_unSelectedItemTitleColor forState:UIControlStateNormal];
+    button.titleLabel.font = _unSelectedItemTitleFont; // 此时必然还没有选中任何按钮，设置_unSelectedItemTitleFont就相是设置所有按钮的文字颜色，这里不能用_itemTitleFont，如果外界先设置_unSelectedItemTitleFont，再创建按钮，假如这里使用_itemTitleFont，那外界设置的_unSelectedItemTitleFont就不生效
+    [button addTarget:self action:@selector(buttonInPageMenuClicked:) forControlEvents:UIControlEventTouchUpInside];
+    button.tag = tagBaseValue + index;
+    if ([object isKindOfClass:[NSString class]]) {
+        [button setTitle:object forState:UIControlStateNormal];
+    } else if ([object isKindOfClass:[UIImage class]]) {
+        [button setImage:object forState:UIControlStateNormal];
+    } else {
+        LJLivePageMenuButtonItem *item = (LJLivePageMenuButtonItem *)object;
+        [button setTitle:item.title forState:UIControlStateNormal];
+        [button setImage:item.image forState:UIControlStateNormal];
+        button.imagePosition = item.imagePosition;
+        button.imageTitleSpace = item.imageTitleSpace;
+    }
+    if (self.insert) {
+        if ([self haveOrNeedsTracker]) {
+            if (self.buttons.count == 0) { // 如果是第一个插入，需要将跟踪器加上,第一个插入说明itemScrollView上没有任何子控件
+                [self.itemScrollView insertSubview:self.tracker atIndex:0];
+                [self.itemScrollView insertSubview:button atIndex:index+1];
+            } else { // 已经有跟踪器
+                [self.itemScrollView insertSubview:button atIndex:index+1]; // +1是因为跟踪器
+            }
+        } else {
+            [self.itemScrollView insertSubview:button atIndex:index];
+        }
+        if (!self.buttons.count) {
+            [self buttonInPageMenuClicked:button];
+        }
+    } else {
+        [self.itemScrollView insertSubview:button atIndex:index];
+    }
+    [self.buttons insertObject:button atIndex:index];
+
+    if (self.insert && animated) { // 是插入的新按钮,且需要动画
+        // 取出上一个按钮
+        LJPageMenuButton *lastButton;
+        if (index > 0) {
+            lastButton = self.buttons[index-1];
+        }
+        // 先给初始的origin，按钮将会从这个origin开始动画
+        button.frame = CGRectMake(CGRectGetMaxX(lastButton.frame)+_itemPadding*0.5, 0, 0, 0);
+        button.titleLabel.frame = button.bounds;
+        [UIView animateWithDuration:.5 animations:^{
+            [self setNeedsLayout];
+            [self layoutIfNeeded];
+        }];
+    }
+}
+- (id)objectForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.items.count) {
+        id object = [self.items objectAtIndex:itemIndex];
+        return object;
+    }
+    return nil;
+}
+- (id)contentForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.items.count) {
+        id content = [self.items objectAtIndex:itemIndex];
+        return content;
+    }
+    return nil;
+}
+- (void)setFunctionButtonTitleTextAttributes:(nullable NSDictionary *)attributes forState:(UIControlState)state {
+    if (attributes[NSFontAttributeName]) {
+        self.functionButton.titleLabel.font = attributes[NSFontAttributeName];
+    }
+    if (attributes[NSForegroundColorAttributeName]) {
+        [self.functionButton setTitleColor:attributes[NSForegroundColorAttributeName] forState:state];
+    }
+    if (attributes[NSBackgroundColorAttributeName]) {
+        self.functionButton.backgroundColor = attributes[NSBackgroundColorAttributeName];
+    }
+}
+- (NSMutableArray *)buttons {
+    
+    if (!_buttons) {
+        _buttons = [NSMutableArray array];
+        
+    }
+    return _buttons;
+}
+- (void)zoomForTitleWithProgress:(CGFloat)progress fromButton:(UIButton *)fromButton toButton:(UIButton *)toButton {
+    CGFloat diff = _selectedItemZoomScale - 1;
+    fromButton.transform = CGAffineTransformMakeScale((1 - progress) * diff + 1, (1 - progress) * diff + 1);
+    toButton.transform = CGAffineTransformMakeScale(progress * diff + 1, progress * diff + 1);
+}
+- (void)delegatePerformMethodWithFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:itemSelectedFromIndex:toIndex:)]) {
+        [self.delegate pageMenu:self itemSelectedFromIndex:fromIndex toIndex:toIndex];
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:itemSelectedAtIndex:)]) {
+        [self.delegate pageMenu:self itemSelectedAtIndex:toIndex];
+    }
+}
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (object == self.bridgeScrollView) {
+        if ([keyPath isEqualToString:scrollViewContentOffset]) {
+            // 当scrolllView滚动时,让跟踪器跟随scrollView滑动
+            [self prepareMoveTrackerFollowScrollView:self.bridgeScrollView];
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+- (void)setDividingLineHeight:(CGFloat)dividingLineHeight {
+    _dividingLineHeight = dividingLineHeight;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+}
+- (void)setFuntionButtonshadowOpacity:(CGFloat)funtionButtonshadowOpacity {
+    _funtionButtonshadowOpacity = funtionButtonshadowOpacity;
+    self.functionButton.layer.shadowOpacity = funtionButtonshadowOpacity;
+}
+- (void)setupSubViews {
+    // 必须先添加分割线
+    LJPageMenuLine *dividingLine = [[LJPageMenuLine alloc] init];
+    dividingLine.backgroundColor = [UIColor lightGrayColor];
+    __weak typeof(self) weakSelf = self;
+    dividingLine.hideBlock = ^() {
+        [weakSelf setNeedsLayout];
+    };
+    [self addSubview:dividingLine];
+    _dividingLine = dividingLine;
+    
+    UIView *backgroundView = [[UIView alloc] init];
+    backgroundView.layer.masksToBounds = YES;
+    [self addSubview:backgroundView];
+    _backgroundView = backgroundView;
+    
+    UIImageView *backgroundImageView = [[UIImageView alloc] init];
+    [backgroundView addSubview:backgroundImageView];
+    _backgroundImageView = backgroundImageView;
+    
+    LJLivePageMenuScrollView *itemScrollView = [[LJLivePageMenuScrollView alloc] init];
+    itemScrollView.showsVerticalScrollIndicator = NO;
+    itemScrollView.showsHorizontalScrollIndicator = NO;
+    itemScrollView.scrollsToTop = NO; // 目的是不要影响到外界的scrollView置顶功能
+    itemScrollView.bouncesZoom = NO;
+    itemScrollView.bounces = YES;
+    if (@available(iOS 11.0, *)) {
+        itemScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
+    [backgroundView addSubview:itemScrollView];
+    _itemScrollView = itemScrollView;
+    
+    LJPageMenuButton *functionButton = [LJPageMenuButton buttonWithType:UIButtonTypeCustom];
+    functionButton.backgroundColor = [UIColor whiteColor];
+    [functionButton setTitle:@"＋" forState:UIControlStateNormal];
+    [functionButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [functionButton addTarget:self action:@selector(functionButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    functionButton.layer.shadowColor = [UIColor blackColor].CGColor;
+    functionButton.layer.shadowOffset = CGSizeMake(0, 0);
+    functionButton.layer.shadowRadius = 2;
+    functionButton.layer.shadowOpacity = _funtionButtonshadowOpacity; // 默认是0,为0的话不会显示阴影
+    functionButton.hidden = !_showFuntionButton;
+    [backgroundView addSubview:functionButton];
+    _functionButton = functionButton;
+}
+- (NSMutableDictionary *)customWidths {
+    
+    if (!_customWidths) {
+        _customWidths = [NSMutableDictionary dictionary];
+    }
+    return _customWidths;
+}
+- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forItemIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        [button setTitle:title forState:UIControlStateNormal];
+        [button setImage:image forState:UIControlStateNormal];
+        button.imagePosition = imagePosition;
+        button.imageTitleSpace = imageTitleSpace;
+        
+        // 文字和图片只能替换其一，因为items数组里不能同时装文字和图片。当文字和图片同时设置时，items里只更新文字
+        if (title == nil || title.length == 0 || [title isKindOfClass:[NSNull class]]) {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:image];
+            self.items = items.copy;
+        } else if (image == nil) {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:title];
+            self.items = items.copy;
+        } else {
+            NSMutableArray *items = self.items.mutableCopy;
+            [items replaceObjectAtIndex:itemIndex withObject:image];
+            self.items = items.copy;
+        }
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
+- (void)setContentEdgeInsets:(UIEdgeInsets)contentInset forItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        button.contentEdgeInsets = contentInset;
+        [self setNeedsLayout];
+        [self layoutIfNeeded];
+    }
+}
+- (CGFloat)customSpacingAfterItemAtIndex:(NSUInteger)itemIndex {
+    if ([self.customSpacings.allKeys containsObject:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]]) {
+        CGFloat customSpacing = [[self.customSpacings valueForKey:[NSString stringWithFormat:@"%lu",(unsigned long)itemIndex]] floatValue];
+        return customSpacing;
+    } else {
+        return CGFLOAT_MAX;
+    }
+}
 - (void)resetupTrackerFrameWithSelectedButton:(LJPageMenuButton *)selectedButton {
     CGFloat trackerX;
     CGFloat trackerY;
@@ -1888,11 +1745,154 @@
     trackerCenter.x = selectedButton.center.x;
     self.tracker.center = trackerCenter;
 }
+- (void)setUnSelectedItemTitleColor:(UIColor *)unSelectedItemTitleColor {
+    _unSelectedItemTitleColor = unSelectedItemTitleColor;
+    [self setupEndColor:unSelectedItemTitleColor];
+    for (LJPageMenuButton *button in self.buttons) {
+        if (button == _selectedButton) {
+            continue;  // 跳过选中的那个button
+        }
+        [button setTitleColor:unSelectedItemTitleColor forState:UIControlStateNormal];
+    }
+}
+- (void)moveItemScrollViewWithSelectedButton:(LJPageMenuButton *)selectedButton {
+    if (CGRectEqualToRect(self.backgroundView.frame, CGRectZero)) {
+        return;
+    }
+    // 转换点的坐标位置
+    CGPoint centerInPageMenu = [self.backgroundView convertPoint:selectedButton.center toView:self];
+    // CGRectGetMidX(self.backgroundView.frame)指的是屏幕水平中心位置，它的值是固定不变的
+    CGFloat offSetX = centerInPageMenu.x - CGRectGetMidX(self.backgroundView.frame);
+    
+    // itemScrollView的容量宽与自身宽之差
+    CGFloat maxOffsetX = self.itemScrollView.contentSize.width - self.itemScrollView.frame.size.width;
+    // 如果选中的button中心x值小于或者等于itemScrollView的中心x值，或者itemScrollView的容量宽度小于itemScrollView本身，此时点击button时不发生任何偏移，置offSetX为0
+    if (offSetX <= 0 || maxOffsetX <= 0) {
+        offSetX = 0;
+    }
+    // 如果offSetX大于maxOffsetX,说明itemScrollView已经滑到尽头，此时button也发生任何偏移了
+    else if (offSetX > maxOffsetX){
+        offSetX = maxOffsetX;
+    }
+    [self.itemScrollView setContentOffset:CGPointMake(offSetX, 0) animated:YES];
+}
+- (NSUInteger)numberOfItems {
+    return self.items.count;
+}
+- (BOOL)haveOrNeedsTracker {
+    if (self.trackerStyle != LJLivePageMenuTrackerStyleTextZoom && self.trackerStyle != LJLivePageMenuTrackerStyleNothing) {
+        return YES;
+    }
+    return NO;
+}
+- (void)setBackgroundImage:(UIImage *)backgroundImage barMetrics:(UIBarMetrics)barMetrics {
+    if (barMetrics == UIBarMetricsDefault) {
+        if (UIEdgeInsetsEqualToEdgeInsets(backgroundImage.capInsets, UIEdgeInsetsZero)) {
+            CGFloat imageWidth = CGImageGetWidth(backgroundImage.CGImage);
+            CGFloat imageHeight = CGImageGetHeight(backgroundImage.CGImage);
+            [self.backgroundImageView setImage:[backgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(imageHeight*0.5, imageWidth*0.5, imageHeight*0.5, imageWidth*0.5) resizingMode:backgroundImage.resizingMode]];
+        } else {
+            [self.backgroundImageView setImage:backgroundImage];
+        }
+    }
+}
+- (UIEdgeInsets)contentEdgeInsetsForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        return button.contentEdgeInsets;
+    }
+    return UIEdgeInsetsZero;
+}
+- (void)setSelectedItemIndex:(NSInteger)selectedItemIndex {
+    _selectedItemIndex = selectedItemIndex;
+    if (self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:selectedItemIndex];
+        [self buttonInPageMenuClicked:button];
+    }
+}
+- (void)functionButtonClicked:(LJPageMenuButton *)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pageMenu:functionButtonClicked:)]) {
+        [self.delegate pageMenu:self functionButtonClicked:sender];
+    }
+}
+- (UIImage *)imageForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.items.count) {
+        id object = [self.items objectAtIndex:itemIndex];
+        NSAssert([object isKindOfClass:[UIImage class]],@"itemIndex对应的item不是UIImage类型，请仔细核对");
+        return object;
+    }
+    return nil;
+}
+- (void)setSelectedItemTitleFont:(UIFont *)selectedItemTitleFont {
+    _selectedItemTitleFont = selectedItemTitleFont;
+    self.selectedButton.titleLabel.font = selectedItemTitleFont;
 
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    // 修正scrollView偏移
+    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
+}
+- (CGRect)titleRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        CGRect titleRectAtPageMenu = [button.titleLabel convertRect:button.titleLabel.bounds toView:self];
+        return titleRectAtPageMenu;
+    }
+    return CGRectZero;
+}
+- (CGRect)imageRectRelativeToPageMenuForItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        CGRect imageRectAtPageMenu = [button.imageView convertRect:button.imageView.bounds toView:self];
+        return imageRectAtPageMenu;
+    }
+    return CGRectZero;
+}
+- (void)setDelegate:(id<LJLivePageMenuDelegate>)delegate {
+    if (delegate == _delegate) {return;}
+    _delegate = delegate;
+    if (self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:_selectedItemIndex];
+        [self delegatePerformMethodWithFromIndex:button.tag-tagBaseValue toIndex:button.tag-tagBaseValue];
+        [self moveItemScrollViewWithSelectedButton:button];
+    }
+}
+- (void)setEnabled:(BOOL)enaled forItemAtIndex:(NSUInteger)itemIndex {
+    if (itemIndex < self.buttons.count) {
+        LJPageMenuButton *button = [self.buttons objectAtIndex:itemIndex];
+        [button setEnabled:enaled];
+    }
+}
 - (void)dealloc {
     [self.bridgeScrollView removeObserver:self forKeyPath:scrollViewContentOffset];
 }
-
+- (void)setItem:(LJLivePageMenuButtonItem *)item forItemAtIndex:(NSUInteger)itemIndex {
+    [self setItem:item forItemIndex:itemIndex];
+}
+- (void)insertItemWithImage:(UIImage *)image atIndex:(NSUInteger)itemIndex animated:(BOOL)animated {
+    self.insert = YES;
+    NSAssert(itemIndex <= self.items.count, @"itemIndex超过了items的总个数“%ld”",self.items.count);
+    NSMutableArray *objects = self.items.mutableCopy;
+    [objects insertObject:image atIndex:itemIndex];
+    self.items = objects.copy;
+    [self addButton:itemIndex object:image animated:animated];
+    if (itemIndex <= self.selectedItemIndex) {
+        _selectedItemIndex += 1;
+    }
+}
+- (void)setItemPadding:(CGFloat)itemPadding {
+    _itemPadding = itemPadding;
+    _forceUseSettingSpacing = YES;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    // 修正scrollView偏移
+    [self moveItemScrollViewWithSelectedButton:self.selectedButton];
+}
+- (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView {
+    // 说明外界传进来了一个scrollView,如果外界传进来了，pageMenu会观察该scrollView的contentOffset自动处理跟踪器的跟踪
+    if (self.bridgeScrollView == scrollView) { return; }
+    [self prepareMoveTrackerFollowScrollView:scrollView];
+}
 @end
 
 @implementation LJLivePageMenuButtonItem
@@ -1907,6 +1907,7 @@
     return item;
 }
 
+
 - (instancetype)initWithTitle:(NSString *)title image:(UIImage *)image imagePosition:(LJLiveItemImagePosition)imagePosition {
     if (self = [super init]) {
         self.title = title;
@@ -1915,7 +1916,6 @@
     }
     return self;
 }
-
 @end
 
 #pragma clang diagnostic pop

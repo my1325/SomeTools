@@ -11,20 +11,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveAudiencePopView : UIView
 
-@property (nonatomic, strong) LJLiveRoomUser *user;
 
-@property (nonatomic, copy) LJLiveVoidBlock avatarBlock, reportBlock, blockBlock;
 
-@property (nonatomic, copy) LJLiveBoolBlock followBlock;
 
-@property (nonatomic, assign) BOOL followed;
 
-+ (LJLiveAudiencePopView *)audienceView;
 
-- (void)lj_showInView:(UIView *)inView;
+
 
 - (void)lj_dismiss;
-
+- (void)lj_showInView:(UIView *)inView;
++ (LJLiveAudiencePopView *)audienceView;
+@property (nonatomic, strong) LJLiveRoomUser *user;
+@property (nonatomic, copy) LJLiveVoidBlock avatarBlock, reportBlock, blockBlock;
+@property (nonatomic, copy) LJLiveBoolBlock followBlock;
+@property (nonatomic, assign) BOOL followed;
 @end
 
 NS_ASSUME_NONNULL_END

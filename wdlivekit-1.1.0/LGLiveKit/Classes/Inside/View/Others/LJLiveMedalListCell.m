@@ -8,13 +8,15 @@
 #import "LJLiveMedalListCell.h"
 
 @interface LJLiveMedalListCell()
-@property (nonatomic, strong) UIImageView *medalImage;
-@property (nonatomic, strong) UILabel *medalTitle;
-@property (nonatomic, strong) UILabel *medalTip;
 @property (nonatomic, strong) UILabel *timeLabel;
+@property (nonatomic, strong) UIImageView *medalImage;
+@property (nonatomic, strong) UILabel *medalTip;
+@property (nonatomic, strong) UILabel *medalTitle;
 @end
 
 @implementation LJLiveMedalListCell
+
+
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -61,7 +63,6 @@
     }
     return self;
 }
-
 - (void)setEventLabel:(LJUniqueTag *)eventLabel{
     [_medalImage sd_setImageWithURL:eventLabel.imageUrl.mj_url];
     _medalTitle.text = eventLabel.title;
@@ -73,5 +74,4 @@
         _timeLabel.text = [NSString stringWithFormat:kLJLocalString(@"%ld days"), day];
     }
 }
-
 @end

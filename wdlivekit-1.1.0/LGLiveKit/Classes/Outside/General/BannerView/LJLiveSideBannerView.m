@@ -9,11 +9,16 @@
 #import "LJLiveAlertWebView.h"
 
 @interface LJLiveSideBannerView()
-@property (nonatomic, strong) UIScrollView *scroll;
 @property (nonatomic, strong) UIView *bgView;
+@property (nonatomic, strong) UIScrollView *scroll;
 @end
 
 @implementation LJLiveSideBannerView
+
+
+
+#pragma mark - UI
+
 
 - (instancetype)init
 {
@@ -25,7 +30,6 @@
     }
     return self;
 }
-
 - (void)lj_showInView:(UIView *)inView{
 
     for (UIView *subview in inView.subviews) {
@@ -45,22 +49,6 @@
         
     } completion:^(BOOL finished) {}];
 }
-- (void)lj_dismiss{
-    UIView *subScroll = (UIView *)(self.superview);
-    UIView *cell = (UIView *)subScroll.superview;
-    UIScrollView *scroll = (UIScrollView *)cell.superview;
-    scroll.scrollEnabled = YES;
-    
-    [UIView animateWithDuration:0.1 animations:^{
-        self.bgView.x = kLJLiveManager.inside.appRTL?-100:kLJScreenWidth;
-        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
-    }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self removeFromSuperview];
-    });
-}
-
-#pragma mark - UI
 -(void)lj_creatUI{
     UIButton *closeBtn = [[UIButton alloc] initWithFrame:self.bounds];
     [self addSubview:closeBtn];
@@ -91,7 +79,6 @@
         [imageBtn addTarget:self action:@selector(lj_itemClick:) forControlEvents:UIControlEventTouchUpInside];
     }
 }
-
 - (void)lj_itemClick:(UIButton *)imageBtn
 {
     NSInteger index = imageBtn.tag - 100;
@@ -162,5 +149,18 @@
             break;
     }
 }
-
+- (void)lj_dismiss{
+    UIView *subScroll = (UIView *)(self.superview);
+    UIView *cell = (UIView *)subScroll.superview;
+    UIScrollView *scroll = (UIScrollView *)cell.superview;
+    scroll.scrollEnabled = YES;
+    
+    [UIView animateWithDuration:0.1 animations:^{
+        self.bgView.x = kLJLiveManager.inside.appRTL?-100:kLJScreenWidth;
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self removeFromSuperview];
+    });
+}
 @end

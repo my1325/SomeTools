@@ -11,34 +11,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePrivate : LJLiveBaseObject
 
-@property (nonatomic, assign) LJLiveRoleType roleType;
 
-@property (nonatomic, assign) NSInteger roomId;
 
-@property (nonatomic, assign) NSInteger userId;
 
-@property (nonatomic, assign) NSInteger anchorId;
 
-@property (nonatomic, assign) NSInteger leftDiamond;
 
-@property (nonatomic, strong) NSString *userNickName;
 
-@property (nonatomic, strong) NSString *anchorNickName;
 
-@property (nonatomic, assign) NSInteger callTime;
 
-@property (nonatomic, assign) NSInteger initialPrice;
+
+
+
+
+
 
 @property (nonatomic, assign) BOOL isTruthOrDareOn;
-
+@property (nonatomic, strong) NSString *anchorNickName;
+@property (nonatomic, strong) NSString *userNickName;
 @property (nonatomic, strong) NSString *anchorAvatar;
-
-@property (nonatomic, assign) BOOL isFollowed;
-
 @property (nonatomic, assign) NSInteger anchorAge;
-
+@property (nonatomic, assign) NSInteger initialPrice;
+@property (nonatomic, assign) NSInteger callTime;
+@property (nonatomic, assign) NSInteger userId;
+@property (nonatomic, assign) NSInteger anchorId;
+@property (nonatomic, assign) NSInteger leftDiamond;
 @property (nonatomic, strong) NSString *anchorGender;
-
+@property (nonatomic, assign) BOOL isFollowed;
+@property (nonatomic, assign) LJLiveRoleType roleType;
+@property (nonatomic, assign) NSInteger roomId;
 @end
 
 //{

@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkRemoteWaitingView : UIView
 
-+ (LJLivePkRemoteWaitingView *)lj_waitingView;
 
++ (LJLivePkRemoteWaitingView *)lj_waitingView;
 @end
 
 NS_ASSUME_NONNULL_END

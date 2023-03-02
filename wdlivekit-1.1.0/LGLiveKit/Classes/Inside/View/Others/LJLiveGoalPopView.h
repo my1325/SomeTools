@@ -12,11 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGoalPopView : UIView
 
-@property (nonatomic, copy) LJLiveVoidBlock sendGiftBlock;
+
+
 
 - (void)updateUIWithModel:(LJLiveRoomGoal *)model;
-
-
+@property (nonatomic, copy) LJLiveVoidBlock sendGiftBlock;
 @end
 
 NS_ASSUME_NONNULL_END

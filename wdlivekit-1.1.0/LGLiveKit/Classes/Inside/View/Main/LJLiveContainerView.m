@@ -17,56 +17,247 @@
 #import "LJLiveBonusView.h"
 @interface LJLiveContainerView ()
 
-/// 顶部信息视图
-@property (nonatomic, strong) LJLiveHeadView *headView;
-/// 弹幕
-@property (nonatomic, strong) LJLiveBarrageView *barrageView;
-/// 底部控制视图
-@property (nonatomic, strong) LJLiveControlView *controlView;
+
+
+
+
+
+
+
+
 
 /// 活动banner
-@property (nonatomic, strong) LJLiveBannerView *bannerView;
-
-@property (nonatomic, assign) BOOL pkLoading;
-
 /// 目标视图
-@property (nonatomic, strong) LJLiveGoalView *goalView;
-
-@property (nonatomic, strong) LJLiveGoalPopView *goalPopView;
-
+/// 顶部信息视图
+/// 底部控制视图
+/// 弹幕
 /// 抽奖转盘
-@property(nonatomic,strong) LJLiveTurnPlateView *turnPlateView;
-
-@property(nonatomic,strong) LJLiveTurnPlateTipView *turnPlateResultTipView;
-
-@property(nonatomic,strong) UIButton *openTurnPlateBtn;
-
-@property (nonatomic, strong) LJLiveBonusView *bonusView;
-
+@property (nonatomic, assign) BOOL pkLoading;
 @property(nonatomic,strong) UIButton *openBonusBtn;
+@property (nonatomic, strong) LJLiveGoalView *goalView;
+@property(nonatomic,strong) LJLiveTurnPlateView *turnPlateView;
+@property (nonatomic, strong) LJLiveHeadView *headView;
+@property (nonatomic, strong) LJLiveBarrageView *barrageView;
+@property (nonatomic, strong) LJLiveBannerView *bannerView;
+@property (nonatomic, strong) LJLiveControlView *controlView;
+@property(nonatomic,strong) UIButton *openTurnPlateBtn;
+@property (nonatomic, strong) LJLiveGoalPopView *goalPopView;
+@property(nonatomic,strong) LJLiveTurnPlateTipView *turnPlateResultTipView;
+@property (nonatomic, strong) LJLiveBonusView *bonusView;
 @end
 
 @implementation LJLiveContainerView
 
 #pragma mark - Life Cycle
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self lj_setupDataSource];
-        [self lj_setupViews];
-    }
-    return self;
-}
 
 #pragma mark - Init
 
-- (void)lj_setupDataSource
+
+
+
+#pragma mark - Public Methods
+
+
+
+
+#pragma mark - Events
+
+
+
+#pragma mark - Getter
+
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark - Setter
+
+
+
+/// 显示转盘
+/// 显示折扣
+- (void)lj_endPKWithCompletion:(LJLiveVoidBlock __nullable)completion
 {
+    CGRect barrageRect = kLJLiveHelper.ui.barrageRect;
+    barrageRect.origin.y = barrageRect.origin.y - self.keyboardChangedHeight;
+    //
+    self.bannerView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.bannerRect);
+    [UIView animateWithDuration:0.15 animations:^{
+        self.barrageView.frame = barrageRect;
+    } completion:^(BOOL finished) {
+        if (completion) completion();
+    }];
+    // 恢复转盘状态
+    if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn) {
+        if (self.liveRoom.turntableFlag == 1) {
+            self.openTurnPlateBtn.hidden = NO;
+        } else {
+            self.openTurnPlateBtn.hidden = YES;
+        }
+    } else {
+        self.openTurnPlateBtn.hidden = YES;
+    }
     
 }
-
+- (LJLiveBarrageView *)barrageView
+{
+    if (!_barrageView) {
+        _barrageView = [[LJLiveBarrageView alloc] initWithFrame:kLJLiveHelper.ui.barrageRect];
+        _barrageView.backgroundColor = UIColor.clearColor;
+    }
+    return _barrageView;
+}
+- (LJLiveTurnPlateView *)turnPlateView
+{
+    if (!_turnPlateView) {
+        _turnPlateView = kLJLoadingXib(@"LJLiveTurnPlateView");
+        kLJWeakSelf;
+        // 主播用户自身显示隐藏大转盘回调事件
+        _turnPlateView.hiddenBlock = ^{
+            weakSelf.openTurnPlateBtn.hidden = NO;
+            weakSelf.turnPlateView.hidden = YES;
+            UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
+            UIView *cell = (UIView *)subScroll.superview;
+            UIScrollView *scroll = (UIScrollView *)cell.superview;
+            scroll.scrollEnabled = YES;
+        };
+        // 主播关闭打开转盘block回调事件
+        _turnPlateView.hostCloseOpenTurnPlateBlock = ^{
+            if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn && kLJLiveHelper.data.current.turntableFlag == 1) {
+                if (weakSelf.turnPlateView.isHidden) {
+                    weakSelf.openTurnPlateBtn.hidden = NO;
+                } else {
+                    weakSelf.openTurnPlateBtn.hidden = YES;
+                }
+            } else {
+                weakSelf.openTurnPlateBtn.hidden = YES;
+                weakSelf.turnPlateView.hidden = YES;
+                UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
+                UIView *cell = (UIView *)subScroll.superview;
+                UIScrollView *scroll = (UIScrollView *)cell.superview;
+                scroll.scrollEnabled = YES;
+            }
+        };
+        _turnPlateView.showResultBlock = ^(NSString *result) {
+            [weakSelf.turnPlateResultTipView mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.centerY.equalTo(weakSelf).offset(-50);
+                make.centerX.equalTo(weakSelf);
+                make.height.mas_greaterThanOrEqualTo(68);
+                make.width.mas_greaterThanOrEqualTo(169);
+                make.width.mas_lessThanOrEqualTo(kScreenWidth-30);
+            }];
+            [UIView animateWithDuration:0.5 animations:^{
+                weakSelf.turnPlateResultTipView.resultLabel.text =  [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                weakSelf.turnPlateResultTipView.hidden = NO;
+            }];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [UIView animateWithDuration:0.5 animations:^{
+                    weakSelf.turnPlateResultTipView.hidden = YES;
+                }];
+            });
+        };
+    }
+    return _turnPlateView;
+}
+- (LJLiveHeadView *)headView
+{
+    if (!_headView) {
+        _headView = [[LJLiveHeadView alloc] initWithFrame:kLJLiveHelper.ui.headRect];
+    }
+    return _headView;
+}
+- (LJLiveGoalView *)goalView
+{
+    if (!_goalView) {
+        _goalView = [[LJLiveGoalView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.ui.roomGoalRect)];
+    }
+    return _goalView;
+    
+}
+- (void)lj_addActivityBannerView
+{
+    NSArray *bannerInfo = kLJLiveManager.inside.accountConfig.voiceChatRoomBannerInfoList;
+    if (bannerInfo.count > 0) {
+        [self addSubview:self.bannerView];
+        self.bannerView.dataArray = bannerInfo;
+    }
+}
+- (LJLiveGoalPopView *)goalPopView
+{
+    if (!_goalPopView) {
+        _goalPopView = [[LJLiveGoalPopView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.ui.roomGoalPopRect)];
+    }
+    return _goalPopView;
+}
+-(UIButton *)openBonusBtn
+{
+    if (!_openBonusBtn) {
+        BOOL hasBought = NO;
+        NSInteger index = -1;
+        for (int i = 0;i < kLJLiveManager.inside.accountConfig.payConfigs.count; i++) {
+            if (kLJLiveManager.inside.accountConfig.payConfigs[i].type == LJRechargeTypeIAP) index = i;
+        }
+        
+        NSArray *productsArr = [kLJLiveManager.inside.accountConfig.payConfigs[index].products mutableCopy];
+        for (LJIapConfig *iap in productsArr.reverseObjectEnumerator) {
+            if (iap.productType == 2 && [iap.isBought isEqualToNumber:@1]) {
+                hasBought = YES;
+            }
+        }
+        
+        if (!kLJLiveManager.inside.account.isGreen && ((kLJLiveManager.inside.account.abTestFlag&16) > 0) && !hasBought) {
+            _openBonusBtn = [[UIButton alloc] initWithFrame:kLJLiveHelper.ui.openBonusBtnRect];
+            [_openBonusBtn setImage:kLJImageNamed(@"lj_live_discount_bonus") forState:UIControlStateNormal];
+            [_openBonusBtn addTarget:self action:@selector(showBonus) forControlEvents:UIControlEventTouchUpInside];
+        }
+    }
+   return _openBonusBtn;
+}
+- (void)setLiveRoom:(LJLiveRoom *)liveRoom
+{
+    _liveRoom = liveRoom;
+    
+    self.headView.liveRoom = liveRoom;
+    self.controlView.liveRoom = liveRoom;
+    self.barrageView.liveRoom = liveRoom;
+    
+    // 目标
+    if (liveRoom.roomGoal.goalDesc.length == 0) {
+        self.goalView.hidden = YES;
+    } else {
+        self.goalView.hidden = NO;
+        [self.goalView updateUIWithModel:liveRoom.roomGoal];
+        if (self.goalView.isOpen) {
+            [self.goalPopView updateUIWithModel:liveRoom.roomGoal];
+        }
+    }
+    
+    // 转盘
+    [self.turnPlateView updateRoomInfo:liveRoom];
+    // 控制转盘按显示
+    if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn && !self.turnPlateView.isShowing) {//模型转换
+        if (liveRoom.turntableFlag == 1) {
+            self.openTurnPlateBtn.hidden = NO;
+        } else {
+            self.openTurnPlateBtn.hidden = YES;
+        }
+    } else {
+        self.openTurnPlateBtn.hidden = YES;
+    }
+    // pk中切换房间
+    if (liveRoom.pking) {
+        self.turnPlateView.hiddenBlock();
+        self.openTurnPlateBtn.hidden = YES;
+    }
+}
 - (void)lj_setupViews
 {
     [self addSubview:self.headView];
@@ -131,18 +322,140 @@
         weakSelf.eventBlock(LJLiveEventGifts, nil);
     };
 }
-
-- (void)lj_addActivityBannerView
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    NSArray *bannerInfo = kLJLiveManager.inside.accountConfig.voiceChatRoomBannerInfoList;
-    if (bannerInfo.count > 0) {
-        [self addSubview:self.bannerView];
-        self.bannerView.dataArray = bannerInfo;
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self lj_setupDataSource];
+        [self lj_setupViews];
+    }
+    return self;
+}
+- (LJLiveBonusView *)bonusView
+{
+    if (!_bonusView) {
+        _bonusView = [[LJLiveBonusView alloc] init];
+        _bonusView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.bonusViewRect);
+        kLJWeakSelf;
+        _bonusView.bonusViewDismissBlock = ^{
+            UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
+            UIView *cell = (UIView *)subScroll.superview;
+            UIScrollView *scroll = (UIScrollView *)cell.superview;
+            scroll.scrollEnabled = YES;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [weakSelf.bonusView lj_showInView:kLJLiveHelper.isMinimize?weakSelf:[UIApplication sharedApplication].keyWindow withPrice:LJLiveBonusViewPrice499];
+                });
+            });
+        };
+    }
+    return _bonusView;
+}
+-(UIButton *)openTurnPlateBtn
+{
+    if (!_openTurnPlateBtn) {
+        _openTurnPlateBtn = [[UIButton alloc] initWithFrame:kLJLiveHelper.ui.turnPlateBtnRect];
+        [_openTurnPlateBtn setImage:kLJImageNamed(@"lj_live_plate_small") forState:UIControlStateNormal];
+        [_openTurnPlateBtn addTarget:self action:@selector(showTurnPlate:) forControlEvents:UIControlEventTouchUpInside];
+        _openTurnPlateBtn.hidden = YES;
+    }
+   return _openTurnPlateBtn;
+}
+- (void)showTurnPlate:(UIButton*)btn
+{
+    self.openTurnPlateBtn.hidden = YES;
+    UIView *subScroll = ((UIView *)(self.superview)).superview;
+    UIView *cell = (UIView *)subScroll.superview;
+    UIScrollView *scroll = (UIScrollView *)cell.superview;
+    scroll.scrollEnabled = NO;
+    [self.turnPlateView showView];
+}
+- (void)lj_beginPKWithCompletion:(LJLiveVoidBlock __nullable)completion
+{
+    CGRect barrageRect = kLJLiveHelper.ui.pkBarrageRect;
+    barrageRect.origin.y = barrageRect.origin.y - self.keyboardChangedHeight;
+    //
+    self.bannerView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.pkBannerRect);
+    [UIView animateWithDuration:0.15 animations:^{
+        self.barrageView.frame = barrageRect;
+    } completion:^(BOOL finished) {
+        self.pkLoading = NO;
+        if (completion) completion();
+    }];
+    // 开始pk关闭转盘
+    [self.turnPlateView hiddenView];
+    self.openTurnPlateBtn.hidden = YES;
+}
+- (void)showBonus
+{
+    BOOL hasBought = NO;
+    NSInteger index = -1;
+    for (int i = 0;i < kLJLiveManager.inside.accountConfig.payConfigs.count; i++) {
+        if (kLJLiveManager.inside.accountConfig.payConfigs[i].type == LJRechargeTypeIAP) index = i;
+    }
+    if (index < 0) {
+        return;
+    }
+    NSArray *productsArr = [kLJLiveManager.inside.accountConfig.payConfigs[index].products mutableCopy];
+    for (LJIapConfig *iap in productsArr.reverseObjectEnumerator) {
+        if (iap.productType == 2 && [iap.isBought isEqualToNumber:@1]) {
+            hasBought = YES;
+        }
+    }
+    if (!kLJLiveManager.inside.account.isGreen && ((kLJLiveManager.inside.account.abTestFlag&16) > 0) && !hasBought){
+        UIView *subScroll = ((UIView *)(self.superview)).superview;
+        UIView *cell = (UIView *)subScroll.superview;
+        UIScrollView *scroll = (UIScrollView *)cell.superview;
+        scroll.scrollEnabled = NO;
+        [self.bonusView lj_showInView:[UIApplication sharedApplication].keyWindow withPrice:LJLiveBonusViewPrice099];
     }
 }
-
-#pragma mark - Public Methods
-
+- (void)lj_setupDataSource
+{
+    
+}
+- (LJLiveBannerView *)bannerView
+{
+    if (!_bannerView) {
+        _bannerView = [[LJLiveBannerView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.data.current.privateChatFlag == 2 ? kLJLiveHelper.ui.pkBannerRect : kLJLiveHelper.ui.bannerRect)];
+        _bannerView.isLive = YES;
+    }
+    return _bannerView;
+}
+- (LJLiveControlView *)controlView
+{
+    if (!_controlView) {
+        _controlView = [[LJLiveControlView alloc] initWithFrame:kLJLiveHelper.ui.inputRect];
+        _controlView.backgroundColor = UIColor.clearColor;
+    }
+    return _controlView;
+}
+- (void)setKeyboardChangedHeight:(CGFloat)keyboardChangedHeight
+{
+    _keyboardChangedHeight = keyboardChangedHeight;
+    if (keyboardChangedHeight == 0) {
+        // 收起键盘
+        self.controlView.transform = CGAffineTransformIdentity;
+        self.barrageView.transform = CGAffineTransformIdentity;
+        [self.controlView lj_closeChatView];
+    } else {
+        // 弹起键盘
+        self.controlView.transform = CGAffineTransformMakeTranslation(0, - keyboardChangedHeight);
+        self.barrageView.transform = CGAffineTransformMakeTranslation(0, - keyboardChangedHeight);
+        [self.controlView lj_openChatView];
+    }
+}
+-(LJLiveTurnPlateTipView*)turnPlateResultTipView
+{
+    if (!_turnPlateResultTipView) {
+        _turnPlateResultTipView = kLJLoadingXib(@"LJLiveTurnPlateTipView");
+        _turnPlateResultTipView.hidden = YES;
+        _turnPlateResultTipView.layer.cornerRadius = 10;
+        _turnPlateResultTipView.layer.masksToBounds = YES;
+    }
+    return _turnPlateResultTipView;
+}
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj
 {
     [self.headView lj_event:event withObj:obj];
@@ -185,317 +498,4 @@
     }
 
 }
-
-- (void)lj_beginPKWithCompletion:(LJLiveVoidBlock __nullable)completion
-{
-    CGRect barrageRect = kLJLiveHelper.ui.pkBarrageRect;
-    barrageRect.origin.y = barrageRect.origin.y - self.keyboardChangedHeight;
-    //
-    self.bannerView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.pkBannerRect);
-    [UIView animateWithDuration:0.15 animations:^{
-        self.barrageView.frame = barrageRect;
-    } completion:^(BOOL finished) {
-        self.pkLoading = NO;
-        if (completion) completion();
-    }];
-    // 开始pk关闭转盘
-    [self.turnPlateView hiddenView];
-    self.openTurnPlateBtn.hidden = YES;
-}
-
-- (void)lj_endPKWithCompletion:(LJLiveVoidBlock __nullable)completion
-{
-    CGRect barrageRect = kLJLiveHelper.ui.barrageRect;
-    barrageRect.origin.y = barrageRect.origin.y - self.keyboardChangedHeight;
-    //
-    self.bannerView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.bannerRect);
-    [UIView animateWithDuration:0.15 animations:^{
-        self.barrageView.frame = barrageRect;
-    } completion:^(BOOL finished) {
-        if (completion) completion();
-    }];
-    // 恢复转盘状态
-    if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn) {
-        if (self.liveRoom.turntableFlag == 1) {
-            self.openTurnPlateBtn.hidden = NO;
-        } else {
-            self.openTurnPlateBtn.hidden = YES;
-        }
-    } else {
-        self.openTurnPlateBtn.hidden = YES;
-    }
-    
-}
-
-#pragma mark - Events
-
-/// 显示转盘
-- (void)showTurnPlate:(UIButton*)btn
-{
-    self.openTurnPlateBtn.hidden = YES;
-    UIView *subScroll = ((UIView *)(self.superview)).superview;
-    UIView *cell = (UIView *)subScroll.superview;
-    UIScrollView *scroll = (UIScrollView *)cell.superview;
-    scroll.scrollEnabled = NO;
-    [self.turnPlateView showView];
-}
-
-/// 显示折扣
-- (void)showBonus
-{
-    BOOL hasBought = NO;
-    NSInteger index = -1;
-    for (int i = 0;i < kLJLiveManager.inside.accountConfig.payConfigs.count; i++) {
-        if (kLJLiveManager.inside.accountConfig.payConfigs[i].type == LJRechargeTypeIAP) index = i;
-    }
-    if (index < 0) {
-        return;
-    }
-    NSArray *productsArr = [kLJLiveManager.inside.accountConfig.payConfigs[index].products mutableCopy];
-    for (LJIapConfig *iap in productsArr.reverseObjectEnumerator) {
-        if (iap.productType == 2 && [iap.isBought isEqualToNumber:@1]) {
-            hasBought = YES;
-        }
-    }
-    if (!kLJLiveManager.inside.account.isGreen && ((kLJLiveManager.inside.account.abTestFlag&16) > 0) && !hasBought){
-        UIView *subScroll = ((UIView *)(self.superview)).superview;
-        UIView *cell = (UIView *)subScroll.superview;
-        UIScrollView *scroll = (UIScrollView *)cell.superview;
-        scroll.scrollEnabled = NO;
-        [self.bonusView lj_showInView:[UIApplication sharedApplication].keyWindow withPrice:LJLiveBonusViewPrice099];
-    }
-}
-
-#pragma mark - Getter
-
-- (LJLiveHeadView *)headView
-{
-    if (!_headView) {
-        _headView = [[LJLiveHeadView alloc] initWithFrame:kLJLiveHelper.ui.headRect];
-    }
-    return _headView;
-}
-
-- (LJLiveBarrageView *)barrageView
-{
-    if (!_barrageView) {
-        _barrageView = [[LJLiveBarrageView alloc] initWithFrame:kLJLiveHelper.ui.barrageRect];
-        _barrageView.backgroundColor = UIColor.clearColor;
-    }
-    return _barrageView;
-}
-
-- (LJLiveControlView *)controlView
-{
-    if (!_controlView) {
-        _controlView = [[LJLiveControlView alloc] initWithFrame:kLJLiveHelper.ui.inputRect];
-        _controlView.backgroundColor = UIColor.clearColor;
-    }
-    return _controlView;
-}
-
-- (LJLiveBannerView *)bannerView
-{
-    if (!_bannerView) {
-        _bannerView = [[LJLiveBannerView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.data.current.privateChatFlag == 2 ? kLJLiveHelper.ui.pkBannerRect : kLJLiveHelper.ui.bannerRect)];
-        _bannerView.isLive = YES;
-    }
-    return _bannerView;
-}
-
-- (LJLiveGoalView *)goalView
-{
-    if (!_goalView) {
-        _goalView = [[LJLiveGoalView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.ui.roomGoalRect)];
-    }
-    return _goalView;
-    
-}
-
-- (LJLiveGoalPopView *)goalPopView
-{
-    if (!_goalPopView) {
-        _goalPopView = [[LJLiveGoalPopView alloc] initWithFrame:LJFlipedScreenBy(kLJLiveHelper.ui.roomGoalPopRect)];
-    }
-    return _goalPopView;
-}
-
-- (LJLiveBonusView *)bonusView
-{
-    if (!_bonusView) {
-        _bonusView = [[LJLiveBonusView alloc] init];
-        _bonusView.frame = LJFlipedScreenBy(kLJLiveHelper.ui.bonusViewRect);
-        kLJWeakSelf;
-        _bonusView.bonusViewDismissBlock = ^{
-            UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
-            UIView *cell = (UIView *)subScroll.superview;
-            UIScrollView *scroll = (UIScrollView *)cell.superview;
-            scroll.scrollEnabled = YES;
-            static dispatch_once_t onceToken;
-            dispatch_once(&onceToken, ^{
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [weakSelf.bonusView lj_showInView:kLJLiveHelper.isMinimize?weakSelf:[UIApplication sharedApplication].keyWindow withPrice:LJLiveBonusViewPrice499];
-                });
-            });
-        };
-    }
-    return _bonusView;
-}
-
-- (LJLiveTurnPlateView *)turnPlateView
-{
-    if (!_turnPlateView) {
-        _turnPlateView = kLJLoadingXib(@"LJLiveTurnPlateView");
-        kLJWeakSelf;
-        // 主播用户自身显示隐藏大转盘回调事件
-        _turnPlateView.hiddenBlock = ^{
-            weakSelf.openTurnPlateBtn.hidden = NO;
-            weakSelf.turnPlateView.hidden = YES;
-            UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
-            UIView *cell = (UIView *)subScroll.superview;
-            UIScrollView *scroll = (UIScrollView *)cell.superview;
-            scroll.scrollEnabled = YES;
-        };
-        // 主播关闭打开转盘block回调事件
-        _turnPlateView.hostCloseOpenTurnPlateBlock = ^{
-            if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn && kLJLiveHelper.data.current.turntableFlag == 1) {
-                if (weakSelf.turnPlateView.isHidden) {
-                    weakSelf.openTurnPlateBtn.hidden = NO;
-                } else {
-                    weakSelf.openTurnPlateBtn.hidden = YES;
-                }
-            } else {
-                weakSelf.openTurnPlateBtn.hidden = YES;
-                weakSelf.turnPlateView.hidden = YES;
-                UIView *subScroll = ((UIView *)(weakSelf.superview)).superview;
-                UIView *cell = (UIView *)subScroll.superview;
-                UIScrollView *scroll = (UIScrollView *)cell.superview;
-                scroll.scrollEnabled = YES;
-            }
-        };
-        _turnPlateView.showResultBlock = ^(NSString *result) {
-            [weakSelf.turnPlateResultTipView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.centerY.equalTo(weakSelf).offset(-50);
-                make.centerX.equalTo(weakSelf);
-                make.height.mas_greaterThanOrEqualTo(68);
-                make.width.mas_greaterThanOrEqualTo(169);
-                make.width.mas_lessThanOrEqualTo(kScreenWidth-30);
-            }];
-            [UIView animateWithDuration:0.5 animations:^{
-                weakSelf.turnPlateResultTipView.resultLabel.text =  [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-                weakSelf.turnPlateResultTipView.hidden = NO;
-            }];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [UIView animateWithDuration:0.5 animations:^{
-                    weakSelf.turnPlateResultTipView.hidden = YES;
-                }];
-            });
-        };
-    }
-    return _turnPlateView;
-}
-
--(LJLiveTurnPlateTipView*)turnPlateResultTipView
-{
-    if (!_turnPlateResultTipView) {
-        _turnPlateResultTipView = kLJLoadingXib(@"LJLiveTurnPlateTipView");
-        _turnPlateResultTipView.hidden = YES;
-        _turnPlateResultTipView.layer.cornerRadius = 10;
-        _turnPlateResultTipView.layer.masksToBounds = YES;
-    }
-    return _turnPlateResultTipView;
-}
-
--(UIButton *)openTurnPlateBtn
-{
-    if (!_openTurnPlateBtn) {
-        _openTurnPlateBtn = [[UIButton alloc] initWithFrame:kLJLiveHelper.ui.turnPlateBtnRect];
-        [_openTurnPlateBtn setImage:kLJImageNamed(@"lj_live_plate_small") forState:UIControlStateNormal];
-        [_openTurnPlateBtn addTarget:self action:@selector(showTurnPlate:) forControlEvents:UIControlEventTouchUpInside];
-        _openTurnPlateBtn.hidden = YES;
-    }
-   return _openTurnPlateBtn;
-}
-
--(UIButton *)openBonusBtn
-{
-    if (!_openBonusBtn) {
-        BOOL hasBought = NO;
-        NSInteger index = -1;
-        for (int i = 0;i < kLJLiveManager.inside.accountConfig.payConfigs.count; i++) {
-            if (kLJLiveManager.inside.accountConfig.payConfigs[i].type == LJRechargeTypeIAP) index = i;
-        }
-        
-        NSArray *productsArr = [kLJLiveManager.inside.accountConfig.payConfigs[index].products mutableCopy];
-        for (LJIapConfig *iap in productsArr.reverseObjectEnumerator) {
-            if (iap.productType == 2 && [iap.isBought isEqualToNumber:@1]) {
-                hasBought = YES;
-            }
-        }
-        
-        if (!kLJLiveManager.inside.account.isGreen && ((kLJLiveManager.inside.account.abTestFlag&16) > 0) && !hasBought) {
-            _openBonusBtn = [[UIButton alloc] initWithFrame:kLJLiveHelper.ui.openBonusBtnRect];
-            [_openBonusBtn setImage:kLJImageNamed(@"lj_live_discount_bonus") forState:UIControlStateNormal];
-            [_openBonusBtn addTarget:self action:@selector(showBonus) forControlEvents:UIControlEventTouchUpInside];
-        }
-    }
-   return _openBonusBtn;
-}
-
-#pragma mark - Setter
-
-- (void)setKeyboardChangedHeight:(CGFloat)keyboardChangedHeight
-{
-    _keyboardChangedHeight = keyboardChangedHeight;
-    if (keyboardChangedHeight == 0) {
-        // 收起键盘
-        self.controlView.transform = CGAffineTransformIdentity;
-        self.barrageView.transform = CGAffineTransformIdentity;
-        [self.controlView lj_closeChatView];
-    } else {
-        // 弹起键盘
-        self.controlView.transform = CGAffineTransformMakeTranslation(0, - keyboardChangedHeight);
-        self.barrageView.transform = CGAffineTransformMakeTranslation(0, - keyboardChangedHeight);
-        [self.controlView lj_openChatView];
-    }
-}
-
-- (void)setLiveRoom:(LJLiveRoom *)liveRoom
-{
-    _liveRoom = liveRoom;
-    
-    self.headView.liveRoom = liveRoom;
-    self.controlView.liveRoom = liveRoom;
-    self.barrageView.liveRoom = liveRoom;
-    
-    // 目标
-    if (liveRoom.roomGoal.goalDesc.length == 0) {
-        self.goalView.hidden = YES;
-    } else {
-        self.goalView.hidden = NO;
-        [self.goalView updateUIWithModel:liveRoom.roomGoal];
-        if (self.goalView.isOpen) {
-            [self.goalPopView updateUIWithModel:liveRoom.roomGoal];
-        }
-    }
-    
-    // 转盘
-    [self.turnPlateView updateRoomInfo:liveRoom];
-    // 控制转盘按显示
-    if (kLJLiveManager.inside.accountConfig.liveConfig.isTurntableFeatureOn && !self.turnPlateView.isShowing) {//模型转换
-        if (liveRoom.turntableFlag == 1) {
-            self.openTurnPlateBtn.hidden = NO;
-        } else {
-            self.openTurnPlateBtn.hidden = YES;
-        }
-    } else {
-        self.openTurnPlateBtn.hidden = YES;
-    }
-    // pk中切换房间
-    if (liveRoom.pking) {
-        self.turnPlateView.hiddenBlock();
-        self.openTurnPlateBtn.hidden = YES;
-    }
-}
-
 @end

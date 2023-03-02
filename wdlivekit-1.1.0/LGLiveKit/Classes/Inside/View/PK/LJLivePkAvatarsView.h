@@ -11,17 +11,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkAvatarsView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-@property (nonatomic, strong) NSArray *localAvatars, *remoteAvatars;
 
-+ (LJLivePkAvatarsView *)lj_avatarsView;
+
 
 /// 刷新内部
 /// @param event 事件
 /// @param obj 对象
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
++ (LJLivePkAvatarsView *)lj_avatarsView;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+@property (nonatomic, strong) NSArray *localAvatars, *remoteAvatars;
 @end
 
 NS_ASSUME_NONNULL_END

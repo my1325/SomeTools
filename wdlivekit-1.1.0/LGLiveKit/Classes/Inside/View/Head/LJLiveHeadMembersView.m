@@ -32,14 +32,39 @@ static NSString *const kCellID = @"LJLiveHeadMembersViewCellID";
     return membersView;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
+
+#pragma mark - Event
+
+
+
+#pragma mark - UICollectionViewDelegate
+
+
+
+
+
+#pragma mark - Setter
+
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    LJLiveRoomMember *member = self.liveRoom.videoChatRoomMembers[indexPath.row];
+    self.eventBlock(LJLiveEventPersonalData, member);
+    //
+    LJEvent(@"lj_LiveTouchRightTopAvatar", nil);
+}
+- (void)closeButtonClick:(UIButton *)sender
+{
+    // 关闭房间
+    self.eventBlock(LJLiveEventMinimize, nil);
+}
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return self.liveRoom.videoChatRoomMembers.count;
+}
 - (void)lj_setupViews
 {
     self.membersButton.layer.masksToBounds = YES;
@@ -50,9 +75,6 @@ static NSString *const kCellID = @"LJLiveHeadMembersViewCellID";
     [self.membersButton addTarget:self action:@selector(membersButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.closeButton addTarget:self action:@selector(closeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
 }
-
-#pragma mark - Event
-
 - (void)membersButtonClick:(UIButton *)sender
 {
     // 成员列表
@@ -61,25 +83,16 @@ static NSString *const kCellID = @"LJLiveHeadMembersViewCellID";
     LJEvent(@"lj_LiveTouchRank", nil);
     LJLiveThinking(LJLiveThinkingEventTypeEvent, LJLiveThinkingEventClickAudienceListInLive, nil);
 }
-
-- (void)closeButtonClick:(UIButton *)sender
+- (void)awakeFromNib
 {
-    // 关闭房间
-    self.eventBlock(LJLiveEventMinimize, nil);
+    [super awakeFromNib];
+    [self lj_setupViews];
 }
-
-#pragma mark - UICollectionViewDelegate
-
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+- (void)setLiveRoom:(LJLiveRoom *)liveRoom
 {
-    return 1;
+    _liveRoom = liveRoom;
+    [self.collectionView reloadData];
 }
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
-    return self.liveRoom.videoChatRoomMembers.count;
-}
-
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     UICollectionViewCell *headCell = [collectionView dequeueReusableCellWithReuseIdentifier:kCellID forIndexPath:indexPath];
@@ -110,21 +123,8 @@ static NSString *const kCellID = @"LJLiveHeadMembersViewCellID";
     [headImageView sd_setImageWithURL:[NSURL URLWithString:member.avatar] placeholderImage:kLJLiveManager.config.avatar];
     return headCell;
 }
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-    LJLiveRoomMember *member = self.liveRoom.videoChatRoomMembers[indexPath.row];
-    self.eventBlock(LJLiveEventPersonalData, member);
-    //
-    LJEvent(@"lj_LiveTouchRightTopAvatar", nil);
+    return 1;
 }
-
-#pragma mark - Setter
-
-- (void)setLiveRoom:(LJLiveRoom *)liveRoom
-{
-    _liveRoom = liveRoom;
-    [self.collectionView reloadData];
-}
-
 @end

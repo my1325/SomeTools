@@ -11,18 +11,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveGiftPrivateView : UIView
 
-@property (nonatomic, copy) LJLiveVoidBlock leftAvatarBlock, rightAvatarBlock, dismissBlock;
 
-@property (nonatomic, copy) LJLiveObjectBlock privateBlock;
 
-@property (nonatomic, strong) LJLiveRoom *liveRoom;
 
-+ (LJLiveGiftPrivateView *)privateView;
 
-- (void)lj_showInView:(UIView *)inView;
+
 
 - (void)lj_dismiss;
-
++ (LJLiveGiftPrivateView *)privateView;
+- (void)lj_showInView:(UIView *)inView;
+@property (nonatomic, copy) LJLiveVoidBlock leftAvatarBlock, rightAvatarBlock, dismissBlock;
+@property (nonatomic, strong) LJLiveRoom *liveRoom;
+@property (nonatomic, copy) LJLiveObjectBlock privateBlock;
 @end
 
 NS_ASSUME_NONNULL_END

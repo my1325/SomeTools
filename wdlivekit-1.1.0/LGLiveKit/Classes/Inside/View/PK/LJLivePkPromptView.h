@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLivePkPromptView : UIView
 
-+ (LJLivePkPromptView *)lj_promptView;
 
-/// 刷新内部
+
 /// @param event 事件
+/// 刷新内部
 /// @param obj 对象
 - (void)lj_event:(LJLiveEvent)event withObj:(NSObject * __nullable )obj;
-
++ (LJLivePkPromptView *)lj_promptView;
 @end
 
 NS_ASSUME_NONNULL_END

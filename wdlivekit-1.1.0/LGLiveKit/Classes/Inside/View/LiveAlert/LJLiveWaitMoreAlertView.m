@@ -9,24 +9,24 @@
 
 @interface LJLiveWaitMoreAlertView ()
 
-@property (weak, nonatomic) IBOutlet UIView *contentView;
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentLabelLeft;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentLabelRight;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *waitButtonLeft;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *moreButtonRight;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *waitButtonRight;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftRightRatio;
+
 
 @property (nonatomic, copy) LJLiveVoidBlock waitBlock, moreBlock;
-
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *moreButtonRight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftRightRatio;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentLabelLeft;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *waitButtonRight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contentLabelRight;
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *waitButtonLeft;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @end
 
 @implementation LJLiveWaitMoreAlertView
@@ -75,14 +75,23 @@
     return view;
 }
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    [self lj_setupViews];
-}
 
 #pragma mark - Init
 
+
+#pragma mark - Events
+
+
+
+#pragma mark - Methods
+
+
+
+- (IBAction)waitButtonClick:(UIButton *)sender
+{
+    if (self.waitBlock) self.waitBlock();
+    [self lj_dismiss];
+}
 - (void)lj_setupViews
 {
     self.contentLabelLeft.constant = kLJWidthScale(25);
@@ -107,23 +116,11 @@
 //    [self.moreButton setBackgroundImage:image forState:UIControlStateNormal];
     self.contentLabel.text = kLJLocalString(@"The host is in a private call. Please come back later");
 }
-
-#pragma mark - Events
-
-- (IBAction)waitButtonClick:(UIButton *)sender
+- (void)awakeFromNib
 {
-    if (self.waitBlock) self.waitBlock();
-    [self lj_dismiss];
+    [super awakeFromNib];
+    [self lj_setupViews];
 }
-
-- (IBAction)moreButtonClick:(UIButton *)sender
-{
-    if (self.moreBlock) self.moreBlock();
-    [self lj_dismiss];
-}
-
-#pragma mark - Methods
-
 - (void)lj_open
 {
     self.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
@@ -136,7 +133,11 @@
     } completion:^(BOOL finished) {
     }];
 }
-
+- (IBAction)moreButtonClick:(UIButton *)sender
+{
+    if (self.moreBlock) self.moreBlock();
+    [self lj_dismiss];
+}
 - (void)lj_dismiss
 {
     [UIView animateWithDuration:0.1 animations:^{
@@ -147,5 +148,4 @@
         [self removeFromSuperview];
     });
 }
-
 @end

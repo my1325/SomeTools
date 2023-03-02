@@ -11,14 +11,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveControlView : UIView
 
-@property (nonatomic, copy) LJLiveEventBlock eventBlock;
 
-@property (nonatomic, strong) LJLiveRoom *liveRoom;
 
-- (void)lj_openChatView;
+
 
 - (void)lj_closeChatView;
-
+- (void)lj_openChatView;
+@property (nonatomic, copy) LJLiveEventBlock eventBlock;
+@property (nonatomic, strong) LJLiveRoom *liveRoom;
 @end
 
 NS_ASSUME_NONNULL_END

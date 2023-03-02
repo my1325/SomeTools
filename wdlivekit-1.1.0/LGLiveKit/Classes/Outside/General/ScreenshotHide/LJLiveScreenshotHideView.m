@@ -9,6 +9,8 @@
 
 @implementation LJLiveScreenshotHideView
 
+
+
 - (instancetype)init
 {
     self = [super init];
@@ -27,7 +29,6 @@
     }
     return self;
 }
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -47,5 +48,4 @@
     }
     return self;
 }
-
 @end

@@ -12,20 +12,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (LJLiveAdd)
 
-- (NSString *)lj_md5Hash;
 
-/// 拼接URL
-/// @param arg 参数
-- (NSString *)lj_addressURLAppendingByArg:(NSDictionary *)arg;
 
-/// 分割URL
-- (NSDictionary *)lj_parameterAddressURL;
+
+
 
 /// 阿语打头
-- (BOOL)lj_beginWithArabic;
-
+/// @param arg 参数
+/// 拼接URL
+/// 分割URL
 - (NSString *)lj_localized;
-
+- (NSString *)lj_md5Hash;
+- (BOOL)lj_beginWithArabic;
+- (NSString *)lj_addressURLAppendingByArg:(NSDictionary *)arg;
+- (NSDictionary *)lj_parameterAddressURL;
 @end
 
 NS_ASSUME_NONNULL_END

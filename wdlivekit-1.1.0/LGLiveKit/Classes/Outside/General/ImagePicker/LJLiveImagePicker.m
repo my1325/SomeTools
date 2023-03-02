@@ -16,43 +16,8 @@
 
 @implementation LJLiveImagePicker
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.view.backgroundColor = UIColor.clearColor;
-}
 
-- (void)photoLibraryWithAllowEdit:(BOOL)allowEdit
-                       completion:(LJLiveImageBlock)completion
-{
-    self.imagesBlock = completion;
-    
-    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    imagePicker.delegate = self;
-    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    // 编辑模式, 但是编辑框是正方形的
-    imagePicker.allowsEditing = allowEdit;
-    // 设置可用的媒体类型、默认只包含kUTTypeImage
-    imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
-    imagePicker.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    [self presentViewController:imagePicker animated:YES completion:nil];
-}
 
-- (void)cameraWithAllowEdit:(BOOL)allowEdit
-                 completion:(LJLiveImageBlock)completion
-{
-    self.imagesBlock = completion;
-    
-    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    imagePicker.delegate = self;
-    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-    // 编辑模式, 但是编辑框是正方形的
-    imagePicker.allowsEditing = allowEdit;
-    // 设置可用的媒体类型、默认只包含kUTTypeImage
-    imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
-    imagePicker.modalPresentationStyle = UIModalPresentationOverFullScreen;
-    [self presentViewController:imagePicker animated:YES completion:nil];
-}
 
 + (void)tyb_photoLibraryWithSender:(UIViewController *)vc
                          allowEdit:(BOOL)allowEdit
@@ -82,6 +47,24 @@
 
 #pragma mark - UIImagePickerControllerDelegate
 
+
+
+// 取消图片选择调用此方法
+- (void)cameraWithAllowEdit:(BOOL)allowEdit
+                 completion:(LJLiveImageBlock)completion
+{
+    self.imagesBlock = completion;
+    
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    // 编辑模式, 但是编辑框是正方形的
+    imagePicker.allowsEditing = allowEdit;
+    // 设置可用的媒体类型、默认只包含kUTTypeImage
+    imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
+    imagePicker.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info
 {
     // 获取用户拍摄的是照片还是视频
@@ -102,12 +85,29 @@
     [picker dismissViewControllerAnimated:YES completion:nil];
     [self removeFromParentViewController];
 }
-
-// 取消图片选择调用此方法
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor = UIColor.clearColor;
+}
+- (void)photoLibraryWithAllowEdit:(BOOL)allowEdit
+                       completion:(LJLiveImageBlock)completion
+{
+    self.imagesBlock = completion;
+    
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    // 编辑模式, 但是编辑框是正方形的
+    imagePicker.allowsEditing = allowEdit;
+    // 设置可用的媒体类型、默认只包含kUTTypeImage
+    imagePicker.mediaTypes = @[(NSString *)kUTTypeImage];
+    imagePicker.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:nil];
     [self removeFromParentViewController];
 }
-
 @end

@@ -15,13 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LJLiveMethods : NSObject
 
+
+
 /// 当前vc
-+ (UIViewController *)lj_currentViewController;
 /// 当前nav
-+ (UINavigationController *)lj_currentNavigationController;
-
 + (CGRect)lj_flipedRect:(CGRect)targetRect bySuperRect:(CGRect)superRect;
-
++ (UIViewController *)lj_currentViewController;
++ (UINavigationController *)lj_currentNavigationController;
 @end
 
 NS_ASSUME_NONNULL_END
