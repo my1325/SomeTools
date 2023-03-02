@@ -5,66 +5,6 @@ class OCFileHelper
     @file = file
   end
 
-  def header?
-    File.basename(@file).end_with? '.h'
-  end
-
-  def imp?
-    File.basename(@file) =~ /.*\.m(\+\+)?$/
-  end
-
-  def protocol?(line)
-    line =~ /^@protocol .*(?<!;)$/
-  end
-
-  def class?(line)
-    line =~ /^@interface .*:.*$/
-  end
-
-  def class_imp?(line)
-    line.start_with? '@implementation'
-  end
-
-  def class_extension?(line)
-    line =~ /^@interface .*\(\)$/
-  end
-
-  def class_category_imp?(line)
-    line =~ /^@implementation .*\(.*\)$/
-  end
-
-  def class_category?(line)
-    line =~ /^@interface .*\(.*\)$/
-  end
-
-  def has_document?(line)
-    line =~ /.*\/\*.*\*\/.*/
-  end
-
-  def instance_method?(line)
-    line =~ /^- ?\(.*\).*$/
-  end
-
-  def class_method?(line)
-    line =~ /^\+ ?\(.*\).*$/
-  end
-
-  def instance_method_imp?(line)
-    line =~ /^- ?\(.*\).*(?<!;)$/
-  end
-
-  def class_method_imp?(line)
-    line =~ /^\+ ?\(.*\).*(?<!;)$/
-  end
-
-  def property?(line)
-    line =~ /^@property.*;$/
-  end
-
-  def end?(line)
-    line == '@end' || line == "@end\n"
-  end
-
   def could_parse_file?
     header? || imp?
   end
