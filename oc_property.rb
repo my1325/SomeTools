@@ -13,7 +13,7 @@ class OCProperty < Line
     r = /(?<= )[^ ;]*/
     res = r.match(@line)
     i = res.count
-    i -= 1 until i < 0 || !res[i].empty?
+    i -= 1 until i.negative? || !res[i].empty?
     i >= 0 ? res[i] : res[-1]
   end
 end

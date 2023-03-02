@@ -6,11 +6,11 @@ class Line
   end
 
   def self.mark?(line)
-    line.start_with?("#pragma mark")
+    line.start_with?('#pragma mark')
   end
 
-  def self.has_document?(line)
-    Document.has_document? line
+  def self.include_document?(line)
+    Document.include_document? line
   end
 
   def self.class?(line)
@@ -54,16 +54,14 @@ class Line
   end
 
   def self.end?(line)
-    line == '@end' || line == "@end\n"
+    ['@end', "@end\n"].include?(line)
   end
 
   def initialize(line)
     @line = line
   end
 
-  def line
-    @line
-  end
+  attr_reader :line
 
   def format_line
     @line

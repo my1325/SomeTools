@@ -3,54 +3,47 @@
 class Document < Line
 
   def self.document?(line)
-    line.strip.start_with?("//") || (line.strip.start_with?("/*") && line.strip.end_with?("*/")) || (line.strip.start_with?("/*") && !line.strip.include?("*/"))
+    line.strip.start_with?('//') ||
+      (line.strip.start_with?('/*') && line.strip.end_with?('*/')) ||
+      (line.strip.start_with?('/*') && !line.strip.include?('*/'))
   end
 
-  def self.has_document?(line)
-    document?(line) || line =~ /.*\/\*.*\*\/.*/
+  def self.include_document?(line)
+    document?(line) || line =~ %r{.*/\*.*\*/.*}
   end
 
   def self.trim_document(line)
-    return "/*" if (line.strip.start_with?("/*") && !line.strip.include?("*/"))
-    return "" if document?(line)
-    line.gsub(/.*\/\*.*\*\/.*/, "")
-    line.gsub(/(\/\/).*/, "")
+    return '/*' if line.strip.start_with?('/*') && !line.strip.include?('*/')
+    return '' if document?(line)
+
+    line.gsub(%r{.*/\*.*\*/.*}, '')
+    line.gsub(%r{(//).*}, '')
   end
 
   def initialize(file, line, options = nil)
     super(line)
-    @lines = [Line.new(line)]
+    @lines = []
+    if line.strip.start_with?('/*')
+      parse_multiline_document file, options
+    else
+      parse_inline_document
+    end
     parse_document file, options
   end
 
-  def parse_document(file, options)
-    return unless Document.document? @line
-    line = file.readline unless file.eof?
-    document_start = @line.start_with?("/*")
+  def parse_inline_document
+    @lines.append(Line.new(@line))
+  end
 
-    while line && !file.eof?
-      if line.strip.empty? && options[:trim_empty_line]
-        line = file.readline
-        next
-      end
-      document_start = true if line.strip.start_with?("/*")
-      document_start = false if line.strip.end_with?("*/")
-      if line.strip.start_with?("//") || document_start || line.strip.end_with?("*/")
-        @lines.append Line.new(line)
-        line = file.readline unless file.eof?
-      elsif Line.property? line
-        @lines.append OCProperty.new(file, line)
-        break
-      elsif Line.class_method?(line) || Line.instance_method?(line)
-        @lines.append OCMethod.new(file, line, options)
-        break
-      else
-        break
-      end
+  def parse_multiline_document(file, options)
+    line = @line
+    until line.strip.end_with?('*/') || file.eof?
+      @lines.append(Line.new(line))
+      line = file.readline
     end
   end
 
   def format_line
-    @lines.map { |line| line.format_line }.join
+    @lines.map(&:format_line).join
   end
 end
