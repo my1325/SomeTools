@@ -13,7 +13,7 @@ def mix(args)
     dir_foreach dir do |file|
       if OCFile.supported? file
         oc_file = OCFile.new file
-        oc_file.start_parse :trim_document => false
+        oc_file.start_parse trim_document: false
       end
     end
   elsif args[:file]
@@ -28,11 +28,12 @@ def mix(args)
   end
 end
 
-def dir_foreach(path)
+def dir_foreach(path, &block)
   if File.directory? path
     Dir.foreach path do |file|
       next if file.start_with?('.')
-      dir_foreach(File.join(path, file)) { |f| yield f }
+
+      dir_foreach(File.join(path, file), &block)
     end
   else
     yield path

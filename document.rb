@@ -28,7 +28,6 @@ class Document < Line
     else
       parse_inline_document
     end
-    parse_document file, options
   end
 
   def parse_inline_document
@@ -41,6 +40,7 @@ class Document < Line
       @lines.append(Line.new(line))
       line = file.readline
     end
+    @lines.append(Line.new(line))
   end
 
   def format_line

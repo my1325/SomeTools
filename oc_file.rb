@@ -19,6 +19,7 @@ class OCFile
 
   def initialize(file)
     raise "#{file} is not supported" unless OCFile.supported? file
+
     @file = file
   end
 
@@ -42,16 +43,16 @@ class OCFile
 
   def start_parse(options = {})
     handle_line do |file, line|
-      if line.strip.empty? && !options[:trim_empty_line]
-        line
-      end
-
+      line if line.strip.empty? && !options[:trim_empty_line]
       if Line.protocol? line
         oc_protocol = OCProtocol.new file, line, options
         oc_protocol.format_line
       elsif Line.class? line
         oc_class = OCClass.new file, line, options
         oc_class.format_line
+      elsif OCCondition.condition? line
+        oc_condition = OCCondition.new file, line
+        oc_condition.format_line
       else
         line
       end

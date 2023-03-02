@@ -48,13 +48,15 @@ class OCClass < Line
     line = @line
     until Line.end?(line) || file.eof?
       if (line.strip.empty? && !@options[:trim_empty_line]) || (Line.mark?(line.strip) && !@options[:trim_mark])
-        @lines.append(Line(line))
-      elsif Document.document?(line) && !@options[:trim_document]
-        @document.append(Document.new(file, line, @options))
+        @lines.append(Line.new(line))
+      elsif Document.document?(line)
+        @document.append(Document.new(file, line, @options)) unless @options[:trim_document] == true
       elsif OCProperty.property? line
         @properties.append(OCProperty.new(file, line))
       elsif OCMethod.instance_method?(line) || OCMethod.class_method?(line)
         @methods.append(OCMethod.new(file, line, @options))
+      elsif OCCondition.condition? line
+        @lines.append(OCCondition.new(file, line))
       else
         @lines.append Line.new(line)
       end

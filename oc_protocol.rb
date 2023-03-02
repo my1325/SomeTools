@@ -21,18 +21,23 @@ class OCProtocol < Line
         is_required = true
       elsif line.strip.start_with? '@optional'
         is_required = false
-      elsif (line.strip.empty? && !@options[:trim_empty_line]) || (Line.mark?(line.strip) && !@options[:trim_mark])
-        @required.append(Line(line)) if is_required
-        @optional.append(Line(line)) unless is_required
-      elsif Document.document?(line) && !options[:trim_document]
-        @required.append(Document.new(file, line, options)) if is_required
-        @optional.append(Document.new(file, line, options)) unless is_required
+      elsif (line.strip.empty? && !options[:trim_empty_line]) || (Line.mark?(line.strip) && !options[:trim_mark])
+        @required.append(Line.new(line)) if is_required
+        @optional.append(Line.new(line)) unless is_required
+      elsif Document.document?(line)
+        unless options[:trim_document] == true
+          @required.append(Document.new(file, line, options)) if is_required
+          @optional.append(Document.new(file, line, options)) unless is_required
+        end
       elsif OCProperty.property? line
         @required.append(OCProperty.new(file, line)) if is_required
         @optional.append(OCProperty.new(file, line)) unless is_required
       elsif OCMethod.instance_method?(line) || OCMethod.class_method?(line)
         @required.append(OCMethod.new(file, line, options)) if is_required
         @optional.append(OCMethod.new(file, line, options)) unless is_required
+      elsif OCCondition.condition? line
+        @required.append(OCCondition.new(file, line)) if is_required
+        @optional.append(OCCondition.new(file, line)) unless is_required
       else
         @required.append Line.new(line) if is_required
         @optional.append Line.new(line) unless is_required
