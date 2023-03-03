@@ -19,10 +19,11 @@ class OCClassImplementation < Line
 
   def parse_implementation(file, line, options)
     until Line.end?(line) || file.eof?
-      if (line.strip.empty? && !options[:trim_empty_line]) || (Line.mark?(line.strip) && !options[:trim_mark])
+      if (line.strip.empty? && options[:trim_empty_line] == false) || (Line.mark?(line.strip) && options[:trim_mark] == false)
         @lines.append(Line.new(line))
       elsif Document.document?(line)
-        @document.append(Document.new(file, line, options)) unless options[:trim_document] == true
+        document = Document.new(file, line, options)
+        @document.append(document) unless options[:trim_document] == true
       elsif OCMethodImplementation.class_method_implementation?(line) || OCMethodImplementation.instance_method_implementation?(line)
         @methods.append(OCMethodImplementation.new(file, line, options))
       elsif OCCondition.condition? line

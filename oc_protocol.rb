@@ -7,8 +7,8 @@ class OCProtocol < Line
 
   def initialize(file, line, options)
     super(line)
-    @optional = [Line.new('@optional')]
-    @required = [Line.new('@required')]
+    @optional = [Line.new('@optional\n')]
+    @required = [Line.new('@required\n')]
     @lines = [Line.new(line)]
     parse_protocol file, options
   end
@@ -16,7 +16,7 @@ class OCProtocol < Line
   def parse_protocol(file, options)
     line = file.readline
     is_required = true
-    until Line.end? line
+    until Line.end?(line) || file.eof?
       if line.strip.start_with? '@required'
         is_required = true
       elsif line.strip.start_with? '@optional'
@@ -42,7 +42,7 @@ class OCProtocol < Line
         @required.append Line.new(line) if is_required
         @optional.append Line.new(line) unless is_required
       end
-      line = file.readline
+      line = file.readline unless file.eof?
     end
 
     @lines.append(Line.new(line))

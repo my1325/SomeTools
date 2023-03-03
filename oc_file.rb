@@ -58,6 +58,10 @@ class OCFile
       elsif OCCondition.condition? line
         oc_condition = OCCondition.new file, line
         oc_condition.format_line
+      elsif Document.document?(line)
+        document = Document.new(file, line, @options)
+        document.format_line unless options[:trim_document] == false
+        '' unless options[:trim_document] == true
       else
         line
       end
