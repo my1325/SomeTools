@@ -7,15 +7,15 @@ require 'oc_property'
 
 class OCClass < Line
   def self.class?(line)
-    line =~ /^@interface .*:.*$/
+    line.strip =~ /^@interface .*:.*$/
   end
 
   def self.class_extension?(line)
-    line =~ /^@interface .*\(\)$/
+    line.strip =~ /^@interface .*:.*$/
   end
 
   def self.class_category?(line)
-    line =~ /^@interface .*\(.*\)$/
+    line.strip =~ /^@interface .*:.*$/
   end
 
   def initialize(file, line, options = nil)
@@ -52,6 +52,10 @@ class OCClass < Line
       elsif Document.document?(line)
         document = Document.new(file, line, @options)
         @document.append(document) unless @options[:trim_document] == true
+      elsif OCDefine.define? line.strip
+        @lines.append(OCDefine.new(file, line))
+      elsif OCDefine.undefine? line
+        @lines.append(Line.new(''))
       elsif OCProperty.property? line
         @properties.append(OCProperty.new(file, line))
       elsif OCMethod.instance_method?(line) || OCMethod.class_method?(line)
@@ -63,7 +67,7 @@ class OCClass < Line
       end
       line = file.readline unless file.eof?
     end
-    @lines.append Line.new(line)
+    @lines.append(Line.new(line)) if Line.end?(line)
   end
 
   def class_name

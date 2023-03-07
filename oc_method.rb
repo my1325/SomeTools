@@ -2,11 +2,13 @@
 
 class OCMethod < Line
   def self.instance_method?(line)
-    line =~ /^- ?\(.*\).*$/
+    line_strip = Document.trim_document line
+    line_strip.strip =~ /^- ?\(.*\).*$/
   end
 
   def self.class_method?(line)
-    line =~ /^\+ ?\(.*\).*$/
+    line_strip = Document.trim_document line
+    line_strip =~ /^\+ ?\(.*\).*$/
   end
 
   def initialize(file, line, options = nil)
@@ -17,9 +19,9 @@ class OCMethod < Line
 
   def parse_method(file, options)
     line = @line
-    until line.strip.end_with?(';')
+    until line.strip.end_with?(';') || Document.trim_document(line).strip.end_with?(';')
       @lines.append(Line.new(line))
-      line = file.readline
+      line = file.readline unless file.eof?
     end
     @lines.append(Line.new(line))
   end

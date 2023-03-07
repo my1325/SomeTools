@@ -10,7 +10,7 @@ class Line
   end
 
   def self.end?(line)
-    ['@end', "@end\n"].include?(line)
+    line.strip.end_with?('@end')
   end
 
   def initialize(line)

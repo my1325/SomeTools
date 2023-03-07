@@ -2,13 +2,13 @@
 
 class OCProtocol < Line
   def self.protocol?(line)
-    line =~ /^@protocol .*(?<!;)$/
+    line.strip =~ /^@protocol .*(?<!;)$/
   end
 
   def initialize(file, line, options)
     super(line)
-    @optional = [Line.new('@optional\n')]
-    @required = [Line.new('@required\n')]
+    @optional = []
+    @required = []
     @lines = [Line.new(line)]
     parse_protocol file, options
   end
@@ -21,6 +21,10 @@ class OCProtocol < Line
         is_required = true
       elsif line.strip.start_with? '@optional'
         is_required = false
+      elsif OCDefine.define? line
+        @lines.append(OCDefine.new(file, line))
+      elsif OCDefine.undefine? line
+        @lines.append(Line.new(''))
       elsif (line.strip.empty? && !options[:trim_empty_line]) || (Line.mark?(line.strip) && !options[:trim_mark])
         @required.append(Line.new(line)) if is_required
         @optional.append(Line.new(line)) unless is_required
@@ -56,6 +60,8 @@ class OCProtocol < Line
   def format_line
     required_line = @required.shuffle.map(&:format_line).join
     optional_line = @optional.shuffle.map(&:format_line).join
+    optional_line.insert 0, "@optional\n" unless @optional.empty?
+    required_line.insert 0, "@required\n" unless @required.empty?
     lines = @lines.map(&:format_line)
     lines.insert -2, optional_line
     lines.insert -2, required_line

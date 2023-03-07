@@ -6,7 +6,7 @@ class OCClassImplementation < Line
   end
 
   def self.category_implementation?(line)
-    line =~ /^@implementation .*\(.*\)$/
+    line.strip.start_with? '@implementation'
   end
 
   def initialize(file, line, options)
@@ -26,6 +26,10 @@ class OCClassImplementation < Line
         @document.append(document) unless options[:trim_document] == true
       elsif OCMethodImplementation.class_method_implementation?(line) || OCMethodImplementation.instance_method_implementation?(line)
         @methods.append(OCMethodImplementation.new(file, line, options))
+      elsif OCDefine.define? line.strip
+        @lines.append(OCDefine.new(file, line))
+      elsif OCDefine.undefine? line
+        @lines.append(Line.new(''))
       elsif OCCondition.condition? line
         @lines.append(OCCondition.new(file, line))
       else
@@ -33,7 +37,7 @@ class OCClassImplementation < Line
       end
       line = file.readline unless file.eof?
     end
-    @lines.append(Line.new(line))
+    @lines.append(Line.new(line)) if Line.end?(line)
   end
 
   def format_line

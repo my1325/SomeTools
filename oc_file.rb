@@ -5,6 +5,7 @@ require 'oc_protocol'
 require 'document'
 require 'oc_condition'
 require 'oc_class_implementation'
+require 'oc_define'
 
 class OCFile
   def self.header?(file)
@@ -58,6 +59,11 @@ class OCFile
       elsif OCCondition.condition? line
         oc_condition = OCCondition.new file, line
         oc_condition.format_line
+      elsif OCDefine.define? line
+        oc_define = OCDefine.new file, line
+        oc_define.format_line
+      elsif OCDefine.undefine? line
+        ''
       elsif Document.document?(line)
         document = Document.new(file, line, @options)
         document.format_line unless options[:trim_document] == false
